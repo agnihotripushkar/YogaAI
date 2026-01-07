@@ -20,28 +20,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             YogaAITheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    // Pass innerPadding to YogaNavigation if needed for global padding, 
+                    // or handle it inside screens. For now, we'll apply it to the NavHost container if possible,
+                    // but YogaNavigation doesn't take modifier yet. 
+                    // Let's just wrap it in a Box for now or modify YogaNavigation.
+                    // Actually, usually Scaffolds are per-screen or top-level.
+                    // Let's just call YogaNavigation inside a Box with padding.
+                    androidx.compose.foundation.layout.Box(modifier = Modifier.padding(innerPadding)) {
+                         me.pushkaragnihotri.yogaai.features.navigation.YogaNavigation()
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    YogaAITheme {
-        Greeting("Android")
     }
 }

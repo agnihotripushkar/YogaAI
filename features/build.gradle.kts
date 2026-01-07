@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "me.pushkaragnihotri.yogaai.features.profile"
+    namespace = "me.pushkaragnihotri.yogaai.features"
     compileSdk = 34
 
     defaultConfig {
@@ -29,6 +29,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     
     // Compose
     implementation(platform(libs.androidx.compose.bom))
@@ -36,6 +37,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
     
     // Koin
     implementation(libs.koin.androidx.compose)

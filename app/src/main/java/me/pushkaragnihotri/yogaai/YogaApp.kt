@@ -12,7 +12,7 @@ class YogaApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@YogaApp)
-            // modules() // TODO: Add modules here once defined in respective features/core
+            modules(me.pushkaragnihotri.yogaai.features.di.featuresModule)
         }
     }
 }

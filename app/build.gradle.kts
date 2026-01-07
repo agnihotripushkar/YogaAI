@@ -50,17 +50,14 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.navigation.compose)
     
     // Koin
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
     // Feature Modules
-    implementation(project(":features:home"))
-    implementation(project(":features:classes"))
-    implementation(project(":features:videoplayer"))
-    implementation(project(":features:progress"))
-    implementation(project(":features:profile"))
+    implementation(project(":features"))
     
     // Core Modules (Need explicit dependency if not transitively exposed, likely needed for DI/App init)
     implementation(project(":coreNetwork"))
