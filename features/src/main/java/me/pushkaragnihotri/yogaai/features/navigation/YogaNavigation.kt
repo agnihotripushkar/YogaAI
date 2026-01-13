@@ -10,33 +10,64 @@ import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
 import me.pushkaragnihotri.yogaai.features.profile.ui.ProfileScreen
 import me.pushkaragnihotri.yogaai.features.progress.ui.ProgressScreen
 import me.pushkaragnihotri.yogaai.features.videoplayer.ui.VideoPlayerScreen
+import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 
 @Composable
 fun YogaNavigation(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    startDestination: String = YogaDestinations.HOME_ROUTE
 ) {
     NavHost(
         navController = navController,
-        startDestination = YogaDestinations.HOME_ROUTE
+        startDestination = startDestination
     ) {
-        composable(YogaDestinations.HOME_ROUTE) {
-            HomeScreen(
-                onNavigateToClasses = {
-                    navController.navigate(YogaDestinations.CLASSES_ROUTE)
+        composable(YogaDestinations.ONBOARDING_ROUTE) {
+            OnboardingScreen(
+                onOnboardingComplete = {
+                    navController.navigate(YogaDestinations.HOME_ROUTE) {
+                        popUpTo(YogaDestinations.ONBOARDING_ROUTE) { inclusive = true }
+                    }
                 }
             )
         }
-        composable(YogaDestinations.CLASSES_ROUTE) {
-            ClassesScreen()
+        composable(YogaDestinations.HOME_ROUTE) {
+            HomeScreen(
+                onNavigateToClasses = { /* Unused */ },
+                onNavigateToSettings = {
+                    navController.navigate(YogaDestinations.SETTINGS_ROUTE)
+                }
+            )
         }
-        composable(YogaDestinations.VIDEO_PLAYER_ROUTE) {
-            VideoPlayerScreen()
+        composable(YogaDestinations.INSIGHTS_ROUTE) {
+            me.pushkaragnihotri.yogaai.features.insights.ui.InsightsScreen(
+                onNavigateToDetail = { date ->
+                    navController.navigate("insights_detail/$date")
+                }
+            )
         }
-        composable(YogaDestinations.PROGRESS_ROUTE) {
-            ProgressScreen()
+        composable(
+            route = YogaDestinations.INSIGHTS_DETAIL_ROUTE,
+            arguments = listOf(androidx.navigation.navArgument("date") { type = androidx.navigation.NavType.StringType })
+        ) { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            me.pushkaragnihotri.yogaai.features.insights.ui.DailyDetailScreen(
+                date = date,
+                onNavigateUp = { navController.navigateUp() },
+                onNavigateToModelInfo = { navController.navigate(YogaDestinations.MODEL_INFO_ROUTE) }
+            )
         }
-        composable(YogaDestinations.PROFILE_ROUTE) {
-            ProfileScreen()
+        composable(YogaDestinations.MODEL_INFO_ROUTE) {
+            me.pushkaragnihotri.yogaai.features.insights.ui.ModelInfoScreen(
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable(YogaDestinations.GOALS_ROUTE) {
+            me.pushkaragnihotri.yogaai.features.goals.ui.GoalsScreen()
+        }
+        composable(YogaDestinations.SETTINGS_ROUTE) {
+             me.pushkaragnihotri.yogaai.features.settings.ui.SettingsScreen(
+                 onNavigateUp = { navController.navigateUp() }
+             )
         }
     }
 }

@@ -5,6 +5,13 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+
+val appModule = module {
+    viewModel { MainViewModel(get()) }
+}
+
 class YogaApp : Application() {
     override fun onCreate() {
         super.onCreate()
@@ -12,7 +19,11 @@ class YogaApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@YogaApp)
-            modules(me.pushkaragnihotri.yogaai.features.di.featuresModule)
+            modules(
+                me.pushkaragnihotri.yogaai.features.di.featuresModule,
+                me.pushkaragnihotri.yogaai.core.data.di.coreDataModule,
+                appModule
+            )
         }
     }
 }

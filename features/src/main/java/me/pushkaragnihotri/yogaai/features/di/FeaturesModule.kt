@@ -5,5 +5,9 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val featuresModule = module {
-    viewModel { HomeViewModel() }
+    viewModel { HomeViewModel(get()) }
+    viewModel { OnboardingViewModel(get(), get()) }
+    viewModel { InsightsViewModel(get()) }
+    viewModel { GoalsViewModel(get()) }
+    viewModel { me.pushkaragnihotri.yogaai.features.settings.ui.SettingsViewModel(get()) }
 }

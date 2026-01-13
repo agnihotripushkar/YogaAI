@@ -9,6 +9,8 @@ import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomNavItem(
@@ -21,34 +23,26 @@ sealed class BottomNavItem(
         route = YogaDestinations.HOME_ROUTE,
         selectedIcon = Icons.Rounded.Home,
         unselectedIcon = Icons.Outlined.Home,
-        label = "Home"
+        label = "Today"
     )
 
-    data object Classes : BottomNavItem(
-        route = YogaDestinations.CLASSES_ROUTE,
-        selectedIcon = Icons.Rounded.PlayArrow,
-        unselectedIcon = Icons.Outlined.PlayArrow,
-        label = "Classes"
-    )
-
-    data object Progress : BottomNavItem(
-        route = YogaDestinations.PROGRESS_ROUTE,
-        selectedIcon = Icons.Rounded.DateRange,
+    data object Insights : BottomNavItem(
+        route = YogaDestinations.INSIGHTS_ROUTE,
+        selectedIcon = Icons.Rounded.DateRange, // Using DateRange as placeholder for Insights/History
         unselectedIcon = Icons.Outlined.DateRange,
-        label = "Progress"
+        label = "Insights"
     )
 
-    data object Profile : BottomNavItem(
-        route = YogaDestinations.PROFILE_ROUTE,
-        selectedIcon = Icons.Rounded.Person,
-        unselectedIcon = Icons.Outlined.Person,
-        label = "Profile"
+    data object Goals : BottomNavItem(
+        route = YogaDestinations.GOALS_ROUTE,
+        selectedIcon = Icons.Rounded.CheckCircle, // Using CheckCircle for Goals
+        unselectedIcon = Icons.Outlined.CheckCircle,
+        label = "Goals"
     )
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
-    BottomNavItem.Classes,
-    BottomNavItem.Progress,
-    BottomNavItem.Profile
+    BottomNavItem.Insights,
+    BottomNavItem.Goals
 )

@@ -62,6 +62,7 @@ dependencies {
     // Core Modules (Need explicit dependency if not transitively exposed, likely needed for DI/App init)
     implementation(project(":coreNetwork"))
     implementation(project(":coreDB"))
+    implementation(project(":coreData"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

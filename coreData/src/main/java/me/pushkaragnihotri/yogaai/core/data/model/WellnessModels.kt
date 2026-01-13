@@ -1,0 +1,20 @@
+package me.pushkaragnihotri.yogaai.core.data.model
+
+import java.time.LocalDate
+
+enum class RiskLevel {
+    LOW, MEDIUM, HIGH
+}
+
+data class DailyMetric(
+    val steps: Long = 0,
+    val sleepDurationMinutes: Long = 0,
+    val restingHeartRate: Int = 0
+)
+
+data class RiskPrediction(
+    val date: LocalDate,
+    val riskLevel: RiskLevel,
+    val explanation: String,
+    val contributingSignals: List<String>
+)

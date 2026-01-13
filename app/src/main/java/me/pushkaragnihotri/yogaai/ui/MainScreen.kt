@@ -9,7 +9,7 @@ import me.pushkaragnihotri.yogaai.features.navigation.YogaBottomBar
 import me.pushkaragnihotri.yogaai.features.navigation.YogaNavigation
 
 @Composable
-fun MainScreen() {
+fun MainScreen(startDestination: String) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -21,7 +21,7 @@ fun MainScreen() {
         // Since YogaNavigation is the NavHost content, we wrap it in a Box or adjust it
         // Ideally YogaNavigation should take a modifier, but for now we wrap it.
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(innerPadding)) {
-            YogaNavigation(navController = navController)
+            YogaNavigation(navController = navController, startDestination = startDestination)
         }
     }
 }

@@ -1,24 +1,203 @@
 package me.pushkaragnihotri.yogaai.features.home.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
+import me.pushkaragnihotri.yogaai.core.data.model.RiskLevel
+import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
 
-class HomeViewModel : ViewModel() {
-    // TODO: Add logic
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    onNavigateToClasses: () -> Unit
+    onNavigateToClasses: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Home Screen")
+    val uiState by viewModel.uiState.collectAsState()
+    HomeScreenContent(
+        uiState = uiState,
+        onNavigateToSettings = onNavigateToSettings
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenContent(
+    uiState: HomeUiState,
+    onNavigateToSettings: () -> Unit
+) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            LargeTopAppBar(
+                title = { Text("Today") },
+                actions = {
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(Icons.Rounded.Settings, contentDescription = "Settings")
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = "Good morning,",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "Let's check your wellness.",
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    val isWide = maxWidth > 600.dp
+                    
+                    if (isWide) {
+                         Row {
+                             Column(modifier = Modifier.weight(1f)) {
+                                 RiskCard(uiState.riskPrediction!!)
+                             }
+                             Spacer(Modifier.width(16.dp))
+                             Column(modifier = Modifier.weight(1f)) {
+                                 MetricsGrid(uiState.dailyMetric)
+                             }
+                         }
+                    } else {
+                        Column {
+                            uiState.riskPrediction?.let { risk ->
+                                RiskCard(risk)
+                            }
+                            Spacer(modifier = Modifier.height(24.dp))
+                            MetricsRow(uiState.metrics)
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+// ... RiskCard, MetricsRow, MetricCard ...
+
+@Composable
+fun RiskCard(risk: RiskPrediction) {
+    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
+    
+    val containerColor = when (risk.riskLevel) {
+        RiskLevel.LOW -> if (isDark) Color(0xFF0F522E) else Color(0xFFE6F4EA)
+        RiskLevel.MEDIUM -> if (isDark) Color(0xFF5C4200) else Color(0xFFFEF7E0)
+        RiskLevel.HIGH -> if (isDark) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.errorContainer
+    }
+    val contentColor = when (risk.riskLevel) {
+        RiskLevel.LOW -> if (isDark) Color(0xFFC3EED0) else Color(0xFF137333)
+        RiskLevel.MEDIUM -> if (isDark) Color(0xFFFFDFA6) else Color(0xFFEA8600)
+        RiskLevel.HIGH -> if (isDark) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onErrorContainer
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        shape = RoundedCornerShape(28.dp), // Expressive Roundness
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(24.dp)) {
+            Text(
+                text = "${risk.riskLevel.name} RISK",
+                style = MaterialTheme.typography.labelMedium,
+                color = contentColor,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = risk.explanation,
+                style = MaterialTheme.typography.headlineSmall,
+                color = if (isDark && risk.riskLevel == RiskLevel.HIGH) MaterialTheme.colorScheme.onErrorContainer else if (isDark) Color.White else Color.Black
+            )
+        }
+    }
+}
+
+@Composable
+fun MetricsRow(metrics: me.pushkaragnihotri.yogaai.core.data.model.DailyMetric) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp) // Slightly more space
+    ) {
+        MetricCard(
+            title = "Steps",
+            value = metrics.steps.toString(),
+            modifier = Modifier.weight(1f)
+        )
+        MetricCard(
+            title = "Sleep",
+            value = "${metrics.sleepDurationMinutes / 60}h",
+            modifier = Modifier.weight(1f)
+        )
+        MetricCard(
+            title = "HR",
+            value = "${metrics.restingHeartRate}",
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+fun MetricsGrid(metrics: me.pushkaragnihotri.yogaai.core.data.model.DailyMetric) {
+     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        MetricCard("Steps", metrics.steps.toString(), Modifier.fillMaxWidth())
+        MetricCard("Sleep", "${metrics.sleepDurationMinutes / 60}h", Modifier.fillMaxWidth())
+        MetricCard("HR", "${metrics.restingHeartRate}", Modifier.fillMaxWidth())
+    }
+}
+
+@Composable
+fun MetricCard(title: String, value: String, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
+        shape = RoundedCornerShape(24.dp) // Expressive Roundness
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = title, style = MaterialTheme.typography.labelMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        }
     }
 }
