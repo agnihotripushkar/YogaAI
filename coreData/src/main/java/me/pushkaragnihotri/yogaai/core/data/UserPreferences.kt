@@ -19,6 +19,10 @@ class UserPreferences(private val context: Context) {
         val KEY_IS_DEMO_MODE = booleanPreferencesKey("is_demo_mode")
         val KEY_STEP_GOAL = androidx.datastore.preferences.core.intPreferencesKey("step_goal")
         val KEY_SLEEP_GOAL = androidx.datastore.preferences.core.intPreferencesKey("sleep_goal")
+        val KEY_USER_NAME = androidx.datastore.preferences.core.stringPreferencesKey("user_name")
+        val KEY_USER_AGE = androidx.datastore.preferences.core.intPreferencesKey("user_age")
+        val KEY_USER_LEVEL = androidx.datastore.preferences.core.stringPreferencesKey("user_level")
+        val KEY_THEME_MODE = androidx.datastore.preferences.core.intPreferencesKey("theme_mode") // 0=System, 1=Light, 2=Dark
     }
 
     val consentGiven: Flow<Boolean> = context.dataStore.data
@@ -35,6 +39,18 @@ class UserPreferences(private val context: Context) {
 
     val sleepGoal: Flow<Int> = context.dataStore.data
         .map { preferences -> preferences[KEY_SLEEP_GOAL] ?: 8 }
+
+    val userName: Flow<String> = context.dataStore.data
+        .map { preferences -> preferences[KEY_USER_NAME] ?: "" }
+
+    val userAge: Flow<Int> = context.dataStore.data
+        .map { preferences -> preferences[KEY_USER_AGE] ?: 0 }
+
+    val userLevel: Flow<String> = context.dataStore.data
+        .map { preferences -> preferences[KEY_USER_LEVEL] ?: "Beginner" }
+
+    val themeMode: Flow<Int> = context.dataStore.data
+        .map { preferences -> preferences[KEY_THEME_MODE] ?: 0 }
 
     suspend fun setConsent(given: Boolean) {
         context.dataStore.edit { preferences ->
@@ -63,6 +79,30 @@ class UserPreferences(private val context: Context) {
     suspend fun setSleepGoal(hours: Int) {
         context.dataStore.edit { preferences ->
             preferences[KEY_SLEEP_GOAL] = hours
+        }
+    }
+
+    suspend fun setUserName(name: String) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_USER_NAME] = name
+        }
+    }
+
+    suspend fun setUserAge(age: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_USER_AGE] = age
+        }
+    }
+
+    suspend fun setUserLevel(level: String) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_USER_LEVEL] = level
+        }
+    }
+
+    suspend fun setThemeMode(mode: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[KEY_THEME_MODE] = mode
         }
     }
 }

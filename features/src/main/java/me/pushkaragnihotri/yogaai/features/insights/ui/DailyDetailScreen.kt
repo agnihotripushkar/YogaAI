@@ -8,7 +8,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import me.pushkaragnihotri.yogaai.core.data.model.RiskLevel
+import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.core.data.repository.WellnessRepository
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+import me.pushkaragnihotri.yogaai.features.home.ui.RiskCard
 import org.koin.compose.koinInject
 import java.time.LocalDate
 
@@ -19,7 +23,7 @@ fun DailyDetailScreen(
     onNavigateToModelInfo: () -> Unit,
     repository: WellnessRepository = koinInject()
 ) {
-    var risk by remember { mutableStateOf<me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction?>(null) }
+    var risk by remember { mutableStateOf<RiskPrediction?>(null) }
     
     LaunchedEffect(date) {
         try {
@@ -42,7 +46,7 @@ fun DailyDetailScreen(
 @Composable
 fun DailyDetailScreenContent(
     date: String,
-    risk: me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction?,
+    risk: RiskPrediction?,
     onNavigateUp: () -> Unit,
     onNavigateToModelInfo: () -> Unit
 ) {
@@ -52,7 +56,7 @@ fun DailyDetailScreenContent(
                 title = { Text(date) },
                 navigationIcon = {
                      IconButton(onClick = onNavigateUp) {
-                         Icon(androidx.compose.material.icons.Icons.AutoMirrored.Rounded.ArrowBack, "Back")
+                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
                      }
                 }
             )
@@ -65,14 +69,14 @@ fun DailyDetailScreenContent(
                 .padding(16.dp)
         ) {
             risk?.let {
-                me.pushkaragnihotri.yogaai.features.home.ui.RiskCard(it)
+                RiskCard(it)
                 Spacer(Modifier.height(24.dp))
                 Text("Key Signals", style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.height(8.dp))
                 it.contributingSignals.forEach { signal ->
                     ListItem(
                         headlineContent = { Text(signal) },
-                        leadingContent = { Icon(androidx.compose.material.icons.Icons.Rounded.Warning, null) }
+                        leadingContent = { Icon(Icons.Rounded.Warning, null) }
                     )
                 }
             } ?: Text("Loading or Not Found...")
@@ -85,16 +89,16 @@ fun DailyDetailScreenContent(
     }
 }
 
-@me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+@DevicePreviews
 @Composable
 fun DailyDetailScreenPreview() {
-    val dummyRisk = me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction(
-        date = java.time.LocalDate.now(),
-        riskLevel = me.pushkaragnihotri.yogaai.core.data.model.RiskLevel.MEDIUM,
+    val dummyRisk = RiskPrediction(
+        date = LocalDate.now(),
+        riskLevel = RiskLevel.MEDIUM,
         explanation = "Moderate Risk",
         contributingSignals = listOf("High Step Count but Low Sleep")
     )
-    me.pushkaragnihotri.yogaai.ui.theme.YogaAITheme {
+    MaterialTheme {
         DailyDetailScreenContent(
             date = "2024-01-01",
             risk = dummyRisk,

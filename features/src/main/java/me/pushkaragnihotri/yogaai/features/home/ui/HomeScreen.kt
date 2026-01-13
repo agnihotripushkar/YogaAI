@@ -1,8 +1,9 @@
 package me.pushkaragnihotri.yogaai.features.home.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
@@ -11,21 +12,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
+import me.pushkaragnihotri.yogaai.core.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.core.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
@@ -90,11 +86,11 @@ fun HomeScreenContent(
                     if (isWide) {
                          Row {
                              Column(modifier = Modifier.weight(1f)) {
-                                 RiskCard(uiState.riskPrediction!!)
+                                 uiState.riskPrediction?.let { RiskCard(it) }
                              }
                              Spacer(Modifier.width(16.dp))
                              Column(modifier = Modifier.weight(1f)) {
-                                 MetricsGrid(uiState.dailyMetric)
+                                 MetricsGrid(uiState.metrics)
                              }
                          }
                     } else {
@@ -113,8 +109,6 @@ fun HomeScreenContent(
     }
 }
 
-// ... RiskCard, MetricsRow, MetricCard ...
-
 @Composable
 fun RiskCard(risk: RiskPrediction) {
     val isDark = androidx.compose.foundation.isSystemInDarkTheme()
@@ -122,17 +116,17 @@ fun RiskCard(risk: RiskPrediction) {
     val containerColor = when (risk.riskLevel) {
         RiskLevel.LOW -> if (isDark) Color(0xFF0F522E) else Color(0xFFE6F4EA)
         RiskLevel.MEDIUM -> if (isDark) Color(0xFF5C4200) else Color(0xFFFEF7E0)
-        RiskLevel.HIGH -> if (isDark) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.errorContainer
+        RiskLevel.HIGH -> MaterialTheme.colorScheme.errorContainer
     }
     val contentColor = when (risk.riskLevel) {
         RiskLevel.LOW -> if (isDark) Color(0xFFC3EED0) else Color(0xFF137333)
         RiskLevel.MEDIUM -> if (isDark) Color(0xFFFFDFA6) else Color(0xFFEA8600)
-        RiskLevel.HIGH -> if (isDark) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onErrorContainer
+        RiskLevel.HIGH -> MaterialTheme.colorScheme.onErrorContainer
     }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = RoundedCornerShape(28.dp), // Expressive Roundness
+        shape = RoundedCornerShape(28.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
@@ -153,10 +147,10 @@ fun RiskCard(risk: RiskPrediction) {
 }
 
 @Composable
-fun MetricsRow(metrics: me.pushkaragnihotri.yogaai.core.data.model.DailyMetric) {
+fun MetricsRow(metrics: DailyMetric) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp) // Slightly more space
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         MetricCard(
             title = "Steps",
@@ -177,7 +171,7 @@ fun MetricsRow(metrics: me.pushkaragnihotri.yogaai.core.data.model.DailyMetric) 
 }
 
 @Composable
-fun MetricsGrid(metrics: me.pushkaragnihotri.yogaai.core.data.model.DailyMetric) {
+fun MetricsGrid(metrics: DailyMetric) {
      Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         MetricCard("Steps", metrics.steps.toString(), Modifier.fillMaxWidth())
         MetricCard("Sleep", "${metrics.sleepDurationMinutes / 60}h", Modifier.fillMaxWidth())
@@ -192,7 +186,7 @@ fun MetricCard(title: String, value: String, modifier: Modifier = Modifier) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         ),
-        shape = RoundedCornerShape(24.dp) // Expressive Roundness
+        shape = RoundedCornerShape(24.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = title, style = MaterialTheme.typography.labelMedium)

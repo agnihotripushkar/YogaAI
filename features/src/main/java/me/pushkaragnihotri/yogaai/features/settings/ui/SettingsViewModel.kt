@@ -9,6 +9,14 @@ class SettingsViewModel(
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
+    val themeMode = userPreferences.themeMode
+    
+    fun setTheme(mode: Int) {
+        viewModelScope.launch {
+            userPreferences.setThemeMode(mode)
+        }
+    }
+
     // Logic to disconnect or delete data
     fun disconnectWearable() {
         // Clear tokens if any. For demo, just maybe unset connection flag if we had one.

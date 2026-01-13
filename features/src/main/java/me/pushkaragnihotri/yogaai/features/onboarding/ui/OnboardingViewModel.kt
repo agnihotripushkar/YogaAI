@@ -44,8 +44,11 @@ class OnboardingViewModel(
         _currentStep.value = OnboardingStep.PROFILE
     }
     
-    fun onProfileFinished() {
+    fun onProfileFinished(name: String, age: Int, level: String) {
          viewModelScope.launch {
+             userPreferences.setUserName(name)
+             userPreferences.setUserAge(age)
+             userPreferences.setUserLevel(level)
              userPreferences.setOnboardingCompleted(true)
              // Navigate to Home handled by main nav
          }

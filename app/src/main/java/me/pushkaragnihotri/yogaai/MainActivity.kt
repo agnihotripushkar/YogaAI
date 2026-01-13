@@ -15,6 +15,9 @@ import androidx.compose.runtime.collectAsState
 import me.pushkaragnihotri.yogaai.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.ui.MainScreen
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.getValue
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +27,14 @@ class MainActivity : ComponentActivity() {
             val startDestinationState = viewModel.startDestination.collectAsState()
             val startDestination = startDestinationState.value
             
-            YogaAITheme {
+            val themeMode by viewModel.themeMode.collectAsState()
+            val isDarkTheme = when (themeMode) {
+                1 -> false // Light
+                2 -> true  // Dark
+                else -> isSystemInDarkTheme() // System (Default)
+            }
+            
+            YogaAITheme(darkTheme = isDarkTheme) {
                 if (startDestination != null) {
                     MainScreen(startDestination = startDestination)
                 } else {

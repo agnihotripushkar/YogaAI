@@ -17,4 +17,7 @@ class MainViewModel(
             if (completed) "home" else "onboarding"
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
+        
+    val themeMode: StateFlow<Int> = userPreferences.themeMode
+        .stateIn(viewModelScope, SharingStarted.Lazily, 0)
 }

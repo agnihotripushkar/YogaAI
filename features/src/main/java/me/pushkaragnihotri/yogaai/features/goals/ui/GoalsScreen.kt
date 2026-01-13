@@ -5,11 +5,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+import me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
@@ -39,7 +42,7 @@ fun GoalsScreenContent(
      val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-         modifier = Modifier.androidx.compose.ui.input.nestedscroll.nestedScroll(scrollBehavior.nestedScrollConnection),
+         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
          topBar = {
              LargeTopAppBar(
                  title = { Text("Goals") },
@@ -47,7 +50,7 @@ fun GoalsScreenContent(
              )
          }
     ) { padding ->
-        me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer(modifier = Modifier.padding(padding)) {
+        ResponsiveContainer(modifier = Modifier.padding(padding)) {
             Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
                 // Goals & Reminders Title removed as it's now in AppBar
             
@@ -72,7 +75,7 @@ fun GoalsScreenContent(
                 Spacer(Modifier.height(24.dp))
                 Text("Reminders", style = MaterialTheme.typography.titleMedium)
                 // Placeholder for reminders
-                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(checked = true, onCheckedChange = { /* TODO */ })
                     Spacer(Modifier.width(8.dp))
                     Text("Daily Check-in Reminder")
@@ -82,10 +85,10 @@ fun GoalsScreenContent(
     }
 }
 
-@me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+@DevicePreviews
 @Composable
 fun GoalsScreenPreview() {
-    me.pushkaragnihotri.yogaai.ui.theme.YogaAITheme {
+    MaterialTheme {
         GoalsScreenContent(
             stepGoal = 6000,
             sleepGoal = 8,

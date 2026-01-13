@@ -1,17 +1,24 @@
 package me.pushkaragnihotri.yogaai.features.insights.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.koinViewModel
+import me.pushkaragnihotri.yogaai.core.data.model.RiskLevel
+import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.home.ui.RiskCard
+import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 
 @Composable
 fun InsightsScreen(
@@ -25,13 +32,13 @@ fun InsightsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsightsScreenContent(
-    history: List<me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction>,
+    history: List<RiskPrediction>,
     onNavigateToDetail: (String) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     
     Scaffold(
-        modifier = Modifier.androidx.compose.ui.input.nestedscroll.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
                 title = { Text("Insights") },
@@ -47,8 +54,8 @@ fun InsightsScreenContent(
                 val isWide = maxWidth > 600.dp
                 
                 if (isWide) {
-                    androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
-                        columns = androidx.compose.foundation.lazy.grid.GridCells.Adaptive(minSize = 300.dp),
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(minSize = 300.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
@@ -70,32 +77,32 @@ fun InsightsScreenContent(
 }
 
 @Composable
-fun RiskCardItem(item: me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction, onClick: () -> Unit) {
-    androidx.compose.foundation.layout.Box(
-        modifier = Modifier.androidx.compose.foundation.clickable(onClick = onClick)
+fun RiskCardItem(item: RiskPrediction, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier.clickable(onClick = onClick)
     ) {
-        me.pushkaragnihotri.yogaai.features.home.ui.RiskCard(item)
+        RiskCard(item)
     }
 }
 
-@me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+@DevicePreviews
 @Composable
 fun InsightsScreenPreview() {
     val dummyHistory = listOf(
-        me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction(
-            date = java.time.LocalDate.now(),
-            riskLevel = me.pushkaragnihotri.yogaai.core.data.model.RiskLevel.LOW,
+        RiskPrediction(
+            date = LocalDate.now(),
+            riskLevel = RiskLevel.LOW,
             explanation = "Good",
             contributingSignals = emptyList()
         ),
-        me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction(
-            date = java.time.LocalDate.now().minusDays(1),
-            riskLevel = me.pushkaragnihotri.yogaai.core.data.model.RiskLevel.HIGH,
+        RiskPrediction(
+            date = LocalDate.now().minusDays(1),
+            riskLevel = RiskLevel.HIGH,
             explanation = "Bad sleep",
             contributingSignals = listOf("Sleep < 5h")
         )
     )
-    me.pushkaragnihotri.yogaai.ui.theme.YogaAITheme {
+    MaterialTheme {
         InsightsScreenContent(history = dummyHistory, onNavigateToDetail = {})
     }
 }

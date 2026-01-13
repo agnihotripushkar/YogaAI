@@ -3,10 +3,13 @@ package me.pushkaragnihotri.yogaai.features.insights.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -17,7 +20,7 @@ fun ModelInfoScreen(onNavigateUp: () -> Unit) {
                  title = { Text("Model Info") },
                  navigationIcon = {
                      IconButton(onClick = onNavigateUp) {
-                         Icon(androidx.compose.material.icons.Icons.AutoMirrored.Rounded.ArrowBack, "Back")
+                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
                      }
                  }
             )
@@ -48,10 +51,10 @@ fun InfoSection(title: String, body: String) {
     }
 }
 
-@me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+@DevicePreviews
 @Composable
 fun ModelInfoScreenPreview() {
-    me.pushkaragnihotri.yogaai.ui.theme.YogaAITheme {
+    MaterialTheme {
         ModelInfoScreen(onNavigateUp = {})
     }
 }
