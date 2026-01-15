@@ -1,5 +1,8 @@
 package me.pushkaragnihotri.yogaai.features.onboarding.ui
 
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -377,3 +380,44 @@ fun ProfileScreen(onFinished: (String, Int, String) -> Unit) {
         }
     }
 }
+
+@DevicePreviews
+@Composable
+fun SplashScreenPreview() {
+    YogaAITheme {
+        SplashScreen(onFinished = {})
+    }
+}
+
+@DevicePreviews
+@Composable
+fun IntroScreenPreview() {
+    YogaAITheme {
+        IntroScreen(onFinished = {})
+    }
+}
+
+@DevicePreviews
+@Composable
+fun ConsentScreenPreview() {
+    YogaAITheme {
+        ConsentScreen(onConsentGiven = {})
+    }
+}
+
+@DevicePreviews
+@Composable
+fun ConnectScreenPreview() {
+    YogaAITheme {
+        ConnectScreen(onFinished = {})
+    }
+}
+
+@DevicePreviews
+@Composable
+fun OnboardingProfileScreenPreview() {
+    YogaAITheme {
+        ProfileScreen(onFinished = { _, _, _ -> })
+    }
+}
+

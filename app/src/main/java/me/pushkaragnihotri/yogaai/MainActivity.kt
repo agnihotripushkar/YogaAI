@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.collectAsState
-import me.pushkaragnihotri.yogaai.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.ui.MainScreen
 
 import androidx.compose.foundation.isSystemInDarkTheme

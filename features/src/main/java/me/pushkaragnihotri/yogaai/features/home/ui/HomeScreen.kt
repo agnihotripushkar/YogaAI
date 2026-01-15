@@ -1,5 +1,8 @@
 package me.pushkaragnihotri.yogaai.features.home.ui
 
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
@@ -195,3 +198,28 @@ fun MetricCard(title: String, value: String, modifier: Modifier = Modifier) {
         }
     }
 }
+
+@DevicePreviews
+@Composable
+fun HomeScreenPreview() {
+    YogaAITheme {
+        HomeScreenContent(
+            uiState = HomeUiState(
+                isLoading = false,
+                riskPrediction = RiskPrediction(
+                    riskLevel = RiskLevel.LOW,
+                    explanation = "Your stress levels are low and recovery is high. Great day for a workout!",
+                    date = java.time.LocalDate.now(),
+                    contributingSignals = emptyList()
+                ),
+                metrics = DailyMetric(
+                    steps = 8500,
+                    sleepDurationMinutes = 480,
+                    restingHeartRate = 62
+                )
+            ),
+            onNavigateToSettings = {}
+        )
+    }
+}
+
