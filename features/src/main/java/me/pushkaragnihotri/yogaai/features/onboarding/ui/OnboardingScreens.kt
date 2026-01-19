@@ -1,7 +1,8 @@
+
 package me.pushkaragnihotri.yogaai.features.onboarding.ui
 
-import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.health.connect.client.PermissionController
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -28,7 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+import me.pushkaragnihotri.yogaai.features.R
 
 @Composable
 fun OnboardingScreen(
@@ -42,7 +47,7 @@ fun OnboardingScreen(
             OnboardingStep.SPLASH -> SplashScreen(onFinished = viewModel::onSplashFinished)
             OnboardingStep.INTRO -> IntroScreen(onFinished = viewModel::onIntroFinished)
             OnboardingStep.CONSENT -> ConsentScreen(onConsentGiven = viewModel::onConsentGranted)
-            OnboardingStep.CONNECT -> ConnectScreen(onFinished = viewModel::onConnectFinished)
+            OnboardingStep.CONNECT -> ConnectScreen(viewModel = viewModel, onFinished = viewModel::onConnectFinished)
             OnboardingStep.PROFILE -> ProfileScreen(onFinished = { name, age, level ->
                 viewModel.onProfileFinished(name, age, level)
                 onOnboardingComplete()
@@ -72,12 +77,12 @@ fun SplashScreen(onFinished: () -> Unit) {
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                "YogaAI",
+                stringResource(R.string.app_name_splash),
                 style = MaterialTheme.typography.displayMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
-                "Mindful Tech for Wellness",
+                stringResource(R.string.app_tagline),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
             )
@@ -136,15 +141,15 @@ fun IntroPage(
     isLastPage: Boolean
 ) {
     val title = when (page) {
-        0 -> "Predictive Insights"
-        1 -> "Privacy First"
-        2 -> "Not Medical Advice"
+        0 -> stringResource(R.string.intro_title_1)
+        1 -> stringResource(R.string.intro_title_2)
+        2 -> stringResource(R.string.intro_title_3)
         else -> ""
     }
     val description = when (page) {
-        0 -> "Convert your wearable data into early warnings for fatigue and potential burnout before they happen."
-        1 -> "Your data stays on your device. We use privacy-preserving analytics to keep you safe and secure."
-        2 -> "We provide wellness guidance, but always consult a professional for medical concerns."
+        0 -> stringResource(R.string.intro_desc_1)
+        1 -> stringResource(R.string.intro_desc_2)
+        2 -> stringResource(R.string.intro_desc_3)
         else -> ""
     }
     val icon = when (page) {
@@ -200,14 +205,14 @@ fun IntroPage(
                 onClick = onFinished,
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
-                Text("Get Started")
+                Text(stringResource(R.string.intro_button_start))
             }
         } else {
             Button(
                 onClick = onNext,
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
-                Text("Next")
+                Text(stringResource(R.string.intro_button_next))
             }
         }
     }
@@ -221,7 +226,7 @@ fun ConsentScreen(onConsentGiven: () -> Unit) {
         Spacer(Modifier.height(24.dp))
         Icon(Icons.Rounded.VerifiedUser, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
         Spacer(Modifier.height(16.dp))
-        Text("We need your consent", style = MaterialTheme.typography.headlineLarge)
+        Text(stringResource(R.string.consent_title), style = MaterialTheme.typography.headlineLarge)
         Spacer(Modifier.height(16.dp))
         
         Card(
@@ -230,11 +235,7 @@ fun ConsentScreen(onConsentGiven: () -> Unit) {
         ) {
             Column(modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
                 Text(
-                    "To provide you with personalized wellness insights, YogaAI needs to process your health data (Steps, Sleep, Heart Rate). \n\n" +
-                    "• Your data resides locally on your device.\n" +
-                    "• We do not sell your data.\n" +
-                    "• You can revoke access at any time.\n\n" +
-                    "By clicking continue, you agree to our Terms of Service and Privacy Policy.",
+                    stringResource(R.string.consent_terms),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -245,7 +246,7 @@ fun ConsentScreen(onConsentGiven: () -> Unit) {
         Row(verticalAlignment = Alignment.Top) {
             Checkbox(checked = checked, onCheckedChange = { checked = it })
             Text(
-                "I have read and agree to the above terms regarding my health data.",
+                stringResource(R.string.consent_checkbox),
                 modifier = Modifier.padding(top = 12.dp, start = 8.dp),
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -258,13 +259,26 @@ fun ConsentScreen(onConsentGiven: () -> Unit) {
             enabled = checked,
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("I Agree")
+            Text(stringResource(R.string.consent_button))
         }
     }
 }
 
 @Composable
-fun ConnectScreen(onFinished: () -> Unit) {
+fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = PermissionController.createRequestPermissionResultContract(),
+        onResult = viewModel::onPermissionsResult
+    )
+
+    ConnectScreen(
+        onConnectClick = { permissionLauncher.launch(viewModel.permissions) },
+        onSkipClick = onFinished
+    )
+}
+
+@Composable
+fun ConnectScreen(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.Center,
@@ -272,10 +286,10 @@ fun ConnectScreen(onFinished: () -> Unit) {
     ) {
         Icon(Icons.Rounded.MonitorHeart, null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(80.dp))
         Spacer(Modifier.height(32.dp))
-        Text("Connect Health Data", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.connect_title), style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(16.dp))
         Text(
-            "For the best results, please connect your Health Connect account so we can analyze your sleep and steps.",
+            stringResource(R.string.connect_desc),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -283,19 +297,19 @@ fun ConnectScreen(onFinished: () -> Unit) {
         Spacer(Modifier.height(48.dp))
         
         Button(
-            onClick = { /* TODO */ },
+            onClick = onConnectClick,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Icon(Icons.Rounded.Sync, null)
             Spacer(Modifier.width(8.dp))
-            Text("Connect Health Connect")
+            Text(stringResource(R.string.connect_button))
         }
         
         Spacer(Modifier.height(16.dp))
         
-        TextButton(onClick = onFinished) {
-            Text("Skip for now")
+        TextButton(onClick = onSkipClick) {
+            Text(stringResource(R.string.connect_skip))
         }
     }
 }
@@ -306,7 +320,7 @@ fun ProfileScreen(onFinished: (String, Int, String) -> Unit) {
     var age by remember { mutableStateOf("") }
     var level by remember { mutableStateOf("Beginner") }
     
-    val levels = listOf("Beginner", "Intermediate", "Advanced")
+    val levels = listOf(stringResource(R.string.profile_level_beginner), stringResource(R.string.profile_level_intermediate), stringResource(R.string.profile_level_advanced))
     
     Column(
         modifier = Modifier
@@ -316,11 +330,11 @@ fun ProfileScreen(onFinished: (String, Int, String) -> Unit) {
     ) {
         Spacer(Modifier.height(40.dp))
         Text(
-            "Tell us about you", 
+            stringResource(R.string.profile_setup_title), 
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
-            "This helps us tailor your yoga and wellness plan.", 
+            stringResource(R.string.profile_setup_desc), 
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -330,7 +344,7 @@ fun ProfileScreen(onFinished: (String, Int, String) -> Unit) {
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Your Name") },
+            label = { Text(stringResource(R.string.profile_name_label)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             leadingIcon = { Icon(Icons.Rounded.Person, null) }
@@ -341,7 +355,7 @@ fun ProfileScreen(onFinished: (String, Int, String) -> Unit) {
         OutlinedTextField(
             value = age,
             onValueChange = { if (it.all { char -> char.isDigit() }) age = it },
-            label = { Text("Age") },
+            label = { Text(stringResource(R.string.profile_age_label)) },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
@@ -350,7 +364,7 @@ fun ProfileScreen(onFinished: (String, Int, String) -> Unit) {
         
         Spacer(Modifier.height(24.dp))
         
-        Text("Experience Level", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.profile_exp_level), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(12.dp))
         
         Row(
@@ -376,7 +390,7 @@ fun ProfileScreen(onFinished: (String, Int, String) -> Unit) {
             enabled = name.isNotBlank(),
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("Complete Setup")
+            Text(stringResource(R.string.profile_complete_button))
         }
     }
 }
@@ -409,7 +423,7 @@ fun ConsentScreenPreview() {
 @Composable
 fun ConnectScreenPreview() {
     YogaAITheme {
-        ConnectScreen(onFinished = {})
+        ConnectScreen(onConnectClick = {}, onSkipClick = {})
     }
 }
 
@@ -420,4 +434,3 @@ fun OnboardingProfileScreenPreview() {
         ProfileScreen(onFinished = { _, _, _ -> })
     }
 }
-

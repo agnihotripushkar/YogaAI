@@ -7,7 +7,7 @@ import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 
 @Composable
 fun ClassesScreen() {
-    Text("Classes Screen Placeholder")
+    Text(androidx.compose.ui.res.stringResource(me.pushkaragnihotri.yogaai.features.R.string.classes_placeholder))
 }
 
 @DevicePreviews

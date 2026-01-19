@@ -22,9 +22,14 @@ class OnboardingViewModel(
     val consentGiven = userPreferences.consentGiven
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
-    // Check if permissions are granted (to update UI state in Connect screen)
-    // Note: This needs to be polled or updated on resume in real app. For now, we check on request.
-    
+    val permissions get() = healthConnectManager.permissions
+
+    fun onPermissionsResult(granted: Set<String>) {
+        // For onboarding, we proceed whether permissions are granted or not.
+        // The user can manage permissions later in settings/profile.
+        onConnectFinished()
+    }
+
     fun onSplashFinished() {
         _currentStep.value = OnboardingStep.INTRO
     }
@@ -43,7 +48,7 @@ class OnboardingViewModel(
     fun onConnectFinished() {
         _currentStep.value = OnboardingStep.PROFILE
     }
-    
+
     fun onProfileFinished(name: String, age: Int, level: String) {
          viewModelScope.launch {
              userPreferences.setUserName(name)

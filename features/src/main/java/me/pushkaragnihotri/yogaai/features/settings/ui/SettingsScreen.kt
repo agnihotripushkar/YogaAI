@@ -15,6 +15,8 @@ import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+import me.pushkaragnihotri.yogaai.features.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,10 +46,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.title_settings)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.content_description_back))
                     }
                 }
             )
@@ -62,39 +64,39 @@ fun SettingsScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp)
             ) {
-                SettingsSection("Appearance") {
-                    Text("Theme", style = MaterialTheme.typography.bodyMedium)
+                SettingsSection(stringResource(R.string.settings_section_appearance)) {
+                    Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilterChip(
                             selected = themeMode == 0,
                             onClick = { onThemeChange(0) },
-                            label = { Text("System") }
+                            label = { Text(stringResource(R.string.settings_theme_system)) }
                         )
                         FilterChip(
                             selected = themeMode == 1,
                             onClick = { onThemeChange(1) },
-                            label = { Text("Light") }
+                            label = { Text(stringResource(R.string.settings_theme_light)) }
                         )
                         FilterChip(
                             selected = themeMode == 2,
                             onClick = { onThemeChange(2) },
-                            label = { Text("Dark") }
+                            label = { Text(stringResource(R.string.settings_theme_dark)) }
                         )
                     }
                 }
 
                 HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
-                SettingsSection("Account & Data") {
+                SettingsSection(stringResource(R.string.settings_section_account)) {
                      Button(
                          onClick = onDeleteData,
                          colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                      ) {
-                         Text("Delete My Data")
+                         Text(stringResource(R.string.settings_delete_data))
                      }
                      Text(
-                         "Deletes all local data and resets app.",
+                         stringResource(R.string.settings_delete_data_desc),
                          style = MaterialTheme.typography.bodySmall,
                          modifier = Modifier.padding(top = 4.dp)
                      )
@@ -102,19 +104,19 @@ fun SettingsScreen(
 
                 HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
-                SettingsSection("Data Source") {
-                    Text("Source: Health Connect")
+                SettingsSection(stringResource(R.string.settings_section_source)) {
+                    Text(stringResource(R.string.settings_source_health_connect))
                     Spacer(Modifier.height(8.dp))
                     OutlinedButton(onClick = onDisconnectWearable) {
-                        Text("Disconnect")
+                        Text(stringResource(R.string.settings_disconnect))
                     }
                 }
 
                 HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
-                SettingsSection("About") {
-                    Text("Wellness Risk App v1.0")
-                    Text("Pilot Study Build")
+                SettingsSection(stringResource(R.string.settings_section_about)) {
+                    Text(stringResource(R.string.settings_app_version))
+                    Text(stringResource(R.string.settings_pilot_build))
                 }
             }
         }

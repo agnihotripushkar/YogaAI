@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+import me.pushkaragnihotri.yogaai.features.R
 import kotlin.math.roundToInt
 
 @Composable
@@ -45,7 +47,7 @@ fun GoalsScreenContent(
          modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
          topBar = {
              LargeTopAppBar(
-                 title = { Text("Goals") },
+                 title = { Text(stringResource(R.string.title_goals)) },
                  scrollBehavior = scrollBehavior
              )
          }
@@ -54,7 +56,7 @@ fun GoalsScreenContent(
             Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
                 // Goals & Reminders Title removed as it's now in AppBar
             
-                Text("Daily Steps Goal: $stepGoal", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.goal_steps_format, stepGoal), style = MaterialTheme.typography.titleMedium)
                 Slider(
                     value = stepGoal.toFloat(),
                     onValueChange = { onStepGoalChanged(it.roundToInt()) },
@@ -64,7 +66,7 @@ fun GoalsScreenContent(
                 
                 Spacer(Modifier.height(24.dp))
                 
-                Text("Sleep Duration Target: $sleepGoal hours", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.goal_sleep_format, sleepGoal), style = MaterialTheme.typography.titleMedium)
                 Slider(
                     value = sleepGoal.toFloat(),
                     onValueChange = { onSleepGoalChanged(it.roundToInt()) },
@@ -73,12 +75,12 @@ fun GoalsScreenContent(
                 )
                 
                 Spacer(Modifier.height(24.dp))
-                Text("Reminders", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.goal_reminders_header), style = MaterialTheme.typography.titleMedium)
                 // Placeholder for reminders
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(checked = true, onCheckedChange = { /* TODO */ })
                     Spacer(Modifier.width(8.dp))
-                    Text("Daily Check-in Reminder")
+                    Text(stringResource(R.string.goal_checkin_reminder))
                 }
             }
         }

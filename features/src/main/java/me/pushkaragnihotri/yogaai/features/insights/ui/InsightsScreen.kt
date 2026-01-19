@@ -19,6 +19,8 @@ import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.home.ui.RiskCard
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
+import androidx.compose.ui.res.stringResource
+import me.pushkaragnihotri.yogaai.features.R
 
 @Composable
 fun InsightsScreen(
@@ -41,7 +43,7 @@ fun InsightsScreenContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("Insights") },
+                title = { Text(stringResource(R.string.title_insights)) },
                 scrollBehavior = scrollBehavior
             )
         }

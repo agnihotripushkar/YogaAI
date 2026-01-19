@@ -10,5 +10,6 @@ import org.koin.dsl.module
 val coreDataModule = module {
     single { UserPreferences(androidContext()) }
     single { HealthConnectManager(androidContext()) }
+
     single<WellnessRepository> { WellnessRepositoryImpl(get()) }
 }

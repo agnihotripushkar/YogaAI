@@ -17,27 +17,27 @@ sealed class BottomNavItem(
     val route: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val label: String
+    val labelResId: Int
 ) {
     data object Home : BottomNavItem(
         route = YogaDestinations.HOME_ROUTE,
         selectedIcon = Icons.Rounded.Home,
         unselectedIcon = Icons.Outlined.Home,
-        label = "Today"
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.nav_home
     )
 
     data object Insights : BottomNavItem(
         route = YogaDestinations.INSIGHTS_ROUTE,
         selectedIcon = Icons.Rounded.DateRange, // Using DateRange as placeholder for Insights/History
         unselectedIcon = Icons.Outlined.DateRange,
-        label = "Insights"
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.nav_insights
     )
 
     data object Goals : BottomNavItem(
         route = YogaDestinations.GOALS_ROUTE,
         selectedIcon = Icons.Rounded.CheckCircle, // Using CheckCircle for Goals
         unselectedIcon = Icons.Outlined.CheckCircle,
-        label = "Goals"
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.nav_goals
     )
 }
 

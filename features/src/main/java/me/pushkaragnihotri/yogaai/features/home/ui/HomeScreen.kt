@@ -2,6 +2,8 @@ package me.pushkaragnihotri.yogaai.features.home.ui
 
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import androidx.compose.ui.res.stringResource
+import me.pushkaragnihotri.yogaai.features.R
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,10 +52,10 @@ fun HomeScreenContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("Today") },
+                title = { Text(stringResource(R.string.home_title)) },
                 actions = {
                     IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Rounded.Settings, contentDescription = "Settings")
+                        Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.settings))
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -68,12 +70,12 @@ fun HomeScreenContent(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "Good morning,",
+                text = stringResource(R.string.greeting),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Let's check your wellness.",
+                text = stringResource(R.string.wellness_check),
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(24.dp))
@@ -133,8 +135,13 @@ fun RiskCard(risk: RiskPrediction) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(24.dp)) {
+            val riskLevelString = when (risk.riskLevel) {
+                RiskLevel.LOW -> stringResource(R.string.risk_level_low)
+                RiskLevel.MEDIUM -> stringResource(R.string.risk_level_medium)
+                RiskLevel.HIGH -> stringResource(R.string.risk_level_high)
+            }
             Text(
-                text = "${risk.riskLevel.name} RISK",
+                text = "$riskLevelString ${stringResource(R.string.risk_level_suffix)}",
                 style = MaterialTheme.typography.labelMedium,
                 color = contentColor,
                 fontWeight = FontWeight.Bold
@@ -156,17 +163,17 @@ fun MetricsRow(metrics: DailyMetric) {
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         MetricCard(
-            title = "Steps",
+            title = stringResource(R.string.metric_steps),
             value = metrics.steps.toString(),
             modifier = Modifier.weight(1f)
         )
         MetricCard(
-            title = "Sleep",
+            title = stringResource(R.string.metric_sleep),
             value = "${metrics.sleepDurationMinutes / 60}h",
             modifier = Modifier.weight(1f)
         )
         MetricCard(
-            title = "HR",
+            title = stringResource(R.string.metric_hr),
             value = "${metrics.restingHeartRate}",
             modifier = Modifier.weight(1f)
         )
@@ -176,9 +183,9 @@ fun MetricsRow(metrics: DailyMetric) {
 @Composable
 fun MetricsGrid(metrics: DailyMetric) {
      Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        MetricCard("Steps", metrics.steps.toString(), Modifier.fillMaxWidth())
-        MetricCard("Sleep", "${metrics.sleepDurationMinutes / 60}h", Modifier.fillMaxWidth())
-        MetricCard("HR", "${metrics.restingHeartRate}", Modifier.fillMaxWidth())
+        MetricCard(stringResource(R.string.metric_steps), metrics.steps.toString(), Modifier.fillMaxWidth())
+        MetricCard(stringResource(R.string.metric_sleep), "${metrics.sleepDurationMinutes / 60}h", Modifier.fillMaxWidth())
+        MetricCard(stringResource(R.string.metric_hr), "${metrics.restingHeartRate}", Modifier.fillMaxWidth())
     }
 }
 

@@ -34,10 +34,10 @@ fun YogaBottomBar(
                 icon = { 
                     Icon(
                         imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon, 
-                        contentDescription = screen.label
+                        contentDescription = androidx.compose.ui.res.stringResource(screen.labelResId)
                     ) 
                 },
-                label = { Text(screen.label) },
+                label = { Text(androidx.compose.ui.res.stringResource(screen.labelResId)) },
                 selected = selected,
                 onClick = {
                     navController.navigate(screen.route) {
