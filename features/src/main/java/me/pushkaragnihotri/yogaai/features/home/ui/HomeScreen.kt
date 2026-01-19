@@ -50,7 +50,7 @@ fun HomeScreenContent(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 title = { Text(stringResource(R.string.home_title)) },
                 actions = {
                     IconButton(onClick = onNavigateToSettings) {

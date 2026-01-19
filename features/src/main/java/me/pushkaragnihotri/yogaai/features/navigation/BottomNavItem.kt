@@ -39,10 +39,18 @@ sealed class BottomNavItem(
         unselectedIcon = Icons.Outlined.CheckCircle,
         labelResId = me.pushkaragnihotri.yogaai.features.R.string.nav_goals
     )
+
+    data object Profile : BottomNavItem(
+        route = YogaDestinations.PROFILE_ROUTE,
+        selectedIcon = Icons.Rounded.Person,
+        unselectedIcon = Icons.Outlined.Person,
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.title_profile
+    )
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
     BottomNavItem.Insights,
-    BottomNavItem.Goals
+    BottomNavItem.Goals,
+    BottomNavItem.Profile
 )

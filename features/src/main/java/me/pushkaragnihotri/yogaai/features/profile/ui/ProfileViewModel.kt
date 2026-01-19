@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
+import androidx.health.connect.client.HealthConnectClient
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -24,11 +25,17 @@ class ProfileViewModel(private val healthConnectManager: HealthConnectManager) :
     var hasPermissions = mutableStateOf(false)
         private set
 
+    var sdkStatus = mutableStateOf(HealthConnectClient.SDK_UNAVAILABLE)
+        private set
+
     fun initialLoad() {
-        viewModelScope.launch {
-            hasPermissions.value = healthConnectManager.hasAllPermissions()
-            if (hasPermissions.value) {
-                readHealthData()
+        sdkStatus.value = healthConnectManager.checkAvailability()
+        if (sdkStatus.value == HealthConnectClient.SDK_AVAILABLE) {
+            viewModelScope.launch {
+                hasPermissions.value = healthConnectManager.hasAllPermissions()
+                if (hasPermissions.value) {
+                    readHealthData()
+                }
             }
         }
     }

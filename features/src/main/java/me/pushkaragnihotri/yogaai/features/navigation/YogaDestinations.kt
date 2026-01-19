@@ -7,5 +7,6 @@ object YogaDestinations {
     const val MODEL_INFO_ROUTE = "model_info"
     const val GOALS_ROUTE = "goals"
     const val SETTINGS_ROUTE = "settings"
+    const val PROFILE_ROUTE = "profile"
     const val ONBOARDING_ROUTE = "onboarding"
 }

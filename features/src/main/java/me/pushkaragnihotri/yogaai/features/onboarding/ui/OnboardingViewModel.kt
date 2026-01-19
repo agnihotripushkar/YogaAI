@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.data.UserPreferences
@@ -18,6 +19,14 @@ class OnboardingViewModel(
 
     private val _currentStep = MutableStateFlow(OnboardingStep.SPLASH)
     val currentStep: StateFlow<OnboardingStep> = _currentStep
+
+    init {
+        viewModelScope.launch {
+            if (userPreferences.consentGiven.first()) {
+                _currentStep.value = OnboardingStep.CONNECT
+            }
+        }
+    }
 
     val consentGiven = userPreferences.consentGiven
         .stateIn(viewModelScope, SharingStarted.Lazily, false)

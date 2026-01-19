@@ -65,5 +65,8 @@ fun YogaNavigation(
                  onNavigateUp = { navController.navigateUp() }
              )
         }
+        composable(YogaDestinations.PROFILE_ROUTE) {
+             ProfileScreen()
+        }
     }
 }

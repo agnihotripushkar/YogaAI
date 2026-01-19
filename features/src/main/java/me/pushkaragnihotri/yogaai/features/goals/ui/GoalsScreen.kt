@@ -46,7 +46,7 @@ fun GoalsScreenContent(
     Scaffold(
          modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
          topBar = {
-             LargeTopAppBar(
+             TopAppBar(
                  title = { Text(stringResource(R.string.title_goals)) },
                  scrollBehavior = scrollBehavior
              )

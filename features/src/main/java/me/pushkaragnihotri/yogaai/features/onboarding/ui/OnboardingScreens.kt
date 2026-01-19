@@ -99,39 +99,51 @@ fun IntroScreen(onFinished: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
     
-    Column(modifier = Modifier.fillMaxSize()) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.weight(1f)
-        ) { page ->
-            IntroPage(
-                page = page,
-                onNext = {
-                    scope.launch { pagerState.animateScrollToPage(page + 1) }
-                },
-                onFinished = onFinished,
-                isLastPage = page == 2
-            )
-        }
-        
-        // Pager Indicator
-        Row(
-            Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(bottom = 32.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(3) { iteration ->
-                val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-                Box(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(8.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.weight(1f)
+            ) { page ->
+                IntroPage(
+                    page = page,
+                    onNext = {
+                        scope.launch { pagerState.animateScrollToPage(page + 1) }
+                    },
+                    onFinished = onFinished,
+                    isLastPage = page == 2
                 )
             }
+            
+            // Pager Indicator
+            Row(
+                Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(3) { iteration ->
+                    val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                    Box(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(8.dp)
+                    )
+                }
+            }
+        }
+
+        // Skip Button
+        TextButton(
+            onClick = onFinished,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+        ) {
+            Text(stringResource(R.string.connect_skip)) // Reusing existing skip string or should I add a new one? "Skip" is generic.
         }
     }
 }
