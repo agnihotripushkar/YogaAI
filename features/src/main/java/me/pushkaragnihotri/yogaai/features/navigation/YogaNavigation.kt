@@ -5,11 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import me.pushkaragnihotri.yogaai.features.classes.ui.ClassesScreen
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
 import me.pushkaragnihotri.yogaai.features.profile.ui.ProfileScreen
-import me.pushkaragnihotri.yogaai.features.progress.ui.ProgressScreen
-import me.pushkaragnihotri.yogaai.features.videoplayer.ui.VideoPlayerScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 
 @Composable
@@ -32,7 +29,6 @@ fun YogaNavigation(
         }
         composable(YogaDestinations.HOME_ROUTE) {
             HomeScreen(
-                onNavigateToClasses = { /* Unused */ },
                 onNavigateToSettings = {
                     navController.navigate(YogaDestinations.SETTINGS_ROUTE)
                 }
