@@ -28,6 +28,10 @@ class HealthConnectManager(private val context: Context) {
         return granted.containsAll(permissions)
     }
 
+    fun checkAvailability(): Int {
+        return HealthConnectClient.getSdkStatus(context)
+    }
+
     suspend fun readSteps(startTime: Instant, endTime: Instant): Long {
         if (!hasAllPermissions()) return 0
         

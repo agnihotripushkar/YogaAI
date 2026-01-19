@@ -23,6 +23,10 @@ class OnboardingViewModel(
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     val permissions get() = healthConnectManager.permissions
+    
+    fun getHealthConnectAvailability(): Int {
+        return healthConnectManager.checkAvailability()
+    }
 
     fun onPermissionsResult(granted: Set<String>) {
         // For onboarding, we proceed whether permissions are granted or not.

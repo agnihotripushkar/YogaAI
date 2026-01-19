@@ -3,6 +3,9 @@ package me.pushkaragnihotri.yogaai.features.onboarding.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.health.connect.client.PermissionController
+import androidx.health.connect.client.HealthConnectClient
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -266,13 +269,21 @@ fun ConsentScreen(onConsentGiven: () -> Unit) {
 
 @Composable
 fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
+    val context = LocalContext.current
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = PermissionController.createRequestPermissionResultContract(),
         onResult = viewModel::onPermissionsResult
     )
 
     ConnectScreen(
-        onConnectClick = { permissionLauncher.launch(viewModel.permissions) },
+        onConnectClick = { 
+            val availability = viewModel.getHealthConnectAvailability()
+            if (availability == HealthConnectClient.SDK_AVAILABLE) {
+                permissionLauncher.launch(viewModel.permissions)
+            } else {
+                Toast.makeText(context, "Health Connect is not available on this device.", Toast.LENGTH_LONG).show()
+            }
+        },
         onSkipClick = onFinished
     )
 }
