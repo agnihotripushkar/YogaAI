@@ -25,12 +25,12 @@ class ProfileViewModel(private val healthConnectManager: HealthConnectManager) :
     var hasPermissions = mutableStateOf(false)
         private set
 
-    var sdkStatus = mutableStateOf(HealthConnectClient.SDK_UNAVAILABLE)
+    var sdkStatus = mutableStateOf(HealthConnectManager.SDK_UNAVAILABLE)
         private set
 
     fun initialLoad() {
         sdkStatus.value = healthConnectManager.checkAvailability()
-        if (sdkStatus.value == HealthConnectClient.SDK_AVAILABLE) {
+        if (sdkStatus.value == HealthConnectManager.SDK_AVAILABLE) {
             viewModelScope.launch {
                 hasPermissions.value = healthConnectManager.hasAllPermissions()
                 if (hasPermissions.value) {

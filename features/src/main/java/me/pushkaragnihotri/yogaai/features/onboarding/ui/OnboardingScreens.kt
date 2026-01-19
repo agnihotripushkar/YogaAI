@@ -6,9 +6,9 @@ import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.HealthConnectClient
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -93,7 +93,7 @@ fun SplashScreen(onFinished: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 fun IntroScreen(onFinished: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { 3 })
@@ -290,7 +290,7 @@ fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
     ConnectScreen(
         onConnectClick = { 
             val availability = viewModel.getHealthConnectAvailability()
-            if (availability == HealthConnectClient.SDK_AVAILABLE) {
+            if (availability == HealthConnectManager.SDK_AVAILABLE) {
                 permissionLauncher.launch(viewModel.permissions)
             } else {
                 Toast.makeText(context, "Health Connect is not available on this device.", Toast.LENGTH_LONG).show()

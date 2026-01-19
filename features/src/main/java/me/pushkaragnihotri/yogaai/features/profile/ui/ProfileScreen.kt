@@ -14,8 +14,10 @@ import androidx.health.connect.client.PermissionController
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import androidx.health.connect.client.HealthConnectClient
+import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.res.stringResource
+import androidx.annotation.OptIn
 import me.pushkaragnihotri.yogaai.features.R
 
 @Composable
@@ -39,11 +41,11 @@ fun ProfileScreen(
     }
 
     ProfileScreen(sdkStatus, hasPermissions, steps, calories) {
+        android.util.Log.d("ProfileScreen", "Launching permissions request for: ${viewModel.permissions}")
         permissionLauncher.launch(viewModel.permissions)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     sdkStatus: Int,
@@ -68,29 +70,103 @@ fun ProfileScreen(
                 .padding(padding)
                 .padding(horizontal = 16.dp)
         ) {
-            if (sdkStatus != HealthConnectClient.SDK_AVAILABLE) {
+            if (sdkStatus != HealthConnectManager.SDK_AVAILABLE) {
                  Spacer(Modifier.height(16.dp))
+                 Text("Debug Status: $sdkStatus")
             }
 
             when (sdkStatus) {
-                HealthConnectClient.SDK_AVAILABLE -> {
+                HealthConnectManager.SDK_AVAILABLE -> {
                     if (hasPermissions) {
                         Text(stringResource(R.string.profile_health_data_header))
                         Text(stringResource(R.string.profile_steps_format, steps))
                         Text(stringResource(R.string.profile_calories_format, calories))
                     } else {
                         Text(stringResource(R.string.profile_connect_prompt))
-                        Button(onClick = onConnectClick) {
+                        Button(onClick = {
+                            android.util.Log.d("ProfileScreen", "User clicked Connect button (SDK Available)")
+                            onConnectClick()
+                        }) {
                             Text(stringResource(R.string.profile_connect_button))
                         }
                     }
                 }
-                HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> {
+                HealthConnectManager.SDK_UPDATE_REQUIRED -> {
                      Text("Health Connect is not installed or needs an update.")
+                     Spacer(Modifier.height(8.dp))
+                     val context = androidx.compose.ui.platform.LocalContext.current
+                     Button(onClick = {
+                         try {
+                             android.util.Log.d("ProfileScreen", "User clicked UPDATE button. Launching Market Intent.")
+                             val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                                 data = android.net.Uri.parse("market://details?id=com.google.android.apps.healthdata")
+                                 setPackage("com.android.vending")
+                             }
+                             context.startActivity(intent)
+                         } catch (e: Exception) {
+                             android.util.Log.e("ProfileScreen", "Failed to launch market intent", e)
+                             try {
+                                 val webIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata"))
+                                 context.startActivity(webIntent)
+                             } catch (e2: Exception) {
+                                 android.util.Log.e("ProfileScreen", "Failed to launch web intent", e2)
+                                 android.widget.Toast.makeText(context, "Could not open Play Store", android.widget.Toast.LENGTH_SHORT).show()
+                             }
+                         }
+                     }) {
+                         Text("FORCE UPDATE (Status 3)")
+                     }
                 }
                 else -> {
                     Text("Health Connect is not available on this device.")
+                    Spacer(Modifier.height(8.dp))
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    Button(onClick = {
+                         try {
+                             android.util.Log.d("ProfileScreen", "User clicked INSTALL button. Launching Market Intent.")
+                             val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                                 data = android.net.Uri.parse("market://details?id=com.google.android.apps.healthdata")
+                                 setPackage("com.android.vending")
+                             }
+                             context.startActivity(intent)
+                         } catch (e: Exception) {
+                             android.util.Log.e("ProfileScreen", "Failed to launch market intent", e)
+                             try {
+                                 val webIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata"))
+                                 context.startActivity(webIntent)
+                             } catch (e2: Exception) {
+                                 android.util.Log.e("ProfileScreen", "Failed to launch web intent", e2)
+                                 android.widget.Toast.makeText(context, "Could not open Play Store", android.widget.Toast.LENGTH_SHORT).show()
+                             }
+                         }
+                    }) {
+                        Text("FORCE INSTALL (Status $sdkStatus)")
+                    }
                 }
+            }
+            
+            Spacer(Modifier.height(32.dp))
+            HorizontalDivider()
+            Spacer(Modifier.height(16.dp))
+            Text("Troubleshooting Actions:", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+            val context = androidx.compose.ui.platform.LocalContext.current
+            Button(
+                onClick = {
+                    try {
+                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                            data = android.net.Uri.parse("market://details?id=com.google.android.apps.healthdata")
+                            setPackage("com.android.vending")
+                        }
+                        context.startActivity(intent)
+                    } catch (e: Exception) {
+                         val webIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata"))
+                         context.startActivity(webIntent)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+                Text("Open Health Connect on Play Store")
             }
         }
     }
