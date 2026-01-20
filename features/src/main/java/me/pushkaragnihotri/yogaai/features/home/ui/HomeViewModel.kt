@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
@@ -24,24 +25,28 @@ class HomeViewModel(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            repository.todayMetrics.collect { metrics ->
+                _uiState.update { it.copy(metrics = metrics) }
+            }
+        }
         loadData()
     }
 
     private fun loadData() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.update { it.copy(isLoading = true) }
             try {
-                // Parallel fetch could be better but sequential is fine for now
                 val risk = repository.getTodayRisk()
-                val metrics = repository.getTodayMetrics()
-                _uiState.value = HomeUiState(
-                    riskPrediction = risk,
-                    metrics = metrics,
-                    isLoading = false
-                )
+                repository.refreshMetrics()
+                _uiState.update {
+                    it.copy(
+                        riskPrediction = risk,
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
-                // Handle error
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }

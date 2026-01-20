@@ -13,5 +13,5 @@ val featuresModule = module {
     viewModel { OnboardingViewModel(get(), get()) }
     viewModel { GoalsViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get()) }
 }

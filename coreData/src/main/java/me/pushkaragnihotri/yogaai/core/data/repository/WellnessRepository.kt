@@ -1,5 +1,8 @@
 package me.pushkaragnihotri.yogaai.core.data.repository
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.core.data.model.RiskLevel
@@ -9,6 +12,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 interface WellnessRepository {
+    val todayMetrics: StateFlow<DailyMetric>
+    suspend fun refreshMetrics()
     suspend fun getTodayRisk(): RiskPrediction
     suspend fun getRiskByDate(date: LocalDate): RiskPrediction?
     suspend fun getTodayMetrics(): DailyMetric
@@ -20,6 +25,13 @@ class WellnessRepositoryImpl(
     private val healthConnectManager: HealthConnectManager,
     private val isDemoMode: Boolean = false
 ) : WellnessRepository {
+
+    private val _todayMetrics = MutableStateFlow(DailyMetric())
+    override val todayMetrics: StateFlow<DailyMetric> = _todayMetrics.asStateFlow()
+
+    override suspend fun refreshMetrics() {
+        _todayMetrics.value = getTodayMetrics()
+    }
 
     override suspend fun getTodayRisk(): RiskPrediction {
         if (isDemoMode) return MockWellnessDataSource.getTodayRisk()

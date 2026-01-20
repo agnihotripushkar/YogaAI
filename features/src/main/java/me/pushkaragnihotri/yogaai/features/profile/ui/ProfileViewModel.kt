@@ -9,11 +9,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
 import androidx.health.connect.client.HealthConnectClient
+import me.pushkaragnihotri.yogaai.core.data.repository.WellnessRepository
 import timber.log.Timber
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
-class ProfileViewModel(private val healthConnectManager: HealthConnectManager) : ViewModel() {
+class ProfileViewModel(
+    private val healthConnectManager: HealthConnectManager,
+    private val wellnessRepository: WellnessRepository
+) : ViewModel() {
 
     private val _steps = MutableStateFlow(0L)
     val steps: StateFlow<Long> = _steps.asStateFlow()
@@ -28,6 +31,15 @@ class ProfileViewModel(private val healthConnectManager: HealthConnectManager) :
 
     var sdkStatus = mutableStateOf(HealthConnectManager.SDK_UNAVAILABLE)
         private set
+
+    init {
+        viewModelScope.launch {
+            wellnessRepository.todayMetrics.collect { metrics ->
+                _steps.value = metrics.steps
+                _calories.value = metrics.calories
+            }
+        }
+    }
 
     fun initialLoad() {
         val currentStatus = healthConnectManager.checkAvailability()
@@ -56,10 +68,7 @@ class ProfileViewModel(private val healthConnectManager: HealthConnectManager) :
 
     private fun readHealthData() {
         viewModelScope.launch {
-            val now = Instant.now()
-            val startTime = now.minus(1, ChronoUnit.DAYS)
-            _steps.value = healthConnectManager.readSteps(startTime, now)
-            _calories.value = healthConnectManager.readCalories(startTime, now)
+            wellnessRepository.refreshMetrics()
         }
     }
 }
