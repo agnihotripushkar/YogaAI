@@ -29,21 +29,18 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel(),
-    onNavigateToSettings: () -> Unit
+    viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     HomeScreenContent(
-        uiState = uiState,
-        onNavigateToSettings = onNavigateToSettings
+        uiState = uiState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
-    uiState: HomeUiState,
-    onNavigateToSettings: () -> Unit
+    uiState: HomeUiState
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -52,11 +49,6 @@ fun HomeScreenContent(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.home_title)) },
-                actions = {
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.settings))
-                    }
-                },
                 scrollBehavior = scrollBehavior
             )
         }
@@ -236,8 +228,7 @@ fun HomeScreenPreview() {
                     sleepDurationMinutes = 480,
                     restingHeartRate = 62
                 )
-            ),
-            onNavigateToSettings = {}
+            )
         )
     }
 }

@@ -76,34 +76,7 @@ fun YogaNavigation(
             )
         }
         composable(YogaDestinations.HOME_ROUTE) {
-            HomeScreen(
-                onNavigateToSettings = {
-                    navController.navigate(YogaDestinations.SETTINGS_ROUTE)
-                }
-            )
-        }
-        composable(YogaDestinations.INSIGHTS_ROUTE) {
-            me.pushkaragnihotri.yogaai.features.insights.ui.InsightsScreen(
-                onNavigateToDetail = { date ->
-                    navController.navigate("insights_detail/$date")
-                }
-            )
-        }
-        composable(
-            route = YogaDestinations.INSIGHTS_DETAIL_ROUTE,
-            arguments = listOf(androidx.navigation.navArgument("date") { type = androidx.navigation.NavType.StringType })
-        ) { backStackEntry ->
-            val date = backStackEntry.arguments?.getString("date") ?: ""
-            me.pushkaragnihotri.yogaai.features.insights.ui.DailyDetailScreen(
-                date = date,
-                onNavigateUp = { navController.navigateUp() },
-                onNavigateToModelInfo = { navController.navigate(YogaDestinations.MODEL_INFO_ROUTE) }
-            )
-        }
-        composable(YogaDestinations.MODEL_INFO_ROUTE) {
-            me.pushkaragnihotri.yogaai.features.insights.ui.ModelInfoScreen(
-                onNavigateUp = { navController.navigateUp() }
-            )
+            HomeScreen()
         }
         composable(YogaDestinations.GOALS_ROUTE) {
             me.pushkaragnihotri.yogaai.features.goals.ui.GoalsScreen()
