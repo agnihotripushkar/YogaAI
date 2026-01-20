@@ -52,6 +52,9 @@ dependencies {
     // Koin
     implementation(libs.koin.androidx.compose)
 
+    // Timber
+    implementation(libs.timber)
+
     // Modules
     implementation(project(":coreNetwork"))
     implementation(project(":coreDB"))

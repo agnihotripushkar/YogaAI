@@ -19,6 +19,7 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.res.stringResource
 import androidx.annotation.OptIn
 import me.pushkaragnihotri.yogaai.features.R
+import timber.log.Timber
 
 @Composable
 fun ProfileScreen(
@@ -41,7 +42,7 @@ fun ProfileScreen(
     }
 
     ProfileScreen(sdkStatus, hasPermissions, steps, calories) {
-        android.util.Log.d("ProfileScreen", "Launching permissions request for: ${viewModel.permissions}")
+        Timber.d("Launching permissions request for: ${viewModel.permissions}")
         permissionLauncher.launch(viewModel.permissions)
     }
 }
@@ -84,7 +85,7 @@ fun ProfileScreen(
                     } else {
                         Text(stringResource(R.string.profile_connect_prompt))
                         Button(onClick = {
-                            android.util.Log.d("ProfileScreen", "User clicked Connect button (SDK Available)")
+                            Timber.d("User clicked Connect button (SDK Available)")
                             onConnectClick()
                         }) {
                             Text(stringResource(R.string.profile_connect_button))
@@ -97,19 +98,19 @@ fun ProfileScreen(
                      val context = androidx.compose.ui.platform.LocalContext.current
                      Button(onClick = {
                          try {
-                             android.util.Log.d("ProfileScreen", "User clicked UPDATE button. Launching Market Intent.")
+                             Timber.d("User clicked UPDATE button. Launching Market Intent.")
                              val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
                                  data = android.net.Uri.parse("market://details?id=com.google.android.apps.healthdata")
                                  setPackage("com.android.vending")
                              }
                              context.startActivity(intent)
                          } catch (e: Exception) {
-                             android.util.Log.e("ProfileScreen", "Failed to launch market intent", e)
+                             Timber.e(e, "Failed to launch market intent")
                              try {
                                  val webIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata"))
                                  context.startActivity(webIntent)
                              } catch (e2: Exception) {
-                                 android.util.Log.e("ProfileScreen", "Failed to launch web intent", e2)
+                                 Timber.e(e2, "Failed to launch web intent")
                                  android.widget.Toast.makeText(context, "Could not open Play Store", android.widget.Toast.LENGTH_SHORT).show()
                              }
                          }
@@ -123,19 +124,19 @@ fun ProfileScreen(
                     val context = androidx.compose.ui.platform.LocalContext.current
                     Button(onClick = {
                          try {
-                             android.util.Log.d("ProfileScreen", "User clicked INSTALL button. Launching Market Intent.")
+                             Timber.d("User clicked INSTALL button. Launching Market Intent.")
                              val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
                                  data = android.net.Uri.parse("market://details?id=com.google.android.apps.healthdata")
                                  setPackage("com.android.vending")
                              }
                              context.startActivity(intent)
                          } catch (e: Exception) {
-                             android.util.Log.e("ProfileScreen", "Failed to launch market intent", e)
+                             Timber.e(e, "Failed to launch market intent")
                              try {
                                  val webIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata"))
                                  context.startActivity(webIntent)
                              } catch (e2: Exception) {
-                                 android.util.Log.e("ProfileScreen", "Failed to launch web intent", e2)
+                                 Timber.e(e2, "Failed to launch web intent")
                                  android.widget.Toast.makeText(context, "Could not open Play Store", android.widget.Toast.LENGTH_SHORT).show()
                              }
                          }

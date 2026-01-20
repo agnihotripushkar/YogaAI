@@ -28,6 +28,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.android)
+    implementation(libs.timber)
     
     // Internal modules
     implementation(project(":coreDB"))

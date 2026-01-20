@@ -18,6 +18,7 @@ datastore = "1.0.0"
 googleServices = "4.4.1"
 firebaseCrashlyticsPlugin = "2.9.9"
 firebaseBom = "32.7.2"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +64,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

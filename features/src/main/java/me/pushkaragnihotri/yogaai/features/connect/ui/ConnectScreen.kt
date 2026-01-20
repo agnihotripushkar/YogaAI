@@ -20,9 +20,11 @@ import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
+import timber.log.Timber
 
 @Composable
 fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
+    val TAG = "ConnectScreen"
     val context = LocalContext.current
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = PermissionController.createRequestPermissionResultContract(),
@@ -35,9 +37,9 @@ fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
     ConnectScreen(
         onConnectClick = { 
             val availability = viewModel.getHealthConnectAvailability()
-            Timber.d("Health Connect availability: $availability")
+            Timber.d("$TAG Health Connect availability: $availability")
             if (availability == HealthConnectManager.SDK_AVAILABLE) {
-
+                Timber.d("${TAG} Launching permissions request")
                 permissionLauncher.launch(viewModel.permissions)
             } else {
                 Toast.makeText(context, "Health Connect is not available on this device.", Toast.LENGTH_LONG).show()
