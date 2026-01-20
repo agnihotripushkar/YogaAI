@@ -1,5 +1,7 @@
 package me.pushkaragnihotri.yogaai.features.insights.ui
 
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -54,7 +56,7 @@ fun InfoSection(title: String, body: String) {
 @DevicePreviews
 @Composable
 fun ModelInfoScreenPreview() {
-    MaterialTheme {
+    YogaAITheme {
         ModelInfoScreen(onNavigateUp = {})
     }
 }

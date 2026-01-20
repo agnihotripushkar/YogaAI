@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import me.pushkaragnihotri.yogaai.features.navigation.YogaBottomBar
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.navigation.YogaDestinations
 import me.pushkaragnihotri.yogaai.features.navigation.YogaNavigation
 
@@ -17,9 +19,17 @@ fun MainScreen(startDestination: String) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val onboardRoutes = listOf(
+        YogaDestinations.SPLASH_ROUTE,
+        YogaDestinations.ONBOARDING_ROUTE,
+        YogaDestinations.CONSENT_ROUTE,
+        YogaDestinations.CONNECT_ROUTE,
+        YogaDestinations.PROFILE_SETUP_ROUTE
+    )
+
     Scaffold(
         bottomBar = {
-            if (currentRoute != YogaDestinations.ONBOARDING_ROUTE) {
+            if (currentRoute !in onboardRoutes) {
                 YogaBottomBar(navController = navController)
             }
         }
@@ -30,5 +40,13 @@ fun MainScreen(startDestination: String) {
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())) {
             YogaNavigation(navController = navController, startDestination = startDestination)
         }
+    }
+}
+
+@DevicePreviews
+@Composable
+fun MainScreenPreview() {
+    YogaAITheme {
+        MainScreen(startDestination = YogaDestinations.HOME_ROUTE)
     }
 }

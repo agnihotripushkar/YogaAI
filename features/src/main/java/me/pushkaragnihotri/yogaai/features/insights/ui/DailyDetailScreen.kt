@@ -1,5 +1,7 @@
 package me.pushkaragnihotri.yogaai.features.insights.ui
 
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -98,7 +100,7 @@ fun DailyDetailScreenPreview() {
         explanation = "Moderate Risk",
         contributingSignals = listOf("High Step Count but Low Sleep")
     )
-    MaterialTheme {
+    YogaAITheme {
         DailyDetailScreenContent(
             date = "2024-01-01",
             risk = dummyRisk,

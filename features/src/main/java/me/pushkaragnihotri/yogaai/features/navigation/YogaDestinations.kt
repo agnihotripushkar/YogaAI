@@ -9,4 +9,8 @@ object YogaDestinations {
     const val SETTINGS_ROUTE = "settings"
     const val PROFILE_ROUTE = "profile"
     const val ONBOARDING_ROUTE = "onboarding"
+    const val SPLASH_ROUTE = "splash"
+    const val CONSENT_ROUTE = "consent"
+    const val CONNECT_ROUTE = "connect"
+    const val PROFILE_SETUP_ROUTE = "profile_setup"
 }

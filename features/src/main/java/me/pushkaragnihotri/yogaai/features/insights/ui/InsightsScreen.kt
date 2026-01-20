@@ -1,5 +1,7 @@
 package me.pushkaragnihotri.yogaai.features.insights.ui
 
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -104,7 +106,7 @@ fun InsightsScreenPreview() {
             contributingSignals = listOf("Sleep < 5h")
         )
     )
-    MaterialTheme {
+    YogaAITheme {
         InsightsScreenContent(history = dummyHistory, onNavigateToDetail = {})
     }
 }

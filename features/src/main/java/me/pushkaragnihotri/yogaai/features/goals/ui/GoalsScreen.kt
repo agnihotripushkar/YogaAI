@@ -1,5 +1,7 @@
 package me.pushkaragnihotri.yogaai.features.goals.ui
 
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -90,7 +92,7 @@ fun GoalsScreenContent(
 @DevicePreviews
 @Composable
 fun GoalsScreenPreview() {
-    MaterialTheme {
+    YogaAITheme {
         GoalsScreenContent(
             stepGoal = 6000,
             sleepGoal = 8,
