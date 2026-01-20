@@ -25,7 +25,7 @@ class YogaApp : Application() {
             androidContext(this@YogaApp)
             modules(
                 me.pushkaragnihotri.yogaai.features.di.featuresModule,
-                me.pushkaragnihotri.yogaai.core.data.di.coreDataModule,
+                me.pushkaragnihotri.yogaai.core.di.coreDataModule,
                 appModule
             )
         }

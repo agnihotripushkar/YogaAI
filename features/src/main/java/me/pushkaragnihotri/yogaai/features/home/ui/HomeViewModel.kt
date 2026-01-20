@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.data.model.DailyMetric
-import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
-import me.pushkaragnihotri.yogaai.core.data.repository.WellnessRepository
+import me.pushkaragnihotri.yogaai.core.model.DailyMetric
+import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.core.repository.WellnessRepository
 
 data class HomeUiState(
     val riskPrediction: RiskPrediction? = null,

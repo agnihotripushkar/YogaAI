@@ -3,7 +3,7 @@ package me.pushkaragnihotri.yogaai.features.settings.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.data.UserPreferences
+import me.pushkaragnihotri.yogaai.core.UserPreferences
 
 class SettingsViewModel(
     private val userPreferences: UserPreferences

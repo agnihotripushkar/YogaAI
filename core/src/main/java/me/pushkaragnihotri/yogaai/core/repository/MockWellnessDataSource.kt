@@ -1,8 +1,8 @@
-package me.pushkaragnihotri.yogaai.core.data.repository
+package me.pushkaragnihotri.yogaai.core.repository
 
-import me.pushkaragnihotri.yogaai.core.data.model.DailyMetric
-import me.pushkaragnihotri.yogaai.core.data.model.RiskLevel
-import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.core.model.DailyMetric
+import me.pushkaragnihotri.yogaai.core.model.RiskLevel
+import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
 import java.time.LocalDate
 
 object MockWellnessDataSource {

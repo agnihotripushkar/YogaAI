@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
-import me.pushkaragnihotri.yogaai.core.data.UserPreferences
+import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.UserPreferences
 import timber.log.Timber
 
 class OnboardingViewModel(

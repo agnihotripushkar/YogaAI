@@ -65,10 +65,8 @@ dependencies {
     // Feature Modules
     implementation(project(":features"))
     
-    // Core Modules (Need explicit dependency if not transitively exposed, likely needed for DI/App init)
-    implementation(project(":coreNetwork"))
-    implementation(project(":coreDB"))
-    implementation(project(":coreData"))
+    // Core Module
+    implementation(project(":core"))
 
     // Firebase
     implementation(platform(libs.firebase.bom))

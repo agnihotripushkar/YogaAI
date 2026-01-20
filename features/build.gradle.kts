@@ -56,7 +56,5 @@ dependencies {
     implementation(libs.timber)
 
     // Modules
-    implementation(project(":coreNetwork"))
-    implementation(project(":coreDB"))
-    implementation(project(":coreData"))
+    implementation(project(":core"))
 }

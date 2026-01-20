@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import androidx.health.connect.client.HealthConnectClient
-import me.pushkaragnihotri.yogaai.core.data.repository.WellnessRepository
+import me.pushkaragnihotri.yogaai.core.repository.WellnessRepository
 import timber.log.Timber
 import java.time.Instant
 

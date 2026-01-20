@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.core.data
+package me.pushkaragnihotri.yogaai.core
 
 import android.content.Context
 import androidx.datastore.core.DataStore

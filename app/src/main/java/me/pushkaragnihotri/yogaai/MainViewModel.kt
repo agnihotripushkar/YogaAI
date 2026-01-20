@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import me.pushkaragnihotri.yogaai.core.data.UserPreferences
+import me.pushkaragnihotri.yogaai.core.UserPreferences
 
 class MainViewModel(
     userPreferences: UserPreferences

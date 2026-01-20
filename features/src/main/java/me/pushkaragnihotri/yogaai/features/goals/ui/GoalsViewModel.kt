@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.data.UserPreferences
+import me.pushkaragnihotri.yogaai.core.UserPreferences
 
 class GoalsViewModel(
     private val userPreferences: UserPreferences

@@ -1,12 +1,12 @@
-package me.pushkaragnihotri.yogaai.core.data.repository
+package me.pushkaragnihotri.yogaai.core.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
-import me.pushkaragnihotri.yogaai.core.data.model.DailyMetric
-import me.pushkaragnihotri.yogaai.core.data.model.RiskLevel
-import me.pushkaragnihotri.yogaai.core.data.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.model.DailyMetric
+import me.pushkaragnihotri.yogaai.core.model.RiskLevel
+import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
