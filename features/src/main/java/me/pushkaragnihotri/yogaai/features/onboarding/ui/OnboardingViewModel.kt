@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.data.UserPreferences
+import timber.log.Timber
 
 class OnboardingViewModel(
     private val userPreferences: UserPreferences,
@@ -19,7 +20,9 @@ class OnboardingViewModel(
     val permissions get() = healthConnectManager.permissions
     
     fun getHealthConnectAvailability(): Int {
-        return healthConnectManager.checkAvailability()
+        val availability = healthConnectManager.checkAvailability()
+        Timber.d("OnboardingViewModel availability: $availability")
+        return availability
     }
 
     fun onPermissionsResult(granted: Set<String>) {

@@ -39,13 +39,14 @@ class HealthConnectManager(private val context: Context) {
 
     fun checkAvailability(): Int {
         val status = HealthConnectClient.getSdkStatus(context)
-        Timber.d("Health Connect SDK status: $status")
-        return when (status) {
+        val mappedStatus = when (status) {
             HealthConnectClient.SDK_AVAILABLE -> SDK_AVAILABLE
             HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> SDK_UPDATE_REQUIRED
             HealthConnectClient.SDK_UNAVAILABLE -> SDK_UNAVAILABLE
             else -> SDK_UNAVAILABLE
         }
+        Timber.d("Health Connect SDK status: $status (mapped to: $mappedStatus)")
+        return mappedStatus
     }
 
     suspend fun readSteps(startTime: Instant, endTime: Instant): Long {

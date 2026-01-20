@@ -67,8 +67,10 @@ class WellnessRepositoryImpl(
         val avgHr = if (hrRecords.isNotEmpty()) {
             hrRecords.map { it.samples.map { s -> s.beatsPerMinute }.average() }.average().toInt()
         } else 0
+        
+        val calories = healthConnectManager.readCalories(startOfDay, now)
 
-        return DailyMetric(steps, sleep, avgHr)
+        return DailyMetric(steps, sleep, avgHr, calories)
     }
 
     override suspend fun getRiskHistory(): List<RiskPrediction> {

@@ -9,7 +9,8 @@ enum class RiskLevel {
 data class DailyMetric(
     val steps: Long = 0,
     val sleepDurationMinutes: Long = 0,
-    val restingHeartRate: Int = 0
+    val restingHeartRate: Int = 0,
+    val calories: Double = 0.0
 )
 
 data class RiskPrediction(

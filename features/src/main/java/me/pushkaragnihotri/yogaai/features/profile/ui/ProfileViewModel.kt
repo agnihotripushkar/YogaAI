@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.data.HealthConnectManager
 import androidx.health.connect.client.HealthConnectClient
+import timber.log.Timber
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -29,14 +30,20 @@ class ProfileViewModel(private val healthConnectManager: HealthConnectManager) :
         private set
 
     fun initialLoad() {
-        sdkStatus.value = healthConnectManager.checkAvailability()
-        if (sdkStatus.value == HealthConnectManager.SDK_AVAILABLE) {
+        val currentStatus = healthConnectManager.checkAvailability()
+        sdkStatus.value = currentStatus
+        Timber.d("ProfileViewModel initialLoad status: $currentStatus")
+        
+        if (currentStatus == HealthConnectManager.SDK_AVAILABLE) {
             viewModelScope.launch {
                 hasPermissions.value = healthConnectManager.hasAllPermissions()
+                Timber.d("ProfileViewModel permissions: ${hasPermissions.value}")
                 if (hasPermissions.value) {
                     readHealthData()
                 }
             }
+        } else {
+            hasPermissions.value = false
         }
     }
 

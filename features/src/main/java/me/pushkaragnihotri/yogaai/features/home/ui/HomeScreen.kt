@@ -157,25 +157,37 @@ fun RiskCard(risk: RiskPrediction) {
 
 @Composable
 fun MetricsRow(metrics: DailyMetric) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        MetricCard(
-            title = stringResource(R.string.metric_steps),
-            value = metrics.steps.toString(),
-            modifier = Modifier.weight(1f)
-        )
-        MetricCard(
-            title = stringResource(R.string.metric_sleep),
-            value = "${metrics.sleepDurationMinutes / 60}h",
-            modifier = Modifier.weight(1f)
-        )
-        MetricCard(
-            title = stringResource(R.string.metric_hr),
-            value = "${metrics.restingHeartRate}",
-            modifier = Modifier.weight(1f)
-        )
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            MetricCard(
+                title = stringResource(R.string.metric_steps),
+                value = metrics.steps.toString(),
+                modifier = Modifier.weight(1f)
+            )
+            MetricCard(
+                title = stringResource(R.string.metric_sleep),
+                value = "${metrics.sleepDurationMinutes / 60}h",
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            MetricCard(
+                title = stringResource(R.string.metric_hr),
+                value = "${metrics.restingHeartRate}",
+                modifier = Modifier.weight(1f)
+            )
+            MetricCard(
+                title = stringResource(R.string.metric_calories),
+                value = String.format("%.0f", metrics.calories),
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
@@ -185,6 +197,7 @@ fun MetricsGrid(metrics: DailyMetric) {
         MetricCard(stringResource(R.string.metric_steps), metrics.steps.toString(), Modifier.fillMaxWidth())
         MetricCard(stringResource(R.string.metric_sleep), "${metrics.sleepDurationMinutes / 60}h", Modifier.fillMaxWidth())
         MetricCard(stringResource(R.string.metric_hr), "${metrics.restingHeartRate}", Modifier.fillMaxWidth())
+        MetricCard(stringResource(R.string.metric_calories), String.format("%.0f", metrics.calories), Modifier.fillMaxWidth())
     }
 }
 
