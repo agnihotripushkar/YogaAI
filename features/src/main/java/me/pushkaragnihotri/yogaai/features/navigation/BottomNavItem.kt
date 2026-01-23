@@ -1,54 +1,54 @@
 package me.pushkaragnihotri.yogaai.features.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomNavItem(
     val route: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val label: String
+    val labelResId: Int
 ) {
     data object Home : BottomNavItem(
         route = YogaDestinations.HOME_ROUTE,
         selectedIcon = Icons.Rounded.Home,
         unselectedIcon = Icons.Outlined.Home,
-        label = "Home"
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.nav_home
     )
 
-    data object Classes : BottomNavItem(
-        route = YogaDestinations.CLASSES_ROUTE,
-        selectedIcon = Icons.Rounded.PlayArrow,
-        unselectedIcon = Icons.Outlined.PlayArrow,
-        label = "Classes"
+    data object Goals : BottomNavItem(
+        route = YogaDestinations.GOALS_ROUTE,
+        selectedIcon = Icons.Rounded.CheckCircle,
+        unselectedIcon = Icons.Outlined.CheckCircle,
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.nav_goals
     )
 
-    data object Progress : BottomNavItem(
-        route = YogaDestinations.PROGRESS_ROUTE,
-        selectedIcon = Icons.Rounded.DateRange,
-        unselectedIcon = Icons.Outlined.DateRange,
-        label = "Progress"
+    data object Settings : BottomNavItem(
+        route = YogaDestinations.SETTINGS_ROUTE,
+        selectedIcon = Icons.Rounded.Settings,
+        unselectedIcon = Icons.Outlined.Settings,
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.title_settings
     )
 
     data object Profile : BottomNavItem(
         route = YogaDestinations.PROFILE_ROUTE,
         selectedIcon = Icons.Rounded.Person,
         unselectedIcon = Icons.Outlined.Person,
-        label = "Profile"
+        labelResId = me.pushkaragnihotri.yogaai.features.R.string.title_profile
     )
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
-    BottomNavItem.Classes,
-    BottomNavItem.Progress,
+    BottomNavItem.Goals,
+    BottomNavItem.Settings,
     BottomNavItem.Profile
 )

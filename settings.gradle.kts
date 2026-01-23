@@ -21,6 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "YogaAI"
 include(":app")
-include(":coreNetwork")
-include(":coreDB")
+include(":core")
 include(":features")

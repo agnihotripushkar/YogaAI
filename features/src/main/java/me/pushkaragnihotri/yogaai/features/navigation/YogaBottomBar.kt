@@ -22,9 +22,7 @@ fun YogaBottomBar(
     modifier: Modifier = Modifier
 ) {
     NavigationBar(
-        modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 0.dp
+        modifier = modifier
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
@@ -36,10 +34,10 @@ fun YogaBottomBar(
                 icon = { 
                     Icon(
                         imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon, 
-                        contentDescription = screen.label
+                        contentDescription = androidx.compose.ui.res.stringResource(screen.labelResId)
                     ) 
                 },
-                label = { Text(screen.label) },
+                label = { Text(androidx.compose.ui.res.stringResource(screen.labelResId)) },
                 selected = selected,
                 onClick = {
                     navController.navigate(screen.route) {
@@ -55,15 +53,7 @@ fun YogaBottomBar(
                         // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
-                },
-                alwaysShowLabel = false, // Clean, expressive look
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer, // Use secondary container for expressive feel
-                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                }
             )
         }
     }

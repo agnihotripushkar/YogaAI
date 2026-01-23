@@ -18,6 +18,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.core.os.BuildCompat.PrereleaseSdkCheck"
+        )
     }
     buildFeatures {
         compose = true
@@ -30,21 +35,26 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    
+    implementation(libs.androidx.health.connect.client)
+
     // Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    
+    implementation(libs.androidx.compose.material.icons.extended)
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    
+
     // Koin
     implementation(libs.koin.androidx.compose)
 
+    // Timber
+    implementation(libs.timber)
+
     // Modules
-    implementation(project(":coreNetwork"))
-    implementation(project(":coreDB"))
+    implementation(project(":core"))
 }
