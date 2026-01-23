@@ -12,11 +12,17 @@ class MainViewModel(
     userPreferences: UserPreferences
 ) : ViewModel() {
     
-    val startDestination: StateFlow<String?> = userPreferences.onboardingCompleted
-        .map { completed ->
-            if (completed) "home" else "onboarding"
+    val finalDestination: StateFlow<String?> = kotlinx.coroutines.flow.combine(
+        userPreferences.onboardingCompleted,
+        userPreferences.consentGiven
+    ) { onboardingCompleted, consentGiven ->
+        when {
+            onboardingCompleted -> "home"
+            consentGiven -> "connect"
+            else -> "onboarding"
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, null)
+    }
+    .stateIn(viewModelScope, SharingStarted.Lazily, null)
         
     val themeMode: StateFlow<Int> = userPreferences.themeMode
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)

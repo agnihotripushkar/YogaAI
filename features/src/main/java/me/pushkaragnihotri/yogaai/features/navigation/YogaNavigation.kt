@@ -17,16 +17,16 @@ import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
 @Composable
 fun YogaNavigation(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = YogaDestinations.SPLASH_ROUTE
+    finalDestination: String
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = YogaDestinations.SPLASH_ROUTE
     ) {
         composable(YogaDestinations.SPLASH_ROUTE) {
             SplashScreen(
                 onFinished = {
-                    navController.navigate(YogaDestinations.ONBOARDING_ROUTE) {
+                    navController.navigate(finalDestination) {
                         popUpTo(YogaDestinations.SPLASH_ROUTE) { inclusive = true }
                     }
                 }
