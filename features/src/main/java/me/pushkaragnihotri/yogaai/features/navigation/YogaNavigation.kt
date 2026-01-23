@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
-import me.pushkaragnihotri.yogaai.features.profile.ui.ProfileScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.splash.ui.SplashScreen
 import me.pushkaragnihotri.yogaai.features.consent.ui.ConsentScreen
@@ -85,9 +84,6 @@ fun YogaNavigation(
              me.pushkaragnihotri.yogaai.features.settings.ui.SettingsScreen(
                  onNavigateUp = { navController.navigateUp() }
              )
-        }
-        composable(YogaDestinations.PROFILE_ROUTE) {
-             ProfileScreen()
         }
     }
 }

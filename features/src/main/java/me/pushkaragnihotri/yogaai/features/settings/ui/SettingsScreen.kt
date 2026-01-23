@@ -1,12 +1,15 @@
 package me.pushkaragnihotri.yogaai.features.settings.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.health.connect.client.PermissionController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import me.pushkaragnihotri.yogaai.features.R
@@ -21,6 +24,20 @@ fun SettingsScreen(
     onNavigateUp: () -> Unit
 ) {
     val themeMode by viewModel.themeMode.collectAsState(initial = 0)
+    val steps by viewModel.steps.collectAsState()
+    val calories by viewModel.calories.collectAsState()
+    val hasPermissions = viewModel.hasPermissions.value
+    val sdkStatus = viewModel.sdkStatus.value
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        PermissionController.createRequestPermissionResultContract()
+    ) { granted ->
+        viewModel.onPermissionsResult(granted)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.initialLoad()
+    }
 
     Scaffold(
         topBar = {
@@ -39,8 +56,15 @@ fun SettingsScreen(
         ) {
             SettingsScreenContent(
                 themeMode = themeMode,
+                sdkStatus = sdkStatus,
+                hasPermissions = hasPermissions,
+                steps = steps,
+                calories = calories,
                 onThemeChange = viewModel::setTheme,
                 onDeleteData = viewModel::deleteData,
+                onConnectClick = {
+                     permissionLauncher.launch(viewModel.permissions)
+                },
                 onDisconnectWearable = viewModel::disconnectWearable
             )
         }
