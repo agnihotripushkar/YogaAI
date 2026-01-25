@@ -55,6 +55,15 @@ dependencies {
     // Timber
     implementation(libs.timber)
 
+    // Camera
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // Permissions
+    implementation(libs.google.accompanist.permissions)
+
     // Modules
     implementation(project(":core"))
 }

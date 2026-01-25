@@ -9,4 +9,5 @@ object YogaDestinations {
     const val CONSENT_ROUTE = "consent"
     const val CONNECT_ROUTE = "connect"
     const val PROFILE_SETUP_ROUTE = "profile_setup"
+    const val YOGA_DETECTOR_ROUTE = "yoga_detector"
 }

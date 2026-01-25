@@ -13,6 +13,7 @@ import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
 import me.pushkaragnihotri.yogaai.features.profilesetup.ui.ProfileSetupScreen
 import org.koin.androidx.compose.koinViewModel
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
+import me.pushkaragnihotri.yogaai.features.yogadetector.YogaDetectorScreen
 
 @Composable
 fun YogaNavigation(
@@ -75,7 +76,14 @@ fun YogaNavigation(
             )
         }
         composable(YogaDestinations.HOME_ROUTE) {
-            HomeScreen()
+            HomeScreen(
+                onStartYogaSession = {
+                    navController.navigate(YogaDestinations.YOGA_DETECTOR_ROUTE)
+                }
+            )
+        }
+        composable(YogaDestinations.YOGA_DETECTOR_ROUTE) {
+            YogaDetectorScreen()
         }
         composable(YogaDestinations.GOALS_ROUTE) {
             me.pushkaragnihotri.yogaai.features.goals.ui.GoalsScreen()

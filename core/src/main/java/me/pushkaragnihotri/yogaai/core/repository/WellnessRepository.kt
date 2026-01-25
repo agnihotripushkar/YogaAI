@@ -7,6 +7,8 @@ import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.model.DailyMetric
 import me.pushkaragnihotri.yogaai.core.model.RiskLevel
 import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.core.wellness.WellnessExplanationGenerator
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -23,6 +25,7 @@ interface WellnessRepository {
 
 class WellnessRepositoryImpl(
     private val healthConnectManager: HealthConnectManager,
+    private val explanationGenerator: WellnessExplanationGenerator? = null,
     private val isDemoMode: Boolean = false
 ) : WellnessRepository {
 
@@ -36,23 +39,24 @@ class WellnessRepositoryImpl(
     override suspend fun getTodayRisk(): RiskPrediction {
         if (isDemoMode) return MockWellnessDataSource.getTodayRisk()
         
-        // TODO: Real logic using ML model. For now returning dummy based on simple heuristic.
         val metrics = getTodayMetrics()
-        return if (metrics.sleepDurationMinutes < 300) {
-           RiskPrediction(
-               LocalDate.now(), 
-               RiskLevel.HIGH, 
-               "Short sleep detected.", 
-               listOf("Sleep < 5h")
-           )
-        } else {
-            RiskPrediction(
-                LocalDate.now(), 
-                RiskLevel.LOW, 
-                "Wellness looks good.", 
-                emptyList()
-            )
-        }
+        
+        // Simple heuristic for risk level
+        val riskLevel = if (metrics.sleepDurationMinutes < 300) RiskLevel.HIGH else RiskLevel.LOW
+        val signals = if (riskLevel == RiskLevel.HIGH) listOf("Sleep < 5h") else emptyList()
+        
+        val explanation = explanationGenerator?.generateExplanation(
+            riskLevel = riskLevel,
+            contributingSignals = signals,
+            metricsSummary = "Steps: ${metrics.steps}, Sleep: ${metrics.sleepDurationMinutes}m, HR: ${metrics.restingHeartRate}"
+        ) ?: if (riskLevel == RiskLevel.HIGH) "Short sleep detected." else "Wellness looks good."
+
+        return RiskPrediction(
+            LocalDate.now(),
+            riskLevel,
+            explanation,
+            signals
+        )
     }
 
     override suspend fun getRiskByDate(date: LocalDate): RiskPrediction? {
