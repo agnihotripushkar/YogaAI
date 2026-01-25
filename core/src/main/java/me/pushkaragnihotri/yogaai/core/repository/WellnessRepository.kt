@@ -7,7 +7,6 @@ import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.model.DailyMetric
 import me.pushkaragnihotri.yogaai.core.model.RiskLevel
 import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
-import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.core.wellness.WellnessExplanationGenerator
 import java.time.Instant
 import java.time.LocalDate

@@ -7,9 +7,12 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -30,6 +33,7 @@ import java.util.concurrent.Executors
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.ImageProxy
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -48,7 +52,7 @@ fun YogaDetectorScreen(
         if (cameraPermissionState.status.isGranted) {
             CameraPreview(
                 onImageAnalyzed = { imageProxy ->
-                    val bitmap = imageProxy.toBitmap()
+                    val bitmap = imageProxy.toRotatedBitmap()
                     if (bitmap != null) {
                         viewModel.poseDetectionManager.detectPose(
                             bitmap,
@@ -61,8 +65,44 @@ fun YogaDetectorScreen(
             )
             
             // Draw landmarks overlay
-            uiState.poseResult?.let { result ->
-                PoseOverlay(result)
+            val poseResult = uiState.poseResult
+            if (poseResult != null) {
+                PoseOverlay(
+                    result = poseResult,
+                    isCorrect = uiState.isPoseCorrect
+                )
+            }
+
+            // Pose Status Card
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp)
+            ) {
+                Card(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = uiState.poseName,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = if (uiState.isPoseCorrect) Color.Green else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        if (uiState.holdTimeSeconds > 0) {
+                            Text(
+                                text = "Holding: ${uiState.holdTimeSeconds}s",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
             }
         } else {
             Text(
@@ -136,14 +176,14 @@ fun CameraPreview(
 }
 
 @Composable
-fun PoseOverlay(result: com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult) {
+fun PoseOverlay(result: PoseLandmarkerResult, isCorrect: Boolean) {
     Canvas(modifier = Modifier.fillMaxSize()) {
         val landmarks = result.landmarks()
         if (landmarks.isNotEmpty()) {
-            // Very simplified drawing of landmarks for visualization
-            landmarks[0].forEach { landmark ->
+            val firstPersonLandmarks = landmarks[0]
+            for (landmark in firstPersonLandmarks) {
                 drawCircle(
-                    color = Color.Cyan,
+                    color = if (isCorrect) Color.Green else Color.Cyan,
                     radius = 8f,
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )
@@ -152,10 +192,10 @@ fun PoseOverlay(result: com.google.mediapipe.tasks.vision.poselandmarker.PoseLan
     }
 }
 
-fun ImageProxy.toBitmap(): Bitmap? {
+fun ImageProxy.toRotatedBitmap(): Bitmap? {
     val bitmap = this.toBitmap() ?: return null
     val matrix = Matrix().apply {
-        postRotate(this@toBitmap.imageInfo.rotationDegrees.toFloat())
+        postRotate(this@toRotatedBitmap.imageInfo.rotationDegrees.toFloat())
     }
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }

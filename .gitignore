@@ -31,3 +31,6 @@ render.experimental.xml
 
 # Android Profiling
 *.hprof
+features/src/.DS_Store
+features/src/main/.DS_Store
+features/src/main/assets/.DS_Store

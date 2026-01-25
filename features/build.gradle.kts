@@ -28,7 +28,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.7"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 
@@ -63,6 +63,10 @@ dependencies {
 
     // Permissions
     implementation(libs.google.accompanist.permissions)
+
+    // AI
+    implementation(libs.mediapipe.tasks.vision)
+    implementation(libs.guava)
 
     // Modules
     implementation(project(":core"))

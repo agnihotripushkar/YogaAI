@@ -2,6 +2,7 @@ package me.pushkaragnihotri.yogaai.core.di
 
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.UserPreferences
+import me.pushkaragnihotri.yogaai.core.ai.PoseClassifier
 import me.pushkaragnihotri.yogaai.core.ai.PoseDetectionManager
 import me.pushkaragnihotri.yogaai.core.ai.PoseDetectionManagerImpl
 import me.pushkaragnihotri.yogaai.core.repository.WellnessRepository
@@ -16,6 +17,7 @@ val coreDataModule = module {
     single { HealthConnectManager(androidContext()) }
 
     // AI
+    single { PoseClassifier() }
     single<PoseDetectionManager> { PoseDetectionManagerImpl() }
     single<WellnessExplanationGenerator> { GeminiNanoExplanationProvider() }
 
