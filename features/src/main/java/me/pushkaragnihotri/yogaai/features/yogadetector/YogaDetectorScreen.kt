@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -38,7 +39,8 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun YogaDetectorScreen(
-    viewModel: YogaDetectorViewModel = koinViewModel()
+    viewModel: YogaDetectorViewModel = koinViewModel(),
+    onNavigateToResult: (String, String, String) -> Unit = { _, _, _ -> }
 ) {
     val context = LocalContext.current
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
@@ -46,6 +48,16 @@ fun YogaDetectorScreen(
 
     LaunchedEffect(Unit) {
         viewModel.poseDetectionManager.setup(context, viewModel)
+    }
+
+    LaunchedEffect(uiState.isPoseCompleted) {
+        if (uiState.isPoseCompleted) {
+            onNavigateToResult(
+                uiState.poseName,
+                uiState.holdTimeSeconds.toString(),
+                uiState.feedback.ifEmpty { "Great job!" }
+            )
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -95,12 +107,39 @@ fun YogaDetectorScreen(
                             style = MaterialTheme.typography.headlineMedium,
                             color = if (uiState.isPoseCorrect) Color.Green else MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        if (uiState.holdTimeSeconds > 0) {
+                        if (uiState.isPoseCompleted) {
                             Text(
-                                text = "Holding: ${uiState.holdTimeSeconds}s",
+                                text = "Pose Completed!",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = Color.Green,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        } else if (uiState.holdTimeSeconds > 0) {
+                            // Show progress
+                            Text(
+                                text = "Holding: ${uiState.holdTimeSeconds}/10s",
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }
+                    }
+                }
+                
+                // Feedback
+                if (uiState.feedback.isNotEmpty() && !uiState.isPoseCompleted) {
+                    Card(
+                         modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 64.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
+                        )
+                    ) {
+                        Text(
+                            text = uiState.feedback,
+                            modifier = Modifier.padding(16.dp),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }

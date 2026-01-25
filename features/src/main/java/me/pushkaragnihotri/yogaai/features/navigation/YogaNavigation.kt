@@ -2,9 +2,11 @@ package me.pushkaragnihotri.yogaai.features.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.splash.ui.SplashScreen
@@ -13,6 +15,7 @@ import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
 import me.pushkaragnihotri.yogaai.features.profilesetup.ui.ProfileSetupScreen
 import org.koin.androidx.compose.koinViewModel
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
+import me.pushkaragnihotri.yogaai.features.poseresult.PoseResultScreen
 import me.pushkaragnihotri.yogaai.features.yogadetector.YogaDetectorScreen
 
 @Composable
@@ -83,7 +86,33 @@ fun YogaNavigation(
             )
         }
         composable(YogaDestinations.YOGA_DETECTOR_ROUTE) {
-            YogaDetectorScreen()
+            YogaDetectorScreen(
+                onNavigateToResult = { poseName, duration, feedback ->
+                    navController.navigate("pose_result/$poseName/$duration/$feedback")
+                }
+            )
+        }
+        composable(
+            route = YogaDestinations.POSE_RESULT_ROUTE,
+            arguments = listOf(
+                navArgument("poseName") { type = NavType.StringType },
+                navArgument("duration") { type = NavType.StringType },
+                navArgument("feedback") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val poseName = backStackEntry.arguments?.getString("poseName") ?: ""
+            val duration = backStackEntry.arguments?.getString("duration") ?: ""
+            val feedback = backStackEntry.arguments?.getString("feedback") ?: ""
+            PoseResultScreen(
+                poseName = poseName,
+                duration = duration,
+                feedback = feedback,
+                onHomeClick = {
+                    navController.navigate(YogaDestinations.HOME_ROUTE) {
+                        popUpTo(YogaDestinations.HOME_ROUTE) { inclusive = true }
+                    }
+                }
+            )
         }
         composable(YogaDestinations.GOALS_ROUTE) {
             me.pushkaragnihotri.yogaai.features.goals.ui.GoalsScreen()

@@ -34,3 +34,5 @@ render.experimental.xml
 features/src/.DS_Store
 features/src/main/.DS_Store
 features/src/main/assets/.DS_Store
+.DS_Store
+**/.DS_Store

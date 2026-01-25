@@ -18,6 +18,7 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     val themeMode = userPreferences.themeMode
+    val language = userPreferences.language
 
     private val _steps = MutableStateFlow(0L)
     val steps: StateFlow<Long> = _steps.asStateFlow()
@@ -74,6 +75,12 @@ class SettingsViewModel(
     fun setTheme(mode: Int) {
         viewModelScope.launch {
             userPreferences.setThemeMode(mode)
+        }
+    }
+
+    fun setLanguage(language: String) {
+        viewModelScope.launch {
+            userPreferences.setLanguage(language)
         }
     }
 

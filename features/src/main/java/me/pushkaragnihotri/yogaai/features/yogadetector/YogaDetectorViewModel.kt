@@ -19,13 +19,19 @@ data class YogaDetectorUiState(
     val errorMessage: String? = null,
     val poseName: String = "Detecting...",
     val isPoseCorrect: Boolean = false,
-    val holdTimeSeconds: Int = 0
+    val holdTimeSeconds: Int = 0,
+    val isPoseCompleted: Boolean = false,
+    val feedback: String = ""
 )
 
 class YogaDetectorViewModel(
     val poseDetectionManager: PoseDetectionManager,
     private val poseClassifier: PoseClassifier
 ) : ViewModel(), PoseDetectionListener {
+
+    companion object {
+        private const val TARGET_HOLD_TIME_SECONDS = 10
+    }
 
     private val _uiState = MutableStateFlow(YogaDetectorUiState())
     val uiState: StateFlow<YogaDetectorUiState> = _uiState.asStateFlow()
@@ -35,11 +41,15 @@ class YogaDetectorViewModel(
     override fun onResults(result: PoseLandmarkerResult) {
         val classification = poseClassifier.classify(result)
         
+        // Don't update state or reset timer if already completed (prevents flickering)
+        if (_uiState.value.isPoseCompleted) return
+
         _uiState.update { 
             it.copy(
                 poseResult = result,
                 poseName = classification.poseName,
-                isPoseCorrect = classification.isCorrect
+                isPoseCorrect = classification.isCorrect,
+                feedback = classification.feedback
             )
         }
 
@@ -51,20 +61,41 @@ class YogaDetectorViewModel(
     }
 
     private fun startTimer() {
-        if (timerJob == null) {
+        if (timerJob == null && !_uiState.value.isPoseCompleted) {
             timerJob = viewModelScope.launch {
                 while (true) {
                     delay(1000)
-                    _uiState.update { it.copy(holdTimeSeconds = it.holdTimeSeconds + 1) }
+                    _uiState.update { 
+                        val newTime = it.holdTimeSeconds + 1
+                        if (newTime >= TARGET_HOLD_TIME_SECONDS) {
+                            // Pose completed!
+                            timerJob?.cancel() // Stop the timer
+                            it.copy(
+                                holdTimeSeconds = newTime,
+                                isPoseCompleted = true,
+                                // Keep the last feedback
+                            )
+                        } else {
+                            it.copy(holdTimeSeconds = newTime)
+                        }
+                    }
                 }
             }
         }
     }
 
     private fun resetTimer() {
+        // Double check completion to be safe
+        if (_uiState.value.isPoseCompleted) return
+
         timerJob?.cancel()
         timerJob = null
-        _uiState.update { it.copy(holdTimeSeconds = 0) }
+        _uiState.update { 
+            it.copy(
+                holdTimeSeconds = 0,
+                isPoseCompleted = false 
+            ) 
+        }
     }
 
     override fun onError(error: String) {

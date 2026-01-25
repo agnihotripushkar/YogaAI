@@ -21,10 +21,13 @@ fun SettingsScreenContent(
     hasPermissions: Boolean,
     steps: Long,
     calories: Double,
+    language: String,
     onThemeChange: (Int) -> Unit,
+    onLanguageChange: (String) -> Unit,
     onDeleteData: () -> Unit,
     onConnectClick: () -> Unit,
-    onDisconnectWearable: () -> Unit // Kept for backward compat, but onConnectClick handles permissions
+    onDisconnectWearable: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -53,7 +56,6 @@ fun SettingsScreenContent(
                 }
                 else -> {
                     Text("Health Connect not available.")
-                    // Simplified for brevity, could add the install logic from ProfileComponents here if needed
                 }
              }
         }
@@ -80,6 +82,28 @@ fun SettingsScreenContent(
                     label = { Text(stringResource(R.string.settings_theme_dark)) }
                 )
             }
+            
+            Spacer(Modifier.height(16.dp))
+            
+            Text("Language", style = MaterialTheme.typography.bodyMedium)
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = language == "English",
+                    onClick = { onLanguageChange("English") },
+                    label = { Text("English") }
+                )
+                FilterChip(
+                    selected = language == "Hindi",
+                    onClick = { onLanguageChange("Hindi") },
+                    label = { Text("Hindi") }
+                )
+                FilterChip(
+                    selected = language == "Spanish",
+                    onClick = { onLanguageChange("Spanish") },
+                    label = { Text("Español") }
+                )
+            }
         }
 
         HorizontalDivider(Modifier.padding(vertical = 16.dp))
@@ -102,7 +126,14 @@ fun SettingsScreenContent(
 
         SettingsSection(stringResource(R.string.settings_section_about)) {
             Text(stringResource(R.string.settings_app_version))
-            Text(stringResource(R.string.settings_pilot_build))
+            // Version Name
+            Text("Version: 1.0.0 (Pilot)", style = MaterialTheme.typography.bodyMedium)
+            
+            Spacer(Modifier.height(8.dp))
+            
+            TextButton(onClick = onPrivacyPolicyClick) {
+                Text("Privacy Policy")
+            }
         }
     }
 }
@@ -135,10 +166,13 @@ fun SettingsScreenPreview() {
             hasPermissions = true,
             steps = 5000,
             calories = 300.0,
+            language = "English",
             onThemeChange = {},
+            onLanguageChange = {},
             onDeleteData = {},
             onConnectClick = {},
-            onDisconnectWearable = {}
+            onDisconnectWearable = {},
+            onPrivacyPolicyClick = {}
         )
     }
 }

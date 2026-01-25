@@ -17,13 +17,18 @@ import me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer
 import me.pushkaragnihotri.yogaai.features.settings.ui.components.SettingsScreenContent
 import org.koin.androidx.compose.koinViewModel
 
+import android.content.Intent
+import android.net.Uri
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
     onNavigateUp: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val themeMode by viewModel.themeMode.collectAsState(initial = 0)
+    val language by viewModel.language.collectAsState(initial = "English")
     val steps by viewModel.steps.collectAsState()
     val calories by viewModel.calories.collectAsState()
     val hasPermissions = viewModel.hasPermissions.value
@@ -60,12 +65,18 @@ fun SettingsScreen(
                 hasPermissions = hasPermissions,
                 steps = steps,
                 calories = calories,
+                language = language,
                 onThemeChange = viewModel::setTheme,
+                onLanguageChange = viewModel::setLanguage,
                 onDeleteData = viewModel::deleteData,
                 onConnectClick = {
                      permissionLauncher.launch(viewModel.permissions)
                 },
-                onDisconnectWearable = viewModel::disconnectWearable
+                onDisconnectWearable = viewModel::disconnectWearable,
+                onPrivacyPolicyClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com")) // Placeholder URL
+                    context.startActivity(intent)
+                }
             )
         }
     }
