@@ -14,7 +14,7 @@ import me.pushkaragnihotri.yogaai.features.navigation.YogaDestinations
 import me.pushkaragnihotri.yogaai.features.navigation.YogaNavigation
 
 @Composable
-fun MainScreen(startDestination: String) {
+fun MainScreen(finalDestination: String) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -38,7 +38,7 @@ fun MainScreen(startDestination: String) {
         // Since YogaNavigation is the NavHost content, we wrap it in a Box or adjust it
         // Ideally YogaNavigation should take a modifier, but for now we wrap it.
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())) {
-            YogaNavigation(navController = navController, startDestination = startDestination)
+            YogaNavigation(navController = navController, finalDestination = finalDestination)
         }
     }
 }
@@ -47,6 +47,6 @@ fun MainScreen(startDestination: String) {
 @Composable
 fun MainScreenPreview() {
     YogaAITheme {
-        MainScreen(startDestination = YogaDestinations.HOME_ROUTE)
+        MainScreen(finalDestination = YogaDestinations.HOME_ROUTE)
     }
 }

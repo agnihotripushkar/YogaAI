@@ -42,5 +42,10 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    
+    // AI
+    implementation(libs.mediapipe.tasks.vision)
+    implementation(libs.mediapipe.tasks.genai)
+    implementation(libs.google.generativeai)
 }
 

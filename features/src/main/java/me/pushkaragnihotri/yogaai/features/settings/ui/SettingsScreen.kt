@@ -1,12 +1,15 @@
 package me.pushkaragnihotri.yogaai.features.settings.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.health.connect.client.PermissionController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import me.pushkaragnihotri.yogaai.features.R
@@ -14,13 +17,32 @@ import me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer
 import me.pushkaragnihotri.yogaai.features.settings.ui.components.SettingsScreenContent
 import org.koin.androidx.compose.koinViewModel
 
+import android.content.Intent
+import android.net.Uri
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
     onNavigateUp: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val themeMode by viewModel.themeMode.collectAsState(initial = 0)
+    val language by viewModel.language.collectAsState(initial = "English")
+    val steps by viewModel.steps.collectAsState()
+    val calories by viewModel.calories.collectAsState()
+    val hasPermissions = viewModel.hasPermissions.value
+    val sdkStatus = viewModel.sdkStatus.value
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        PermissionController.createRequestPermissionResultContract()
+    ) { granted ->
+        viewModel.onPermissionsResult(granted)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.initialLoad()
+    }
 
     Scaffold(
         topBar = {
@@ -39,9 +61,22 @@ fun SettingsScreen(
         ) {
             SettingsScreenContent(
                 themeMode = themeMode,
+                sdkStatus = sdkStatus,
+                hasPermissions = hasPermissions,
+                steps = steps,
+                calories = calories,
+                language = language,
                 onThemeChange = viewModel::setTheme,
+                onLanguageChange = viewModel::setLanguage,
                 onDeleteData = viewModel::deleteData,
-                onDisconnectWearable = viewModel::disconnectWearable
+                onConnectClick = {
+                     permissionLauncher.launch(viewModel.permissions)
+                },
+                onDisconnectWearable = viewModel::disconnectWearable,
+                onPrivacyPolicyClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com")) // Placeholder URL
+                    context.startActivity(intent)
+                }
             )
         }
     }

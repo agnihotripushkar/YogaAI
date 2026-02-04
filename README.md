@@ -6,9 +6,8 @@ YogaAI is a modern Android application built with **Jetpack Compose** that helps
 
 - **Home**: Main dashboard for accessing daily practices, health metrics, and recommendations.
 - **Classes**: Browse and join various yoga classes categorized by difficulty and style.
-- **Video Player**: Integrated player for watching high-quality yoga instruction videos.
 - **Health Tracking**: Integrated with **Health Connect** to track daily streaks, calories burned, and steps.
-- **Water Tracker**: Log daily water intake and set reminders.
+- **Yoga Detector**: Real-time pose detection using the camera to analyze yoga poses.
 - **Profile**: Manage your user profile, settings, and health permissions.
 
 ## 🛠 Tech Stack
@@ -23,6 +22,8 @@ YogaAI is a modern Android application built with **Jetpack Compose** that helps
 - **Health Data**: [Health Connect SDK](https://developer.android.com/health-and-fitness/guides/health-connect)
 - **Storage**: [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore)
 - **Logging**: [Timber](https://github.com/JakeWharton/timber)
+- **AI/ML**: [MediaPipe](https://developers.google.com/mediapipe) (Vision & GenAI)
+- **Camera**: [CameraX](https://developer.android.com/media/camera/camerax)
 - **Analytics/Crash Reporting**: [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics)
 
 ## 📁 Project Structure

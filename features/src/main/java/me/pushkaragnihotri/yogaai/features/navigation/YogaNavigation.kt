@@ -2,11 +2,12 @@ package me.pushkaragnihotri.yogaai.features.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
-import me.pushkaragnihotri.yogaai.features.profile.ui.ProfileScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.splash.ui.SplashScreen
 import me.pushkaragnihotri.yogaai.features.consent.ui.ConsentScreen
@@ -14,20 +15,22 @@ import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
 import me.pushkaragnihotri.yogaai.features.profilesetup.ui.ProfileSetupScreen
 import org.koin.androidx.compose.koinViewModel
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
+import me.pushkaragnihotri.yogaai.features.poseresult.PoseResultScreen
+import me.pushkaragnihotri.yogaai.features.yogadetector.YogaDetectorScreen
 
 @Composable
 fun YogaNavigation(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = YogaDestinations.SPLASH_ROUTE
+    finalDestination: String
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = YogaDestinations.SPLASH_ROUTE
     ) {
         composable(YogaDestinations.SPLASH_ROUTE) {
             SplashScreen(
                 onFinished = {
-                    navController.navigate(YogaDestinations.ONBOARDING_ROUTE) {
+                    navController.navigate(finalDestination) {
                         popUpTo(YogaDestinations.SPLASH_ROUTE) { inclusive = true }
                     }
                 }
@@ -76,7 +79,40 @@ fun YogaNavigation(
             )
         }
         composable(YogaDestinations.HOME_ROUTE) {
-            HomeScreen()
+            HomeScreen(
+                onStartYogaSession = {
+                    navController.navigate(YogaDestinations.YOGA_DETECTOR_ROUTE)
+                }
+            )
+        }
+        composable(YogaDestinations.YOGA_DETECTOR_ROUTE) {
+            YogaDetectorScreen(
+                onNavigateToResult = { poseName, duration, feedback ->
+                    navController.navigate("pose_result/$poseName/$duration/$feedback")
+                }
+            )
+        }
+        composable(
+            route = YogaDestinations.POSE_RESULT_ROUTE,
+            arguments = listOf(
+                navArgument("poseName") { type = NavType.StringType },
+                navArgument("duration") { type = NavType.StringType },
+                navArgument("feedback") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val poseName = backStackEntry.arguments?.getString("poseName") ?: ""
+            val duration = backStackEntry.arguments?.getString("duration") ?: ""
+            val feedback = backStackEntry.arguments?.getString("feedback") ?: ""
+            PoseResultScreen(
+                poseName = poseName,
+                duration = duration,
+                feedback = feedback,
+                onHomeClick = {
+                    navController.navigate(YogaDestinations.HOME_ROUTE) {
+                        popUpTo(YogaDestinations.HOME_ROUTE) { inclusive = true }
+                    }
+                }
+            )
         }
         composable(YogaDestinations.GOALS_ROUTE) {
             me.pushkaragnihotri.yogaai.features.goals.ui.GoalsScreen()
@@ -85,9 +121,6 @@ fun YogaNavigation(
              me.pushkaragnihotri.yogaai.features.settings.ui.SettingsScreen(
                  onNavigateUp = { navController.navigateUp() }
              )
-        }
-        composable(YogaDestinations.PROFILE_ROUTE) {
-             ProfileScreen()
         }
     }
 }

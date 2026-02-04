@@ -2,11 +2,9 @@ package me.pushkaragnihotri.yogaai.features.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,18 +35,10 @@ sealed class BottomNavItem(
         unselectedIcon = Icons.Outlined.Settings,
         labelResId = me.pushkaragnihotri.yogaai.features.R.string.title_settings
     )
-
-    data object Profile : BottomNavItem(
-        route = YogaDestinations.PROFILE_ROUTE,
-        selectedIcon = Icons.Rounded.Person,
-        unselectedIcon = Icons.Outlined.Person,
-        labelResId = me.pushkaragnihotri.yogaai.features.R.string.title_profile
-    )
 }
 
 val bottomNavItems = listOf(
     BottomNavItem.Home,
     BottomNavItem.Goals,
-    BottomNavItem.Settings,
-    BottomNavItem.Profile
+    BottomNavItem.Settings
 )

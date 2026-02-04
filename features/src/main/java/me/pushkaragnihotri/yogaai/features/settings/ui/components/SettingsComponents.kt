@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.HealthConnectClient
+import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
@@ -15,9 +17,17 @@ import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 @Composable
 fun SettingsScreenContent(
     themeMode: Int,
+    sdkStatus: Int,
+    hasPermissions: Boolean,
+    steps: Long,
+    calories: Double,
+    language: String,
     onThemeChange: (Int) -> Unit,
+    onLanguageChange: (String) -> Unit,
     onDeleteData: () -> Unit,
-    onDisconnectWearable: () -> Unit
+    onConnectClick: () -> Unit,
+    onDisconnectWearable: () -> Unit,
+    onPrivacyPolicyClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -25,6 +35,33 @@ fun SettingsScreenContent(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
+        // Health Dashboard Section
+        SettingsSection(stringResource(R.string.profile_health_data_header)) {
+             if (sdkStatus != HealthConnectManager.SDK_AVAILABLE) {
+                 Text("Health Connect Status: $sdkStatus", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                 Spacer(Modifier.height(8.dp))
+             }
+
+             when (sdkStatus) {
+                HealthConnectManager.SDK_AVAILABLE -> {
+                    if (hasPermissions) {
+                        InfoRow(stringResource(R.string.profile_steps_format, steps))
+                        InfoRow(stringResource(R.string.profile_calories_format, calories))
+                    } else {
+                        Text(stringResource(R.string.profile_connect_prompt))
+                        Button(onClick = onConnectClick) {
+                            Text(stringResource(R.string.profile_connect_button))
+                        }
+                    }
+                }
+                else -> {
+                    Text("Health Connect not available.")
+                }
+             }
+        }
+
+        HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
         SettingsSection(stringResource(R.string.settings_section_appearance)) {
             Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(8.dp))
@@ -43,6 +80,28 @@ fun SettingsScreenContent(
                     selected = themeMode == 2,
                     onClick = { onThemeChange(2) },
                     label = { Text(stringResource(R.string.settings_theme_dark)) }
+                )
+            }
+            
+            Spacer(Modifier.height(16.dp))
+            
+            Text("Language", style = MaterialTheme.typography.bodyMedium)
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = language == "English",
+                    onClick = { onLanguageChange("English") },
+                    label = { Text("English") }
+                )
+                FilterChip(
+                    selected = language == "Hindi",
+                    onClick = { onLanguageChange("Hindi") },
+                    label = { Text("Hindi") }
+                )
+                FilterChip(
+                    selected = language == "Spanish",
+                    onClick = { onLanguageChange("Spanish") },
+                    label = { Text("Español") }
                 )
             }
         }
@@ -65,27 +124,33 @@ fun SettingsScreenContent(
 
         HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
-        SettingsSection(stringResource(R.string.settings_section_source)) {
-            Text(stringResource(R.string.settings_source_health_connect))
-            Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = onDisconnectWearable) {
-                Text(stringResource(R.string.settings_disconnect))
-            }
-        }
-
-        HorizontalDivider(Modifier.padding(vertical = 16.dp))
-
         SettingsSection(stringResource(R.string.settings_section_about)) {
             Text(stringResource(R.string.settings_app_version))
-            Text(stringResource(R.string.settings_pilot_build))
+            // Version Name
+            Text("Version: 1.0.0 (Pilot)", style = MaterialTheme.typography.bodyMedium)
+            
+            Spacer(Modifier.height(8.dp))
+            
+            TextButton(onClick = onPrivacyPolicyClick) {
+                Text("Privacy Policy")
+            }
         }
     }
 }
 
 @Composable
+fun InfoRow(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.headlineSmall,
+        color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
 fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) {
     Column {
-        Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+        Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.secondary)
         Spacer(Modifier.height(8.dp))
         content()
     }
@@ -97,9 +162,17 @@ fun SettingsScreenPreview() {
     YogaAITheme {
         SettingsScreenContent(
             themeMode = 0,
+            sdkStatus = HealthConnectManager.SDK_AVAILABLE,
+            hasPermissions = true,
+            steps = 5000,
+            calories = 300.0,
+            language = "English",
             onThemeChange = {},
+            onLanguageChange = {},
             onDeleteData = {},
-            onDisconnectWearable = {}
+            onConnectClick = {},
+            onDisconnectWearable = {},
+            onPrivacyPolicyClick = {}
         )
     }
 }

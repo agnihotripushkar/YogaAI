@@ -18,7 +18,8 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
+    onStartYogaSession: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -39,7 +40,8 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             HomeScreenContent(
-                uiState = uiState
+                uiState = uiState,
+                onStartYogaSession = onStartYogaSession
             )
         }
     }

@@ -24,8 +24,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val viewModel: MainViewModel = org.koin.androidx.compose.koinViewModel()
-            val startDestinationState = viewModel.startDestination.collectAsState()
-            val startDestination = startDestinationState.value
+            val finalDestinationState = viewModel.finalDestination.collectAsState()
+            val finalDestination = finalDestinationState.value
             
             val themeMode by viewModel.themeMode.collectAsState()
             val isDarkTheme = when (themeMode) {
@@ -35,8 +35,8 @@ class MainActivity : ComponentActivity() {
             }
             
             YogaAITheme(darkTheme = isDarkTheme) {
-                if (startDestination != null) {
-                    MainScreen(startDestination = startDestination)
+                if (finalDestination != null) {
+                    MainScreen(finalDestination = finalDestination)
                 } else {
                      // Splash or loading
                      androidx.compose.foundation.layout.Box(
