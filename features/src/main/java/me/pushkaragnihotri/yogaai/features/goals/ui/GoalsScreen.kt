@@ -12,6 +12,8 @@ import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer
 import me.pushkaragnihotri.yogaai.features.goals.ui.components.GoalsScreenContent
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.tooling.preview.Preview
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,6 +22,23 @@ fun GoalsScreen(
 ) {
     val stepGoal by viewModel.stepGoal.collectAsState()
     val sleepGoal by viewModel.sleepGoal.collectAsState()
+    
+    GoalsScreenScaffold(
+        stepGoal = stepGoal,
+        sleepGoal = sleepGoal,
+        onStepGoalChanged = { viewModel.updateStepGoal(it) },
+        onSleepGoalChanged = { viewModel.updateSleepGoal(it) }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GoalsScreenScaffold(
+    stepGoal: Int,
+    sleepGoal: Int,
+    onStepGoalChanged: (Int) -> Unit,
+    onSleepGoalChanged: (Int) -> Unit,
+) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
@@ -35,9 +54,22 @@ fun GoalsScreen(
             GoalsScreenContent(
                 stepGoal = stepGoal,
                 sleepGoal = sleepGoal,
-                onStepGoalChanged = { viewModel.updateStepGoal(it) },
-                onSleepGoalChanged = { viewModel.updateSleepGoal(it) }
+                onStepGoalChanged = onStepGoalChanged,
+                onSleepGoalChanged = onSleepGoalChanged
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun GoalsScreenPreview() {
+    YogaAITheme {
+        GoalsScreenScaffold(
+            stepGoal = 5000,
+            sleepGoal = 8,
+            onStepGoalChanged = {},
+            onSleepGoalChanged = {}
+        )
     }
 }

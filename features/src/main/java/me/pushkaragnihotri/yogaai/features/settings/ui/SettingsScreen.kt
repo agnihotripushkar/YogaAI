@@ -19,6 +19,9 @@ import org.koin.androidx.compose.koinViewModel
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.tooling.preview.Preview
+import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,5 +82,26 @@ fun SettingsScreen(
                 }
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun SettingsScreenContentPreview() {
+    YogaAITheme {
+        SettingsScreenContent(
+            themeMode = 0,
+            sdkStatus = HealthConnectManager.SDK_AVAILABLE,
+            hasPermissions = true,
+            steps = 5201,
+            calories = 120.0,
+            language = "English",
+            onThemeChange = {},
+            onLanguageChange = {},
+            onDeleteData = {},
+            onConnectClick = {},
+            onDisconnectWearable = {},
+            onPrivacyPolicyClick = {}
+        )
     }
 }

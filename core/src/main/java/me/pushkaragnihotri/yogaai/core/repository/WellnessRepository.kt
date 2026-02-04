@@ -44,11 +44,15 @@ class WellnessRepositoryImpl(
         val riskLevel = if (metrics.sleepDurationMinutes < 300) RiskLevel.HIGH else RiskLevel.LOW
         val signals = if (riskLevel == RiskLevel.HIGH) listOf("Sleep < 5h") else emptyList()
         
-        val explanation = explanationGenerator?.generateExplanation(
-            riskLevel = riskLevel,
-            contributingSignals = signals,
-            metricsSummary = "Steps: ${metrics.steps}, Sleep: ${metrics.sleepDurationMinutes}m, HR: ${metrics.restingHeartRate}"
-        ) ?: if (riskLevel == RiskLevel.HIGH) "Short sleep detected." else "Wellness looks good."
+        val explanation = if (explanationGenerator?.isAvailable() == true) {
+             explanationGenerator.generateExplanation(
+                riskLevel = riskLevel,
+                contributingSignals = signals,
+                metricsSummary = "Steps: ${metrics.steps}, Sleep: ${metrics.sleepDurationMinutes}m, HR: ${metrics.restingHeartRate}"
+            )
+        } else {
+             if (riskLevel == RiskLevel.HIGH) "Short sleep detected." else "Wellness looks good."
+        }
 
         return RiskPrediction(
             LocalDate.now(),

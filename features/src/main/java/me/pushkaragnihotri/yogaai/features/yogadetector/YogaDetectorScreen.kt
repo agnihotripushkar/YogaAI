@@ -1,40 +1,48 @@
 package me.pushkaragnihotri.yogaai.features.yogadetector
 
 import android.Manifest
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview as CameraXPreview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cameraswitch
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.VolumeOff
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
-import android.graphics.Bitmap
-import android.graphics.Matrix
-import androidx.camera.core.ImageProxy
-import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
+import androidx.compose.ui.tooling.preview.Preview
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -45,6 +53,8 @@ fun YogaDetectorScreen(
     val context = LocalContext.current
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val uiState by viewModel.uiState.collectAsState()
+    var isMuted by remember { mutableStateOf(false) }
+    var cameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
 
     LaunchedEffect(Unit) {
         viewModel.poseDetectionManager.setup(context, viewModel)
@@ -60,9 +70,10 @@ fun YogaDetectorScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         if (cameraPermissionState.status.isGranted) {
             CameraPreview(
+                cameraSelector = cameraSelector,
                 onImageAnalyzed = { imageProxy ->
                     val bitmap = imageProxy.toRotatedBitmap()
                     if (bitmap != null) {
@@ -76,7 +87,7 @@ fun YogaDetectorScreen(
                 }
             )
             
-            // Draw landmarks overlay
+            // Draw skeleton overlay
             val poseResult = uiState.poseResult
             if (poseResult != null) {
                 PoseOverlay(
@@ -85,87 +96,263 @@ fun YogaDetectorScreen(
                 )
             }
 
-            // Pose Status Card
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(32.dp)
-            ) {
-                Card(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = uiState.poseName,
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = if (uiState.isPoseCorrect) Color.Green else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        if (uiState.isPoseCompleted) {
-                            Text(
-                                text = "Pose Completed!",
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = Color.Green,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        } else if (uiState.holdTimeSeconds > 0) {
-                            // Show progress
-                            Text(
-                                text = "Holding: ${uiState.holdTimeSeconds}/10s",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    }
-                }
-                
-                // Feedback
-                if (uiState.feedback.isNotEmpty() && !uiState.isPoseCompleted) {
-                    Card(
-                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 64.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
-                        )
-                    ) {
-                        Text(
-                            text = uiState.feedback,
-                            modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-        } else {
-            Text(
-                text = "Camera permission is required for pose detection.",
-                modifier = Modifier.align(Alignment.Center).padding(16.dp),
-                style = MaterialTheme.typography.bodyLarge
+            // --- Top HUD ---
+            TopHud(
+                poseName = uiState.poseName,
+                timeSeconds = uiState.holdTimeSeconds,
+                confidence = uiState.confidence
             )
+
+            // --- Bottom Sheet & Controls ---
+            BottomSheetControls(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                isCorrect = uiState.isPoseCorrect,
+                feedback = uiState.feedback,
+                isMuted = isMuted,
+                onToggleMute = { isMuted = !isMuted },
+                onStop = { 
+                     onNavigateToResult(uiState.poseName, uiState.holdTimeSeconds.toString(), "Session Stopped")
+                },
+                onSwitchCamera = { 
+                    cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                        CameraSelector.DEFAULT_FRONT_CAMERA
+                    } else {
+                        CameraSelector.DEFAULT_BACK_CAMERA
+                    }
+                }
+            )
+            
+        } else {
+            // Permission Request State
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Camera permission needed",
+                    color = Color.White
+                )
+            }
             LaunchedEffect(Unit) {
                 cameraPermissionState.launchPermissionRequest()
             }
         }
 
-        uiState.errorMessage?.let { error ->
-            Text(
-                text = error,
-                color = Color.Red,
+        val errorMessage = uiState.errorMessage
+        if (errorMessage != null) {
+             Snackbar(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp)
+            ) { Text(text = errorMessage) }
+        }
+    }
+}
+
+@Composable
+fun BottomSheetControls(
+    modifier: Modifier = Modifier,
+    isCorrect: Boolean, 
+    feedback: String,
+    isMuted: Boolean,
+    onToggleMute: () -> Unit,
+    onStop: () -> Unit,
+    onSwitchCamera: () -> Unit
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1E2124).copy(alpha = 0.95f) // Dark Gunmetal
+        ),
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+             // Handle bar
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color.Gray.copy(alpha = 0.3f))
             )
+            
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Feedback Section
+            if (isCorrect) {
+                 Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = "Correct",
+                    tint = Color(0xFF00E676),
+                    modifier = Modifier.size(48.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Great balance!",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                if (feedback.isNotEmpty()) {
+                    Text(
+                        text = feedback,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.LightGray,
+                         textAlign = TextAlign.Center,
+                         modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            } else {
+                 Text(
+                    text = "Adjust your pose",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                 if (feedback.isNotEmpty()) {
+                     Text(
+                        text = feedback,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFF1DE9B6), // Accent color for instructions
+                        textAlign = TextAlign.Center,
+                         modifier = Modifier.padding(top = 8.dp)
+                    )
+                } else {
+                     Text(
+                        text = "Aligning...",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Gray
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // Integrated Key Controls
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Switch Cam
+                IconButton(
+                    onClick = onSwitchCamera,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Cameraswitch,
+                        contentDescription = "Switch Camera",
+                        tint = Color.White
+                    )
+                }
+        
+                // Stop Button (Big Red)
+                Button(
+                    onClick = onStop,
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                    modifier = Modifier.size(72.dp),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                     Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(Color.White, RoundedCornerShape(4.dp))
+                    )
+                }
+        
+                // Audio
+                IconButton(
+                    onClick = onToggleMute,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
+                        contentDescription = "Mute",
+                        tint = Color.White
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 48.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            color = Color(0xFF2C2C2C).copy(alpha = 0.8f),
+            shape = RoundedCornerShape(50),
+            modifier = Modifier.height(48.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Pose Name
+                Text(
+                    text = poseName,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+
+                // Divider
+                Box(
+                    modifier = Modifier
+                        .width(1.dp)
+                        .height(20.dp)
+                        .background(Color.Gray.copy(alpha = 0.5f))
+                )
+
+                // Timer
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Icon(
+                        imageVector = Icons.Default.Timer,
+                        contentDescription = "Timer",
+                        tint = Color(0xFF00E676), // Bright Green
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = String.format("%02d:%02d", timeSeconds / 60, timeSeconds % 60),
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp
+                    )
+                }
+                
+                // Confidence Pill
+                Surface(
+                    color = Color(0xFF004D40), // Dark Teal
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier
+                ) {
+                   Text(
+                        text = "${(confidence * 100).toInt()}%",
+                        color = Color(0xFF1DE9B6), // Accent Teal
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                   )
+                }
+            }
         }
     }
 }
 
 @Composable
 fun CameraPreview(
+    cameraSelector: CameraSelector,
     onImageAnalyzed: (androidx.camera.core.ImageProxy) -> Unit
 ) {
     val context = LocalContext.current
@@ -183,7 +370,7 @@ fun CameraPreview(
         update = { previewView ->
             cameraProviderFuture.addListener({
                 val cameraProvider = cameraProviderFuture.get()
-                val preview = Preview.Builder().build().also {
+                val preview = CameraXPreview.Builder().build().also {
                     it.setSurfaceProvider(previewView.surfaceProvider)
                 }
 
@@ -195,8 +382,6 @@ fun CameraPreview(
                             onImageAnalyzed(imageProxy)
                         }
                     }
-
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                 try {
                     cameraProvider.unbindAll()
@@ -220,10 +405,18 @@ fun PoseOverlay(result: PoseLandmarkerResult, isCorrect: Boolean) {
         val landmarks = result.landmarks()
         if (landmarks.isNotEmpty()) {
             val firstPersonLandmarks = landmarks[0]
+            
+            // Draw connections could be added here for full stick figure
+            
             for (landmark in firstPersonLandmarks) {
                 drawCircle(
-                    color = if (isCorrect) Color.Green else Color.Cyan,
+                    color = Color.White.copy(alpha = 0.5f),
                     radius = 8f,
+                    center = Offset(landmark.x() * size.width, landmark.y() * size.height)
+                )
+                drawCircle(
+                    color = if (isCorrect) Color(0xFF00E676) else Color.White,
+                    radius = 4f,
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )
             }
@@ -237,4 +430,42 @@ fun ImageProxy.toRotatedBitmap(): Bitmap? {
         postRotate(this@toRotatedBitmap.imageInfo.rotationDegrees.toFloat())
     }
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+}
+
+@Preview
+@Composable
+fun TopHudPreview() {
+    YogaAITheme {
+        TopHud(poseName = "Warrior II", timeSeconds = 30, confidence = 0.95f)
+    }
+}
+
+@Preview
+@Composable
+fun BottomSheetControlsCorrectPreview() {
+    YogaAITheme {
+        BottomSheetControls(
+            isCorrect = true,
+            feedback = "Keep your back straight",
+            isMuted = false,
+            onToggleMute = {},
+            onStop = {},
+            onSwitchCamera = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun BottomSheetControlsIncorrectPreview() {
+    YogaAITheme {
+        BottomSheetControls(
+            isCorrect = false,
+            feedback = "Lower your hips",
+            isMuted = true,
+            onToggleMute = {},
+            onStop = {},
+            onSwitchCamera = {}
+        )
+    }
 }

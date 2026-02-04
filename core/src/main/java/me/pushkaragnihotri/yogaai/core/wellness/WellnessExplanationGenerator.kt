@@ -8,4 +8,6 @@ interface WellnessExplanationGenerator {
         contributingSignals: List<String>,
         metricsSummary: String
     ): String
+
+    suspend fun isAvailable(): Boolean
 }

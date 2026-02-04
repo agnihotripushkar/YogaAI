@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 
 @Composable
 fun PoseResultScreen(
@@ -141,5 +143,29 @@ fun DetailSection(
             }
         }
         Divider(modifier = Modifier.padding(vertical = 8.dp))
+    }
+}
+
+@Preview
+@Composable
+fun PoseResultScreenPreview() {
+    YogaAITheme {
+        PoseResultScreen(
+            poseName = "Warrior II",
+            duration = "60",
+            feedback = "Great job! Your form was perfect.",
+            onHomeClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DetailSectionPreview() {
+    YogaAITheme {
+        DetailSection(
+            title = "Benefits",
+            items = listOf("Benefit 1", "Benefit 2", "Benefit 3")
+        )
     }
 }

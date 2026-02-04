@@ -2,6 +2,8 @@ package me.pushkaragnihotri.yogaai.features.profilesetup.ui
 
 import androidx.compose.runtime.*
 import me.pushkaragnihotri.yogaai.features.profilesetup.ui.components.ProfileSetupScreenContent
+import androidx.compose.ui.tooling.preview.Preview
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 
 @Composable
 fun ProfileSetupScreen(onFinished: (String, Int, String) -> Unit) {
@@ -21,4 +23,12 @@ fun ProfileSetupScreen(onFinished: (String, Int, String) -> Unit) {
             onFinished(name, ageInt, level)
         }
     )
+}
+
+@Preview
+@Composable
+fun ProfileSetupScreenPreview() {
+    YogaAITheme {
+        ProfileSetupScreen(onFinished = { _, _, _ -> })
+    }
 }

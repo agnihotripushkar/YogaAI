@@ -44,4 +44,9 @@ class GeminiNanoExplanationProvider : WellnessExplanationGenerator {
             "Unable to generate dynamic explanation. Risk remains ${riskLevel.name.lowercase()}."
         }
     }
+
+    override suspend fun isAvailable(): Boolean {
+        // Gemini Nano / AICore requires Android 14 (API 34) or higher
+        return android.os.Build.VERSION.SDK_INT >= 34
+    }
 }

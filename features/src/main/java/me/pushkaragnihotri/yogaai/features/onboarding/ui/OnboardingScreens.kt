@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun OnboardingScreen(
@@ -171,5 +172,18 @@ fun IntroPage(
 fun IntroScreenPreview() {
     YogaAITheme {
         IntroScreen(onFinished = {})
+    }
+}
+
+@Preview
+@Composable
+fun IntroPagePreview() {
+    YogaAITheme {
+        IntroPage(
+            page = 0,
+            onNext = {},
+            onFinished = {},
+            isLastPage = false
+        )
     }
 }

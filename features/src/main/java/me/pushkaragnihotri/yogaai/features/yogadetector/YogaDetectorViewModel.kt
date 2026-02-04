@@ -19,6 +19,7 @@ data class YogaDetectorUiState(
     val errorMessage: String? = null,
     val poseName: String = "Detecting...",
     val isPoseCorrect: Boolean = false,
+    val confidence: Float = 0f,
     val holdTimeSeconds: Int = 0,
     val isPoseCompleted: Boolean = false,
     val feedback: String = ""
@@ -49,6 +50,7 @@ class YogaDetectorViewModel(
                 poseResult = result,
                 poseName = classification.poseName,
                 isPoseCorrect = classification.isCorrect,
+                confidence = classification.confidence,
                 feedback = classification.feedback
             )
         }
