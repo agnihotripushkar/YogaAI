@@ -14,8 +14,8 @@ data class DailyMetric(
 )
 
 data class RiskPrediction(
-    val date: LocalDate,
     val riskLevel: RiskLevel,
     val explanation: String,
-    val contributingSignals: List<String>
+    val contributingSignals: List<String>,
+    val date: LocalDate? = null
 )

@@ -55,10 +55,10 @@ class WellnessRepositoryImpl(
         }
 
         return RiskPrediction(
-            LocalDate.now(),
-            riskLevel,
-            explanation,
-            signals
+            riskLevel = riskLevel,
+            explanation = explanation,
+            contributingSignals = signals,
+            date = LocalDate.now()
         )
     }
 

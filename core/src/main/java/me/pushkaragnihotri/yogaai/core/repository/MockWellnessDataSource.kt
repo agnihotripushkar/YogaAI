@@ -8,10 +8,10 @@ import java.time.LocalDate
 object MockWellnessDataSource {
     fun getTodayRisk(): RiskPrediction {
         return RiskPrediction(
-            date = LocalDate.now(),
             riskLevel = RiskLevel.MEDIUM,
             explanation = "Your sleep was slightly fragmented last night.",
-            contributingSignals = listOf("Sleep Efficiency: 85%", "Resting HR: +5 bpm")
+            contributingSignals = listOf("Sleep Efficiency: 85%", "Resting HR: +5 bpm"),
+            date = LocalDate.now()
         )
     }
 
@@ -25,9 +25,9 @@ object MockWellnessDataSource {
     
     fun getHistory(): List<RiskPrediction> {
         return listOf(
-            RiskPrediction(LocalDate.now().minusDays(1), RiskLevel.LOW, "Great recovery.", emptyList()),
-            RiskPrediction(LocalDate.now().minusDays(2), RiskLevel.HIGH, "High fatigue detected.", listOf("Low Sleep", "High Steps")),
-            RiskPrediction(LocalDate.now().minusDays(3), RiskLevel.LOW, "Stable baseline.", emptyList())
+            RiskPrediction(riskLevel = RiskLevel.LOW, explanation = "Great recovery.", contributingSignals = emptyList(), date = LocalDate.now().minusDays(1)),
+            RiskPrediction(riskLevel = RiskLevel.HIGH, explanation = "High fatigue detected.", contributingSignals = listOf("Low Sleep", "High Steps"), date = LocalDate.now().minusDays(2)),
+            RiskPrediction(riskLevel = RiskLevel.LOW, explanation = "Stable baseline.", contributingSignals = emptyList(), date = LocalDate.now().minusDays(3))
         )
     }
 }

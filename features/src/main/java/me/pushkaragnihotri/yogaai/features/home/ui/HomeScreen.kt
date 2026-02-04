@@ -10,8 +10,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import me.pushkaragnihotri.yogaai.core.model.DailyMetric
+import me.pushkaragnihotri.yogaai.core.model.RiskLevel
+import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.R
+import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.home.ui.components.HomeScreenContent
 import org.koin.androidx.compose.koinViewModel
 
@@ -22,8 +26,16 @@ fun HomeScreen(
     onStartYogaSession: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    StatelessHomeScreen(uiState, onStartYogaSession)
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StatelessHomeScreen(
+    uiState: HomeUiState,
+    onStartYogaSession: () -> Unit,
+) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -44,5 +56,28 @@ fun HomeScreen(
                 onStartYogaSession = onStartYogaSession
             )
         }
+    }
+}
+
+@DevicePreviews
+@Composable
+fun HomeScreenPreview() {
+    YogaAITheme {
+        StatelessHomeScreen(
+            uiState = HomeUiState(
+                isLoading = false,
+                riskPrediction = RiskPrediction(
+                    riskLevel = RiskLevel.LOW,
+                    explanation = "Your stress levels are low and recovery is high. Great day for a workout!",
+                    contributingSignals = emptyList()
+                ),
+                metrics = DailyMetric(
+                    steps = 8500,
+                    sleepDurationMinutes = 480,
+                    restingHeartRate = 62
+                )
+            ),
+            onStartYogaSession = {}
+        )
     }
 }
