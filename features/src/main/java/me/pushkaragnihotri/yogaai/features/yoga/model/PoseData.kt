@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.poseresult
+package me.pushkaragnihotri.yogaai.features.yoga.model
 
 data class PoseDetail(
     val name: String,

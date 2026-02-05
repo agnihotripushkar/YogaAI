@@ -33,15 +33,8 @@ fun HomeScreen(
 fun StatelessHomeScreen(
     uiState: HomeUiState
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.home_title)) },
-                scrollBehavior = scrollBehavior
-            )
-        }
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -68,11 +61,7 @@ fun HomeScreenPreview() {
                     explanation = "Your stress levels are low and recovery is high. Great day for a workout!",
                     contributingSignals = emptyList()
                 ),
-                metrics = DailyMetric(
-                    steps = 8500,
-                    sleepDurationMinutes = 480,
-                    restingHeartRate = 62
-                )
+                wellnessItems = emptyList()
             )
         )
     }

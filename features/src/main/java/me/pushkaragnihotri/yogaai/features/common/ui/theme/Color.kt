@@ -43,3 +43,32 @@ val PrivacyIconBg = LavenderContainer
 val PrivacyIconTint = Color(0xFF5C6BC0)
 val HealthIconBg = EarthContainer
 val HealthIconTint = Color(0xFF8D6E63)
+
+// Home - Wellness
+val WellnessSleep = Color(0xFF5C6BC0)
+val WellnessSteps = Color(0xFFE89E58)
+val WellnessHR = Color(0xFFE91E63)
+val WellnessCalories = Color(0xFFFF5722)
+val CardBackgroundLight = Color(0xFFF2F5F1)
+
+// Dynamic Status
+val StatusGreen = Color(0xFF4CAF50)
+val StatusOrange = Color(0xFFFF9800)
+val StatusRed = Color(0xFFF44336)
+
+// Risk Colors
+val RiskLowLight = Color(0xFFE6F4EA)
+val RiskLowTextLight = Color(0xFF137333)
+val RiskMediumLight = Color(0xFFFEF7E0)
+val RiskMediumTextLight = Color(0xFFEA8600)
+val RiskLowDark = Color(0xFF0F522E)
+val RiskLowTextDark = Color(0xFFC3EED0)
+val RiskMediumDark = Color(0xFF5C4200)
+val RiskMediumTextDark = Color(0xFFFFDFA6)
+
+// Yoga / Pose
+val Gunmetal = Color(0xFF1E2124)
+val BrightGreen = Color(0xFF00E676)
+val AccentTeal = Color(0xFF1DE9B6)
+val RedButton = Color(0xFFD32F2F)
+val DarkOverlay = Color(0xFF2C2C2C)

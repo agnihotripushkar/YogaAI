@@ -99,4 +99,27 @@
     <string name="profile_level_intermediate">Intermediate</string>
     <string name="profile_level_advanced">Advanced</string>
     <string name="profile_complete_button">Complete Setup</string>
+    <!-- Home Refinement -->
+    <string name="daily_wellness">Daily Wellness</string>
+    <string name="greeting_namaste">NAMASTE</string>
+    <string name="profile_default_name">Sarah</string>
+    <string name="metric_score_label">SCORE</string>
+
+    <!-- Yoga Detector -->
+    <string name="camera_permission_needed">Camera permission needed</string>
+    <string name="camera_permission_grant">Grant Permission</string>
+    <string name="feedback_great_balance">Great balance!</string>
+    <string name="feedback_default_success">Great job!</string>
+    <string name="feedback_adjust_pose">Adjust your pose</string>
+    <string name="feedback_aligning">Aligning...</string>
+    <string name="session_stopped">Session Stopped</string>
+    
+    <!-- Pose Result -->
+    <string name="result_title">Analysis Complete</string>
+    <string name="result_label_duration">Duration</string>
+    <string name="result_back_home">Back to Home</string>
+    <string name="result_section_benefits">Benefits</string>
+    <string name="result_section_alignment">Alignment Cues</string>
+    <string name="result_section_instructions">Instructions</string>
+    <string name="result_section_contraindications">Contraindications</string>
 </resources>

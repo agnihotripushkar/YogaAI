@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.yogadetector
+package me.pushkaragnihotri.yogaai.features.yoga.ui
 
 import android.Manifest
 import android.graphics.Bitmap
@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
+import me.pushkaragnihotri.yogaai.features.R
+import me.pushkaragnihotri.yogaai.features.common.ui.theme.*
+import me.pushkaragnihotri.yogaai.features.yoga.viewmodel.YogaDetectorViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,7 +83,7 @@ fun YogaDetectorScreen(
             onNavigateToResult(
                 uiState.poseName,
                 uiState.holdTimeSeconds.toString(),
-                uiState.feedback.ifEmpty { "Great job!" }
+                uiState.feedback.ifEmpty { "Great job!" } // Local fallback, could be resource too but this string comes from VM potentially
             )
         }
     }
@@ -141,12 +145,12 @@ fun YogaDetectorScreen(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Camera permission needed",
+                        text = stringResource(R.string.camera_permission_needed),
                         color = Color.White
                     )
                     Spacer(Modifier.height(8.dp))
                     Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
-                        Text("Grant Permission")
+                        Text(stringResource(R.string.camera_permission_grant))
                     }
                 }
             }
@@ -174,7 +178,7 @@ fun BottomSheetControls(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF1E2124).copy(alpha = 0.95f) // Dark Gunmetal
+            containerColor = Gunmetal.copy(alpha = 0.95f)
         ),
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
@@ -198,12 +202,12 @@ fun BottomSheetControls(
                  Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Correct",
-                    tint = Color(0xFF00E676),
+                    tint = BrightGreen,
                     modifier = Modifier.size(48.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Great balance!",
+                    text = stringResource(R.string.feedback_great_balance),
                     style = MaterialTheme.typography.displaySmall,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -213,13 +217,13 @@ fun BottomSheetControls(
                         text = feedback,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.LightGray,
-                         textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center,
                          modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             } else {
                  Text(
-                    text = "Adjust your pose",
+                    text = stringResource(R.string.feedback_adjust_pose),
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -228,13 +232,13 @@ fun BottomSheetControls(
                      Text(
                         text = feedback,
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color(0xFF1DE9B6), // Accent color for instructions
+                        color = AccentTeal,
                         textAlign = TextAlign.Center,
                          modifier = Modifier.padding(top = 8.dp)
                     )
                 } else {
                      Text(
-                        text = "Aligning...",
+                        text = stringResource(R.string.feedback_aligning),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color.Gray
                     )
@@ -267,7 +271,7 @@ fun BottomSheetControls(
                 Button(
                     onClick = onStop,
                     shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                    colors = ButtonDefaults.buttonColors(containerColor = RedButton),
                     modifier = Modifier.size(72.dp),
                     contentPadding = PaddingValues(0.dp)
                 ) {
@@ -307,7 +311,7 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
         contentAlignment = Alignment.Center
     ) {
         Surface(
-            color = Color(0xFF2C2C2C).copy(alpha = 0.8f),
+            color = DarkOverlay.copy(alpha = 0.8f),
             shape = RoundedCornerShape(50),
             modifier = Modifier.height(48.dp)
         ) {
@@ -336,8 +340,8 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Icon(
                         imageVector = Icons.Default.Timer,
-                        contentDescription = "Timer",
-                        tint = Color(0xFF00E676), // Bright Green
+                        contentDescription = "Timer", // This could also be extracted
+                        tint = BrightGreen, 
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
@@ -350,13 +354,13 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
                 
                 // Confidence Pill
                 Surface(
-                    color = Color(0xFF004D40), // Dark Teal
+                    color = Color(0xFF004D40), // Dark Teal - Consider extracting or keeping specific if very contextual
                     shape = RoundedCornerShape(50),
                     modifier = Modifier
                 ) {
                    Text(
                         text = "${(confidence * 100).toInt()}%",
-                        color = Color(0xFF1DE9B6), // Accent Teal
+                        color = AccentTeal,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -432,7 +436,7 @@ fun PoseOverlay(result: PoseLandmarkerResult, isCorrect: Boolean) {
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )
                 drawCircle(
-                    color = if (isCorrect) Color(0xFF00E676) else Color.White,
+                    color = if (isCorrect) BrightGreen else Color.White,
                     radius = 4f,
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )

@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.poseresult
+package me.pushkaragnihotri.yogaai.features.yoga.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,7 +12,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.yoga.model.PoseRepository
+import me.pushkaragnihotri.yogaai.features.R
 
 @Composable
 fun PoseResultScreen(
@@ -31,7 +34,7 @@ fun PoseResultScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Analysis Complete",
+            text = stringResource(R.string.result_title),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -68,7 +71,7 @@ fun PoseResultScreen(
                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                      Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Duration", style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(R.string.result_label_duration), style = MaterialTheme.typography.labelLarge)
                         Text("$duration s", style = MaterialTheme.typography.titleLarge)
                     }
                 }
@@ -78,7 +81,7 @@ fun PoseResultScreen(
                     text = feedback,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = if (feedback.contains("Great")) Color(0xFF006400) else MaterialTheme.colorScheme.error
+                    color = if (feedback.contains("Great")) Color(0xFF006400) else MaterialTheme.colorScheme.error // Consider extracting 0xFF006400 (DarkGreen)
                 )
             }
         }
@@ -87,19 +90,19 @@ fun PoseResultScreen(
         
         // Detail Sections
         if (poseDetail.benefits.isNotEmpty()) {
-            DetailSection(title = "Benefits", items = poseDetail.benefits)
+            DetailSection(title = stringResource(R.string.result_section_benefits), items = poseDetail.benefits)
         }
         
         if (poseDetail.alignmentCues.isNotEmpty()) {
-             DetailSection(title = "Alignment Cues", items = poseDetail.alignmentCues)
+             DetailSection(title = stringResource(R.string.result_section_alignment), items = poseDetail.alignmentCues)
         }
         
         if (poseDetail.instructions.isNotEmpty()) {
-             DetailSection(title = "Instructions", items = poseDetail.instructions, isOrdered = true)
+             DetailSection(title = stringResource(R.string.result_section_instructions), items = poseDetail.instructions, isOrdered = true)
         }
 
          if (poseDetail.contraindications.isNotEmpty()) {
-             DetailSection(title = "Contraindications", items = poseDetail.contraindications, bulletColor = MaterialTheme.colorScheme.error)
+             DetailSection(title = stringResource(R.string.result_section_contraindications), items = poseDetail.contraindications, bulletColor = MaterialTheme.colorScheme.error)
         }
         
         Spacer(modifier = Modifier.height(48.dp))
@@ -108,7 +111,7 @@ fun PoseResultScreen(
             onClick = onHomeClick,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Back to Home")
+            Text(stringResource(R.string.result_back_home))
         }
     }
 }

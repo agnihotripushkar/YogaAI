@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.yogadetector
+package me.pushkaragnihotri.yogaai.features.yoga.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

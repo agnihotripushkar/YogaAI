@@ -16,8 +16,8 @@ import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
 
 import org.koin.androidx.compose.koinViewModel
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
-import me.pushkaragnihotri.yogaai.features.poseresult.PoseResultScreen
-import me.pushkaragnihotri.yogaai.features.yogadetector.YogaDetectorScreen
+import me.pushkaragnihotri.yogaai.features.yoga.ui.PoseResultScreen
+import me.pushkaragnihotri.yogaai.features.yoga.ui.YogaDetectorScreen
 
 @Composable
 fun YogaNavigation(
