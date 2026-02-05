@@ -67,14 +67,15 @@
 
     <!-- Onboarding -->
     <string name="app_name_splash">YogaAI</string>
-    <string name="app_tagline">Mindful Tech for Wellness</string>
+    <string name="app_tagline">Find your flow</string>
+    <string name="splash_loading">LOADING EXPERIENCE</string>
     
-    <string name="intro_title_1">Predictive Insights</string>
-    <string name="intro_desc_1">Convert your wearable data into early warnings for fatigue and potential burnout before they happen.</string>
-    <string name="intro_title_2">Privacy First</string>
-    <string name="intro_desc_2">Your data stays on your device. We use privacy-preserving analytics to keep you safe and secure.</string>
-    <string name="intro_title_3">Not Medical Advice</string>
-    <string name="intro_desc_3">We provide wellness guidance, but always consult a professional for medical concerns.</string>
+    <string name="intro_title_1">Real-time AI Feedback</string>
+    <string name="intro_desc_1">Our advanced computer vision analyzes your movement instantly, offering gentle corrections.</string>
+    <string name="intro_title_2">Personalized Practice</string>
+    <string name="intro_desc_2">Our AI analyzes your flexibility and goals to build a sequence that evolves with your body every single day.</string>
+    <string name="intro_title_3">Track Your Wellness</string>
+    <string name="intro_desc_3">Sync with Health Connect to weave your sleep and step data into your yoga practice. Let our AI tailor routines to your daily vitality.</string>
     <string name="intro_button_next">Next</string>
     <string name="intro_button_start">Get Started</string>
     

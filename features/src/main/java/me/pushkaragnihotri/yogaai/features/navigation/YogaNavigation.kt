@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.splash.ui.SplashScreen
@@ -21,6 +22,7 @@ import me.pushkaragnihotri.yogaai.features.yogadetector.YogaDetectorScreen
 @Composable
 fun YogaNavigation(
     navController: NavHostController = rememberNavController(),
+    windowSizeClass: WindowWidthSizeClass,
     finalDestination: String
 ) {
     NavHost(
@@ -38,6 +40,7 @@ fun YogaNavigation(
         }
         composable(YogaDestinations.ONBOARDING_ROUTE) {
             OnboardingScreen(
+                windowSizeClass = windowSizeClass,
                 onOnboardingComplete = {
                     navController.navigate(YogaDestinations.CONSENT_ROUTE) {
                         popUpTo(YogaDestinations.ONBOARDING_ROUTE) { inclusive = true }

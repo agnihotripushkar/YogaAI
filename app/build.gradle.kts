@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "me.pushkaragnihotri.yogaai"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "me.pushkaragnihotri.yogaai"
@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.window.size)
     implementation(libs.androidx.navigation.compose)
     
     // Koin

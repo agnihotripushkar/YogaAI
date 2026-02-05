@@ -35,30 +35,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
 import androidx.compose.ui.tooling.preview.Preview
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun YogaDetectorScreen(
     viewModel: YogaDetectorViewModel = koinViewModel(),
     onNavigateToResult: (String, String, String) -> Unit = { _, _, _ -> }
 ) {
     val context = LocalContext.current
-    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val launcher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasCameraPermission = isGranted
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) {
+            launcher.launch(Manifest.permission.CAMERA)
+        }
+        viewModel.poseDetectionManager.setup(context, viewModel)
+    }
+
     val uiState by viewModel.uiState.collectAsState()
     var isMuted by remember { mutableStateOf(false) }
     var cameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
-
-    LaunchedEffect(Unit) {
-        viewModel.poseDetectionManager.setup(context, viewModel)
-    }
 
     LaunchedEffect(uiState.isPoseCompleted) {
         if (uiState.isPoseCompleted) {
@@ -71,7 +85,7 @@ fun YogaDetectorScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        if (cameraPermissionState.status.isGranted) {
+        if (hasCameraPermission) {
             CameraPreview(
                 cameraSelector = cameraSelector,
                 onImageAnalyzed = { imageProxy ->
@@ -125,13 +139,16 @@ fun YogaDetectorScreen(
         } else {
             // Permission Request State
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Camera permission needed",
-                    color = Color.White
-                )
-            }
-            LaunchedEffect(Unit) {
-                cameraPermissionState.launchPermissionRequest()
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Camera permission needed",
+                        color = Color.White
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
+                        Text("Grant Permission")
+                    }
+                }
             }
         }
 

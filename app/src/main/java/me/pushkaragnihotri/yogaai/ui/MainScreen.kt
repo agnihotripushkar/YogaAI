@@ -5,6 +5,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import me.pushkaragnihotri.yogaai.features.navigation.YogaBottomBar
@@ -14,7 +15,10 @@ import me.pushkaragnihotri.yogaai.features.navigation.YogaDestinations
 import me.pushkaragnihotri.yogaai.features.navigation.YogaNavigation
 
 @Composable
-fun MainScreen(finalDestination: String) {
+fun MainScreen(
+    windowSizeClass: WindowWidthSizeClass,
+    finalDestination: String
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -38,7 +42,11 @@ fun MainScreen(finalDestination: String) {
         // Since YogaNavigation is the NavHost content, we wrap it in a Box or adjust it
         // Ideally YogaNavigation should take a modifier, but for now we wrap it.
         androidx.compose.foundation.layout.Box(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())) {
-            YogaNavigation(navController = navController, finalDestination = finalDestination)
+            YogaNavigation(
+                navController = navController,
+                windowSizeClass = windowSizeClass,
+                finalDestination = finalDestination
+            )
         }
     }
 }
@@ -47,6 +55,9 @@ fun MainScreen(finalDestination: String) {
 @Composable
 fun MainScreenPreview() {
     YogaAITheme {
-        MainScreen(finalDestination = YogaDestinations.HOME_ROUTE)
+        MainScreen(
+            windowSizeClass = WindowWidthSizeClass.Compact,
+            finalDestination = YogaDestinations.HOME_ROUTE
+        )
     }
 }

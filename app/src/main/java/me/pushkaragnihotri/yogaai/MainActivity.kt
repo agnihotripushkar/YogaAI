@@ -12,17 +12,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.ui.MainScreen
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val windowSizeClass = calculateWindowSizeClass(this)
+            
             val viewModel: MainViewModel = org.koin.androidx.compose.koinViewModel()
             val finalDestinationState = viewModel.finalDestination.collectAsState()
             val finalDestination = finalDestinationState.value
@@ -36,7 +41,10 @@ class MainActivity : ComponentActivity() {
             
             YogaAITheme(darkTheme = isDarkTheme) {
                 if (finalDestination != null) {
-                    MainScreen(finalDestination = finalDestination)
+                    MainScreen(
+                        windowSizeClass = windowSizeClass.widthSizeClass,
+                        finalDestination = finalDestination
+                    )
                 } else {
                      // Splash or loading
                      androidx.compose.foundation.layout.Box(

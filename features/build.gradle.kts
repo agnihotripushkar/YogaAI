@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "me.pushkaragnihotri.yogaai.features"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
@@ -44,6 +44,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.window.size)
     implementation(libs.androidx.compose.material.icons.extended)
 
     // Navigation
@@ -60,9 +61,6 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
-
-    // Permissions
-    implementation(libs.google.accompanist.permissions)
 
     // AI
     implementation(libs.mediapipe.tasks.vision)
