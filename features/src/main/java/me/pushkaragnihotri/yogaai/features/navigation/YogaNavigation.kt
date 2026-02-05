@@ -63,11 +63,7 @@ fun YogaNavigation(
             )
         }
         composable(YogaDestinations.HOME_ROUTE) {
-            HomeScreen(
-                onStartYogaSession = {
-                    navController.navigate(YogaDestinations.YOGA_DETECTOR_ROUTE)
-                }
-            )
+            HomeScreen()
         }
         composable(YogaDestinations.YOGA_DETECTOR_ROUTE) {
             YogaDetectorScreen(
@@ -98,9 +94,7 @@ fun YogaNavigation(
                 }
             )
         }
-        composable(YogaDestinations.GOALS_ROUTE) {
-            me.pushkaragnihotri.yogaai.features.goals.ui.GoalsScreen()
-        }
+
         composable(YogaDestinations.SETTINGS_ROUTE) {
              me.pushkaragnihotri.yogaai.features.settings.ui.SettingsScreen(
                  onNavigateUp = { navController.navigateUp() }

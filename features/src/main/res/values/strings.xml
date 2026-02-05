@@ -29,6 +29,7 @@
 
     <!-- Settings Screen -->
     <string name="title_settings">Settings</string>
+    <string name="title_yoga_detector">Pose</string>
     <string name="content_description_back">Back</string>
     <string name="settings_section_appearance">Appearance</string>
     <string name="settings_theme">Theme</string>

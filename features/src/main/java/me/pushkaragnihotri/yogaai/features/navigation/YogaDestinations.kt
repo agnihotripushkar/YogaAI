@@ -2,7 +2,6 @@ package me.pushkaragnihotri.yogaai.features.navigation
 
 object YogaDestinations {
     const val HOME_ROUTE = "home"
-    const val GOALS_ROUTE = "goals"
     const val SETTINGS_ROUTE = "settings"
     const val ONBOARDING_ROUTE = "onboarding"
     const val SPLASH_ROUTE = "splash"

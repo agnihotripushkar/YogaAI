@@ -21,8 +21,7 @@ import me.pushkaragnihotri.yogaai.features.home.ui.HomeUiState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
-    uiState: HomeUiState,
-    onStartYogaSession: () -> Unit = {}
+    uiState: HomeUiState
 ) {
     Column(
         modifier = Modifier
@@ -69,15 +68,7 @@ fun HomeScreenContent(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = onStartYogaSession,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text("Start Yoga Session (AI Pose Detection)")
-        }
 
         Spacer(modifier = Modifier.height(24.dp))
     }

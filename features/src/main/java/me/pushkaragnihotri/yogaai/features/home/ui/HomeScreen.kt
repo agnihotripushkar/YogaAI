@@ -22,18 +22,16 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel(),
-    onStartYogaSession: () -> Unit = {}
+    viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    StatelessHomeScreen(uiState, onStartYogaSession)
+    StatelessHomeScreen(uiState)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatelessHomeScreen(
-    uiState: HomeUiState,
-    onStartYogaSession: () -> Unit,
+    uiState: HomeUiState
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
@@ -52,8 +50,7 @@ fun StatelessHomeScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             HomeScreenContent(
-                uiState = uiState,
-                onStartYogaSession = onStartYogaSession
+                uiState = uiState
             )
         }
     }
@@ -76,8 +73,7 @@ fun HomeScreenPreview() {
                     sleepDurationMinutes = 480,
                     restingHeartRate = 62
                 )
-            ),
-            onStartYogaSession = {}
+            )
         )
     }
 }
