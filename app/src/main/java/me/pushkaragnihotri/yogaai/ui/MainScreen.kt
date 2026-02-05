@@ -26,9 +26,7 @@ fun MainScreen(
     val onboardRoutes = listOf(
         YogaDestinations.SPLASH_ROUTE,
         YogaDestinations.ONBOARDING_ROUTE,
-        YogaDestinations.CONSENT_ROUTE,
-        YogaDestinations.CONNECT_ROUTE,
-        YogaDestinations.PROFILE_SETUP_ROUTE
+        YogaDestinations.CONNECT_ROUTE
     )
 
     Scaffold(

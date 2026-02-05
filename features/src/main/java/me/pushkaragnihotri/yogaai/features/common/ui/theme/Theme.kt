@@ -16,48 +16,52 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = YogaPrimaryDark,
-    onPrimary = YogaOnPrimaryDark,
-    primaryContainer = YogaPrimaryContainerDark,
-    onPrimaryContainer = YogaOnPrimaryContainerDark,
-    secondary = YogaSecondaryDark,
-    onSecondary = YogaOnSecondaryDark,
-    secondaryContainer = YogaSecondaryContainerDark,
-    onSecondaryContainer = YogaOnSecondaryContainerDark,
-    tertiary = YogaTertiaryDark,
-    onTertiary = YogaOnTertiaryDark,
-    tertiaryContainer = YogaTertiaryContainerDark,
-    onTertiaryContainer = YogaOnTertiaryContainerDark,
-    background = YogaBackgroundDark,
-    onBackground = YogaOnBackgroundDark,
-    surface = YogaSurfaceDark,
-    onSurface = YogaOnSurfaceDark
+    primary = SageGreenDark,
+    onPrimary = OnSageContainer,
+    primaryContainer = OnSageContainer,
+    onPrimaryContainer = SageGreenDark,
+    secondary = LavenderDark,
+    onSecondary = OnLavenderContainer,
+    secondaryContainer = OnLavenderContainer,
+    onSecondaryContainer = LavenderDark,
+    tertiary = EarthDark,
+    onTertiary = OnEarthContainer,
+    tertiaryContainer = OnEarthContainer,
+    onTertiaryContainer = EarthDark,
+    background = CharcoalBackground,
+    onBackground = OnCharcoal,
+    surface = CharcoalSurface,
+    onSurface = OnCharcoal,
+    surfaceVariant = CharcoalSurfaceVariant,
+    onSurfaceVariant = OnCharcoal
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = YogaPrimaryLight,
-    onPrimary = YogaOnPrimaryLight,
-    primaryContainer = YogaPrimaryContainerLight,
-    onPrimaryContainer = YogaOnPrimaryContainerLight,
-    secondary = YogaSecondaryLight,
-    onSecondary = YogaOnSecondaryLight,
-    secondaryContainer = YogaSecondaryContainerLight,
-    onSecondaryContainer = YogaOnSecondaryContainerLight,
-    tertiary = YogaTertiaryLight,
-    onTertiary = YogaOnTertiaryLight,
-    tertiaryContainer = YogaTertiaryContainerLight,
-    onTertiaryContainer = YogaOnTertiaryContainerLight,
-    background = YogaBackgroundLight,
-    onBackground = YogaOnBackgroundLight,
-    surface = YogaSurfaceLight,
-    onSurface = YogaOnSurfaceLight
+    primary = SageGreen,
+    onPrimary = OnSage,
+    primaryContainer = SageContainer,
+    onPrimaryContainer = OnSageContainer,
+    secondary = Lavender,
+    onSecondary = OnLavender,
+    secondaryContainer = LavenderContainer,
+    onSecondaryContainer = OnLavenderContainer,
+    tertiary = Earth,
+    onTertiary = OnEarth,
+    tertiaryContainer = EarthContainer,
+    onTertiaryContainer = OnEarthContainer,
+    background = CreamWhite,
+    onBackground = OnCream,
+    surface = CreamSurface,
+    onSurface = OnCream,
+    surfaceVariant = CreamSurfaceVariant,
+    onSurfaceVariant = OnCream
 )
 
 @Composable
 fun YogaAITheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

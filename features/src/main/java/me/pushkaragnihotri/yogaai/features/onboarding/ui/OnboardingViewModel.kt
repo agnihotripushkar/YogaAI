@@ -35,11 +35,8 @@ class OnboardingViewModel(
         }
     }
 
-    fun onProfileFinished(name: String, age: Int, level: String) {
+    fun completeOnboarding() {
          viewModelScope.launch {
-             userPreferences.setUserName(name)
-             userPreferences.setUserAge(age)
-             userPreferences.setUserLevel(level)
              userPreferences.setOnboardingCompleted(true)
          }
     }

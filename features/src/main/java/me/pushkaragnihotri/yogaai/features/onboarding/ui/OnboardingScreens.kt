@@ -183,7 +183,8 @@ fun IntroPageExpanded(
 ) {
     // Expanded: Row Layout (Image | Text)
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Left: Image
@@ -212,8 +213,7 @@ fun IntroPageExpanded(
                     Text(
                         text = stringResource(R.string.connect_skip),
                         style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant // Visible on image? Maybe need shadow or specific color
-                        // Assuming image allows visibility. Usually onSurface or InversePrimary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant 
                     )
                 }
             }
@@ -254,11 +254,14 @@ fun IntroPageExpanded(
                     onClick = onFinished,
                     modifier = buttonModifier,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text(stringResource(R.string.intro_button_start))
+                    Text(
+                        text = stringResource(R.string.intro_button_start),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             } else {
                 Button(
@@ -269,7 +272,10 @@ fun IntroPageExpanded(
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ) {
-                    Text(stringResource(R.string.intro_button_next))
+                    Text(
+                        text = stringResource(R.string.intro_button_next),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }
@@ -374,11 +380,14 @@ fun IntroPageCompact(
                     onClick = onFinished,
                     modifier = buttonModifier,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
-                    Text(stringResource(R.string.intro_button_start))
+                    Text(
+                        text = stringResource(R.string.intro_button_start),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             } else {
                 Button(
@@ -389,7 +398,10 @@ fun IntroPageCompact(
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ) {
-                    Text(stringResource(R.string.intro_button_next))
+                    Text(
+                        text = stringResource(R.string.intro_button_next),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }

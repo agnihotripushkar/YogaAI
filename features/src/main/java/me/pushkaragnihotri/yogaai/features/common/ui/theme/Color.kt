@@ -3,52 +3,43 @@ package me.pushkaragnihotri.yogaai.features.common.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Primary - Calm energetic purple/lavender
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Wellness Palette (Sage & Cream)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Primary - Sage Green
+val SageGreen = Color(0xFF95C495)
+val SageGreenDark = Color(0xFF76A876) // Slightly darker/desaturated for dark mode primary
+val OnSage = Color(0xFFFFFFFF)
+val SageContainer = Color(0xFFD4E8D4)
+val OnSageContainer = Color(0xFF1E381E)
 
-// Seed Colors for M3 Expressive (Nature/Yoga inspired)
-val YogaPrimaryLight = Color(0xFF6750A4)
-val YogaOnPrimaryLight = Color(0xFFFFFFFF)
-val YogaPrimaryContainerLight = Color(0xFFEADDFF)
-val YogaOnPrimaryContainerLight = Color(0xFF21005D)
+// Secondary - Lavender
+val Lavender = Color(0xFF9FA8DA) // Light Indigo/Lavender
+val LavenderDark = Color(0xFF7986CB)
+val OnLavender = Color(0xFFFFFFFF)
+val LavenderContainer = Color(0xFFE8EAF6) // Very light indigo
+val OnLavenderContainer = Color(0xFF1A237E)
 
-val YogaSecondaryLight = Color(0xFF625B71)
-val YogaOnSecondaryLight = Color(0xFFFFFFFF)
-val YogaSecondaryContainerLight = Color(0xFFE8DEF8)
-val YogaOnSecondaryContainerLight = Color(0xFF1D192B)
+// Tertiary - Earth/Beige
+val Earth = Color(0xFFBCAAA4) // Brown/Earth
+val EarthDark = Color(0xFF8D6E63) 
+val OnEarth = Color(0xFFFFFFFF)
+val EarthContainer = Color(0xFFFBE9E7) // Light Orange/Beige
+val OnEarthContainer = Color(0xFF3E2723)
 
-val YogaTertiaryLight = Color(0xFF7D5260) // Rose
-val YogaOnTertiaryLight = Color(0xFFFFFFFF)
-val YogaTertiaryContainerLight = Color(0xFFFFD8E4)
-val YogaOnTertiaryContainerLight = Color(0xFF31111D)
+// Backgrounds & Surfaces (Light)
+val CreamWhite = Color(0xFFF9F9F4)
+val CreamSurface = Color(0xFFFFFFFF)
+val CreamSurfaceVariant = Color(0xFFF0F0EB)
+val OnCream = Color(0xFF1C1C1A)
 
-val YogaBackgroundLight = Color(0xFFFFFBFE)
-val YogaOnBackgroundLight = Color(0xFF1C1B1F)
-val YogaSurfaceLight = Color(0xFFFFFBFE)
-val YogaOnSurfaceLight = Color(0xFF1C1B1F)
+// Backgrounds & Surfaces (Dark)
+val CharcoalBackground = Color(0xFF1A1C19) // Warm Dark Grey
+val CharcoalSurface = Color(0xFF1A1C19)
+val CharcoalSurfaceVariant = Color(0xFF424940)
+val OnCharcoal = Color(0xFFE2E3DD)
 
-
-val YogaPrimaryDark = Color(0xFFD0BCFF)
-val YogaOnPrimaryDark = Color(0xFF381E72)
-val YogaPrimaryContainerDark = Color(0xFF4F378B)
-val YogaOnPrimaryContainerDark = Color(0xFFEADDFF)
-
-val YogaSecondaryDark = Color(0xFFCCC2DC)
-val YogaOnSecondaryDark = Color(0xFF332D41)
-val YogaSecondaryContainerDark = Color(0xFF4A4458)
-val YogaOnSecondaryContainerDark = Color(0xFFE8DEF8)
-
-val YogaTertiaryDark = Color(0xFFEFB8C8)
-val YogaOnTertiaryDark = Color(0xFF492532)
-val YogaTertiaryContainerDark = Color(0xFF633B48)
-val YogaOnTertiaryContainerDark = Color(0xFFFFD8E4)
-
-val YogaBackgroundDark = Color(0xFF1C1B1F)
-val YogaOnBackgroundDark = Color(0xFFE6E1E5)
-val YogaSurfaceDark = Color(0xFF1C1B1F)
-val YogaOnSurfaceDark = Color(0xFFE6E1E5)
+// Specific Colors for Connect Screen (Legacy support or specific use)
+val PrivacyIconBg = LavenderContainer
+val PrivacyIconTint = Color(0xFF5C6BC0)
+val HealthIconBg = EarthContainer
+val HealthIconTint = Color(0xFF8D6E63)

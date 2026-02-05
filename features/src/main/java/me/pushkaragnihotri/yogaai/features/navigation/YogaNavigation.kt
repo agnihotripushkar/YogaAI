@@ -11,9 +11,9 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.splash.ui.SplashScreen
-import me.pushkaragnihotri.yogaai.features.consent.ui.ConsentScreen
+
 import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
-import me.pushkaragnihotri.yogaai.features.profilesetup.ui.ProfileSetupScreen
+
 import org.koin.androidx.compose.koinViewModel
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
 import me.pushkaragnihotri.yogaai.features.poseresult.PoseResultScreen
@@ -39,22 +39,13 @@ fun YogaNavigation(
             )
         }
         composable(YogaDestinations.ONBOARDING_ROUTE) {
+            val viewModel: OnboardingViewModel = koinViewModel()
             OnboardingScreen(
                 windowSizeClass = windowSizeClass,
                 onOnboardingComplete = {
-                    navController.navigate(YogaDestinations.CONSENT_ROUTE) {
-                        popUpTo(YogaDestinations.ONBOARDING_ROUTE) { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable(YogaDestinations.CONSENT_ROUTE) {
-            val viewModel: OnboardingViewModel = koinViewModel()
-            ConsentScreen(
-                onConsentGiven = {
                     viewModel.onConsentGranted()
                     navController.navigate(YogaDestinations.CONNECT_ROUTE) {
-                        popUpTo(YogaDestinations.CONSENT_ROUTE) { inclusive = true }
+                        popUpTo(YogaDestinations.ONBOARDING_ROUTE) { inclusive = true }
                     }
                 }
             )
@@ -64,19 +55,9 @@ fun YogaNavigation(
             ConnectScreen(
                 viewModel = viewModel,
                 onFinished = {
-                    navController.navigate(YogaDestinations.PROFILE_SETUP_ROUTE) {
-                        popUpTo(YogaDestinations.CONNECT_ROUTE) { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable(YogaDestinations.PROFILE_SETUP_ROUTE) {
-            val viewModel: OnboardingViewModel = koinViewModel()
-            ProfileSetupScreen(
-                onFinished = { name, age, level ->
-                    viewModel.onProfileFinished(name, age, level)
+                    viewModel.completeOnboarding()
                     navController.navigate(YogaDestinations.HOME_ROUTE) {
-                        popUpTo(YogaDestinations.PROFILE_SETUP_ROUTE) { inclusive = true }
+                        popUpTo(YogaDestinations.CONNECT_ROUTE) { inclusive = true }
                     }
                 }
             )
