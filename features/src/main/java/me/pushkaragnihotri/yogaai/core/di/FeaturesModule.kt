@@ -1,6 +1,7 @@
-package me.pushkaragnihotri.yogaai.features.di
+package me.pushkaragnihotri.yogaai.core.di
 
 
+// import me.pushkaragnihotri.yogaai.features.home.domain.GetDailyWellnessUseCase
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeViewModel
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
 import me.pushkaragnihotri.yogaai.features.settings.viewmodel.SettingsViewModel
@@ -9,9 +10,9 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val featuresModule = module {
-    factory { me.pushkaragnihotri.yogaai.features.home.domain.GetDailyWellnessUseCase(get()) }
+    // factory { GetDailyWellnessUseCase(get()) } - Removed
 
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get()) }
     viewModel { OnboardingViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get()) }
     viewModel { YogaDetectorViewModel(get(), get()) }

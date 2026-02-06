@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.navigation
+package me.pushkaragnihotri.yogaai.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -16,6 +16,7 @@ import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
 
 import org.koin.androidx.compose.koinViewModel
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
+import me.pushkaragnihotri.yogaai.features.settings.ui.SettingsScreen
 import me.pushkaragnihotri.yogaai.features.yoga.ui.PoseResultScreen
 import me.pushkaragnihotri.yogaai.features.yoga.ui.YogaDetectorScreen
 
@@ -96,9 +97,9 @@ fun YogaNavigation(
         }
 
         composable(YogaDestinations.SETTINGS_ROUTE) {
-             me.pushkaragnihotri.yogaai.features.settings.ui.SettingsScreen(
-                 onNavigateUp = { navController.navigateUp() }
-             )
+            SettingsScreen(
+                onNavigateUp = { navController.navigateUp() }
+            )
         }
     }
 }

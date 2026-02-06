@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.stringResource
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.yoga.model.PoseRepository
 import me.pushkaragnihotri.yogaai.features.R
 

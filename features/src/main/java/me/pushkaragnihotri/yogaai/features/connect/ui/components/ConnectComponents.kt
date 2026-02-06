@@ -19,12 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun ConnectScreenContent(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {

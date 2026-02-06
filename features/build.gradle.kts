@@ -87,4 +87,7 @@ dependencies {
 
     // Timber
     implementation(libs.timber)
+    
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
 }

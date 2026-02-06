@@ -31,7 +31,7 @@ class YogaDetectorViewModel(
 ) : ViewModel(), PoseDetectionListener {
 
     companion object {
-        private const val TARGET_HOLD_TIME_SECONDS = 10
+        // No constants needed currently
     }
 
     private val _uiState = MutableStateFlow(YogaDetectorUiState())
@@ -68,18 +68,7 @@ class YogaDetectorViewModel(
                 while (true) {
                     delay(1000)
                     _uiState.update { 
-                        val newTime = it.holdTimeSeconds + 1
-                        if (newTime >= TARGET_HOLD_TIME_SECONDS) {
-                            // Pose completed!
-                            timerJob?.cancel() // Stop the timer
-                            it.copy(
-                                holdTimeSeconds = newTime,
-                                isPoseCompleted = true,
-                                // Keep the last feedback
-                            )
-                        } else {
-                            it.copy(holdTimeSeconds = newTime)
-                        }
+                        it.copy(holdTimeSeconds = it.holdTimeSeconds + 1)
                     }
                 }
             }

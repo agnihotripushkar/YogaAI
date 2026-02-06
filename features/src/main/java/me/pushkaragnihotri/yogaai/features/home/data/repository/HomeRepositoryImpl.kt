@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.core.repository
+package me.pushkaragnihotri.yogaai.features.home.data.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -7,26 +7,17 @@ import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.model.DailyMetric
 import me.pushkaragnihotri.yogaai.core.model.RiskLevel
 import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
-import me.pushkaragnihotri.yogaai.core.wellness.WellnessExplanationGenerator
+import me.pushkaragnihotri.yogaai.features.home.domain.repository.HomeRepository
+import me.pushkaragnihotri.yogaai.features.home.wellness.WellnessExplanationGenerator
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-interface WellnessRepository {
-    val todayMetrics: StateFlow<DailyMetric>
-    suspend fun refreshMetrics()
-    suspend fun getTodayRisk(): RiskPrediction
-    suspend fun getRiskByDate(date: LocalDate): RiskPrediction?
-    suspend fun getTodayMetrics(): DailyMetric
-    suspend fun getRiskHistory(): List<RiskPrediction>
-    suspend fun disconnect()
-}
-
-class WellnessRepositoryImpl(
+class HomeRepositoryImpl(
     private val healthConnectManager: HealthConnectManager,
     private val explanationGenerator: WellnessExplanationGenerator? = null,
     private val isDemoMode: Boolean = false
-) : WellnessRepository {
+) : HomeRepository {
 
     private val _todayMetrics = MutableStateFlow(DailyMetric())
     override val todayMetrics: StateFlow<DailyMetric> = _todayMetrics.asStateFlow()

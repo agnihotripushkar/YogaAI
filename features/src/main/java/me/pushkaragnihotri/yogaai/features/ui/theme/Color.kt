@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.common.ui.theme
+package me.pushkaragnihotri.yogaai.features.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

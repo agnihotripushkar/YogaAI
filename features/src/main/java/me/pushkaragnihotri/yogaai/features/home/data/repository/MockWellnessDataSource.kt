@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.core.repository
+package me.pushkaragnihotri.yogaai.features.home.data.repository
 
 import me.pushkaragnihotri.yogaai.core.model.DailyMetric
 import me.pushkaragnihotri.yogaai.core.model.RiskLevel

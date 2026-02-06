@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.navigation
+package me.pushkaragnihotri.yogaai.core.navigation
 
 object YogaDestinations {
     const val HOME_ROUTE = "home"

@@ -5,20 +5,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.collectAsState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.ui.MainScreen
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 class MainActivity : ComponentActivity() {
@@ -47,12 +45,12 @@ class MainActivity : ComponentActivity() {
                     )
                 } else {
                      // Splash or loading
-                     androidx.compose.foundation.layout.Box(
-                         modifier = Modifier.fillMaxSize(), 
-                         contentAlignment = androidx.compose.ui.Alignment.Center
-                     ) { 
-                         androidx.compose.material3.CircularProgressIndicator() 
-                     }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }

@@ -10,7 +10,7 @@ import me.pushkaragnihotri.yogaai.features.connect.ui.components.ConnectScreenCo
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
 import timber.log.Timber
 import androidx.compose.ui.tooling.preview.Preview
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {

@@ -19,7 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun SplashScreenContent() {

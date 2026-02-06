@@ -8,11 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.health.connect.client.HealthConnectClient
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun SettingsScreenContent(

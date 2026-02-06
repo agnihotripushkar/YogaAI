@@ -23,11 +23,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -37,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun OnboardingScreen(

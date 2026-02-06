@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.common.ui.theme
+package me.pushkaragnihotri.yogaai.features.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

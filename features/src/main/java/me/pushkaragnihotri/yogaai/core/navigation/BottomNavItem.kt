@@ -1,12 +1,10 @@
-package me.pushkaragnihotri.yogaai.features.navigation
+package me.pushkaragnihotri.yogaai.core.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.SelfImprovement
 import androidx.compose.material.icons.outlined.SelfImprovement
 import androidx.compose.ui.graphics.vector.ImageVector

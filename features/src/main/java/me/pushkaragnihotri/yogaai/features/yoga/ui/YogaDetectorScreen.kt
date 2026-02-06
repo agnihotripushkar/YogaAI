@@ -29,6 +29,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import me.pushkaragnihotri.yogaai.features.ui.theme.*
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,12 +42,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import me.pushkaragnihotri.yogaai.features.R
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.*
+import me.pushkaragnihotri.yogaai.features.ui.theme.*
 import me.pushkaragnihotri.yogaai.features.yoga.viewmodel.YogaDetectorViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
 import androidx.compose.ui.tooling.preview.Preview
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun YogaDetectorScreen(
@@ -78,12 +82,28 @@ fun YogaDetectorScreen(
     var isMuted by remember { mutableStateOf(false) }
     var cameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
 
+    // TTS Integration
+    val ttsManager = remember { me.pushkaragnihotri.yogaai.features.common.audio.TextToSpeechManager(context) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            ttsManager.shutdown()
+        }
+    }
+
+    LaunchedEffect(uiState.feedback, isMuted) {
+        if (!isMuted && uiState.feedback.isNotEmpty()) {
+            ttsManager.speak(uiState.feedback)
+        }
+    }
+
     LaunchedEffect(uiState.isPoseCompleted) {
         if (uiState.isPoseCompleted) {
+            ttsManager.stop() // Stop speaking on completion
             onNavigateToResult(
                 uiState.poseName,
                 uiState.holdTimeSeconds.toString(),
-                uiState.feedback.ifEmpty { "Great job!" } // Local fallback, could be resource too but this string comes from VM potentially
+                uiState.feedback.ifEmpty { "Great job!" } 
             )
         }
     }

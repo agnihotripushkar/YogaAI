@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 import me.pushkaragnihotri.yogaai.features.splash.ui.components.SplashScreenContent
 import androidx.compose.ui.tooling.preview.Preview
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {

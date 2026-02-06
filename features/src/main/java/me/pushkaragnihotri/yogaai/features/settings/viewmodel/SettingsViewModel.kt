@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.UserPreferences
-import me.pushkaragnihotri.yogaai.core.repository.WellnessRepository
+import me.pushkaragnihotri.yogaai.features.home.domain.repository.HomeRepository
 
 class SettingsViewModel(
     private val userPreferences: UserPreferences,
     private val healthConnectManager: HealthConnectManager,
-    private val wellnessRepository: WellnessRepository
+    private val homeRepository: HomeRepository
 ) : ViewModel() {
 
     val themeMode = userPreferences.themeMode
@@ -36,7 +36,7 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            wellnessRepository.todayMetrics.collect { metrics ->
+            homeRepository.todayMetrics.collect { metrics ->
                 _steps.value = metrics.steps
                 _calories.value = metrics.calories
             }
@@ -68,7 +68,7 @@ class SettingsViewModel(
 
     private fun readHealthData() {
         viewModelScope.launch {
-            wellnessRepository.refreshMetrics()
+            homeRepository.refreshMetrics()
         }
     }
 

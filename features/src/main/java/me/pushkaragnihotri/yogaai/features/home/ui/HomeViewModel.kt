@@ -8,9 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
-import me.pushkaragnihotri.yogaai.core.repository.WellnessRepository
-import me.pushkaragnihotri.yogaai.features.home.domain.GetDailyWellnessUseCase
-import me.pushkaragnihotri.yogaai.features.home.model.WellnessUiModel
+import me.pushkaragnihotri.yogaai.features.home.domain.repository.HomeRepository
+import me.pushkaragnihotri.yogaai.features.home.data.model.WellnessUiModel
 
 data class HomeUiState(
     val riskPrediction: RiskPrediction? = null,
@@ -19,8 +18,7 @@ data class HomeUiState(
 )
 
 class HomeViewModel(
-    private val repository: WellnessRepository,
-    private val getDailyWellnessUseCase: GetDailyWellnessUseCase
+    private val homeRepository: HomeRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -28,20 +26,27 @@ class HomeViewModel(
 
     init {
         viewModelScope.launch {
-            getDailyWellnessUseCase().collect { items ->
-                _uiState.update { it.copy(wellnessItems = items) }
-            }
+            homeRepository.refreshMetrics()
+            val metrics = homeRepository.getTodayMetrics()
+            val prediction = homeRepository.getTodayRisk()
+            
+            // Initial UI update with fetched data
+             _uiState.update {
+                it.copy(
+                     riskPrediction = prediction,
+                     isLoading = false
+                )
+             }
         }
-        loadData()
     }
 
     private fun loadData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
-                // Risk is still fetched directly from repo for now (could be another use case)
-                val risk = repository.getTodayRisk()
-                repository.refreshMetrics()
+                // Refresh and fetch again to be sure
+                homeRepository.refreshMetrics()
+                val risk = homeRepository.getTodayRisk()
                 _uiState.update {
                     it.copy(
                         riskPrediction = risk,

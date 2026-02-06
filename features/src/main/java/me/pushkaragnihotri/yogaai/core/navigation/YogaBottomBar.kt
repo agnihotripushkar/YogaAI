@@ -1,16 +1,13 @@
-package me.pushkaragnihotri.yogaai.features.navigation
+package me.pushkaragnihotri.yogaai.core.navigation
 
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,10 +31,10 @@ fun YogaBottomBar(
                 icon = { 
                     Icon(
                         imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon, 
-                        contentDescription = androidx.compose.ui.res.stringResource(screen.labelResId)
+                        contentDescription = stringResource(screen.labelResId)
                     ) 
                 },
-                label = { Text(androidx.compose.ui.res.stringResource(screen.labelResId)) },
+                label = { Text(stringResource(screen.labelResId)) },
                 selected = selected,
                 onClick = {
                     navController.navigate(screen.route) {

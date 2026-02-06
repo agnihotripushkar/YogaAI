@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.home.model
+package me.pushkaragnihotri.yogaai.features.home.data.model
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector

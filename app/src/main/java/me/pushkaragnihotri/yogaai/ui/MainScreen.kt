@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import me.pushkaragnihotri.yogaai.features.navigation.YogaBottomBar
+import me.pushkaragnihotri.yogaai.core.navigation.YogaBottomBar
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
-import me.pushkaragnihotri.yogaai.features.navigation.YogaDestinations
-import me.pushkaragnihotri.yogaai.features.navigation.YogaNavigation
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.core.navigation.YogaDestinations
+import me.pushkaragnihotri.yogaai.core.navigation.YogaNavigation
 
 @Composable
 fun MainScreen(

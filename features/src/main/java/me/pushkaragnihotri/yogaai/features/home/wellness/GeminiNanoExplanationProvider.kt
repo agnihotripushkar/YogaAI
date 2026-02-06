@@ -1,5 +1,6 @@
-package me.pushkaragnihotri.yogaai.core.wellness
+package me.pushkaragnihotri.yogaai.features.home.wellness
 
+import android.os.Build
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
 import me.pushkaragnihotri.yogaai.core.model.RiskLevel
@@ -47,6 +48,6 @@ class GeminiNanoExplanationProvider : WellnessExplanationGenerator {
 
     override suspend fun isAvailable(): Boolean {
         // Gemini Nano / AICore requires Android 14 (API 34) or higher
-        return android.os.Build.VERSION.SDK_INT >= 34
+        return Build.VERSION.SDK_INT >= 34
     }
 }

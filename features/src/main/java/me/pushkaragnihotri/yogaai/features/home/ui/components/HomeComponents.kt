@@ -31,11 +31,11 @@ import me.pushkaragnihotri.yogaai.core.model.RiskLevel
 import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
-import me.pushkaragnihotri.yogaai.features.home.model.WellnessUiModel
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.*
-import me.pushkaragnihotri.yogaai.features.common.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.home.data.model.WellnessUiModel
+import me.pushkaragnihotri.yogaai.features.ui.theme.*
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeUiState
-import me.pushkaragnihotri.yogaai.core.model.DailyMetric
+import java.time.LocalDate
 
 @Composable
 fun HomeScreenContent(
@@ -325,7 +325,7 @@ fun HomeScreenPreview() {
                 riskPrediction = RiskPrediction(
                     riskLevel = RiskLevel.LOW,
                     explanation = "Your stress levels are low and recovery is high. Great day for a workout!",
-                    date = java.time.LocalDate.now(),
+                    date = LocalDate.now(),
                     contributingSignals = emptyList()
                 ),
                 wellnessItems = listOf() // Empty for preview or mock it if needed

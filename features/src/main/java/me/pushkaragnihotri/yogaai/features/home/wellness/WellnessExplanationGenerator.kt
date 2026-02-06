@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.core.wellness
+package me.pushkaragnihotri.yogaai.features.home.wellness
 
 import me.pushkaragnihotri.yogaai.core.model.RiskLevel
 
