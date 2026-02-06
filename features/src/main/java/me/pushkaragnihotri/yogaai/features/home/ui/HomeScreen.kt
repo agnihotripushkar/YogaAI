@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import me.pushkaragnihotri.yogaai.core.model.RiskLevel
-import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
+import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.home.ui.components.HomeScreenContent

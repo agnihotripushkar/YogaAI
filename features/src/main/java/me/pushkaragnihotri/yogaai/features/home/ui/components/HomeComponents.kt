@@ -27,8 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import me.pushkaragnihotri.yogaai.core.model.RiskLevel
-import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
+import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.home.data.model.WellnessUiModel

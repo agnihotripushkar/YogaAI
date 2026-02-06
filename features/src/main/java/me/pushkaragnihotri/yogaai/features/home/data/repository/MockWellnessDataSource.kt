@@ -1,33 +1,36 @@
 package me.pushkaragnihotri.yogaai.features.home.data.repository
 
-import me.pushkaragnihotri.yogaai.core.model.DailyMetric
-import me.pushkaragnihotri.yogaai.core.model.RiskLevel
-import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
+import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
+import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import java.time.LocalDate
 
 object MockWellnessDataSource {
+
+    fun getTodayMetrics(): DailyMetric {
+        return DailyMetric(
+            steps = 8500,
+            sleepDurationMinutes = 420, // 7 hours
+            restingHeartRate = 65,
+            calories = 2100.0
+        )
+    }
+
     fun getTodayRisk(): RiskPrediction {
         return RiskPrediction(
-            riskLevel = RiskLevel.MEDIUM,
-            explanation = "Your sleep was slightly fragmented last night.",
-            contributingSignals = listOf("Sleep Efficiency: 85%", "Resting HR: +5 bpm"),
+            riskLevel = RiskLevel.LOW,
+            explanation = "Your activity levels are good and sleep is sufficient.",
+            contributingSignals = emptyList(),
             date = LocalDate.now()
         )
     }
 
-    fun getTodayMetrics(): DailyMetric {
-        return DailyMetric(
-            steps = 4520,
-            sleepDurationMinutes = 410, // 6h 50m
-            restingHeartRate = 72
-        )
-    }
-    
     fun getHistory(): List<RiskPrediction> {
+        val today = LocalDate.now()
         return listOf(
-            RiskPrediction(riskLevel = RiskLevel.LOW, explanation = "Great recovery.", contributingSignals = emptyList(), date = LocalDate.now().minusDays(1)),
-            RiskPrediction(riskLevel = RiskLevel.HIGH, explanation = "High fatigue detected.", contributingSignals = listOf("Low Sleep", "High Steps"), date = LocalDate.now().minusDays(2)),
-            RiskPrediction(riskLevel = RiskLevel.LOW, explanation = "Stable baseline.", contributingSignals = emptyList(), date = LocalDate.now().minusDays(3))
+            getTodayRisk(),
+            RiskPrediction(RiskLevel.MEDIUM, "Slightly elevated heart rate.", listOf("Resting HR > 70"), today.minusDays(1)),
+            RiskPrediction(RiskLevel.LOW, "Great recovery day.", emptyList(), today.minusDays(2))
         )
     }
 }

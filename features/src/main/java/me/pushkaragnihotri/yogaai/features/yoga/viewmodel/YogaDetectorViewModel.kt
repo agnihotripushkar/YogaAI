@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.ai.PoseClassifier
-import me.pushkaragnihotri.yogaai.core.ai.PoseDetectionListener
-import me.pushkaragnihotri.yogaai.core.ai.PoseDetectionManager
+import me.pushkaragnihotri.yogaai.features.yoga.data.source.PoseClassifier
+import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepository
+import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepositoryListener
 
 data class YogaDetectorUiState(
     val poseResult: PoseLandmarkerResult? = null,
@@ -26,9 +26,9 @@ data class YogaDetectorUiState(
 )
 
 class YogaDetectorViewModel(
-    val poseDetectionManager: PoseDetectionManager,
+    val yogaRepository: YogaRepository,
     private val poseClassifier: PoseClassifier
-) : ViewModel(), PoseDetectionListener {
+) : ViewModel(), YogaRepositoryListener {
 
     companion object {
         // No constants needed currently
@@ -95,7 +95,7 @@ class YogaDetectorViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        poseDetectionManager.close()
+        yogaRepository.close()
         timerJob?.cancel()
     }
 }

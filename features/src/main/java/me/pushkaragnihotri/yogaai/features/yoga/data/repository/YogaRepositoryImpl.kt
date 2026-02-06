@@ -1,29 +1,18 @@
-package me.pushkaragnihotri.yogaai.core.ai
+package me.pushkaragnihotri.yogaai.features.yoga.data.repository
 
 import android.content.Context
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
-import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import com.google.mediapipe.framework.image.BitmapImageBuilder
-import com.google.mediapipe.framework.image.MPImage
+import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepository
+import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepositoryListener
 import timber.log.Timber
 
-interface PoseDetectionManager {
-    fun setup(context: Context, listener: PoseDetectionListener)
-    fun detectPose(image: android.graphics.Bitmap, rotationDegrees: Int, timestamp: Long)
-    fun close()
-}
-
-interface PoseDetectionListener {
-    fun onResults(result: PoseLandmarkerResult)
-    fun onError(error: String)
-}
-
-class PoseDetectionManagerImpl : PoseDetectionManager {
+class YogaRepositoryImpl : YogaRepository {
     private var poseLandmarker: PoseLandmarker? = null
 
-    override fun setup(context: Context, listener: PoseDetectionListener) {
+    override fun setup(context: Context, listener: YogaRepositoryListener) {
         try {
             val baseOptions = BaseOptions.builder()
                 .setModelAssetPath("pose_landmarker.task")

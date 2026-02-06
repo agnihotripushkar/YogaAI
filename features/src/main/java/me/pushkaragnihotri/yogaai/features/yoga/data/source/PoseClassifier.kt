@@ -1,15 +1,9 @@
-package me.pushkaragnihotri.yogaai.core.ai
+package me.pushkaragnihotri.yogaai.features.yoga.data.source
 
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
+import me.pushkaragnihotri.yogaai.features.yoga.domain.model.PoseClassification
 import kotlin.math.abs
 import kotlin.math.atan2
-
-    data class PoseClassification(
-    val poseName: String,
-    val confidence: Float,
-    val isCorrect: Boolean = false,
-    val feedback: String = ""
-)
 
 class PoseClassifier {
 

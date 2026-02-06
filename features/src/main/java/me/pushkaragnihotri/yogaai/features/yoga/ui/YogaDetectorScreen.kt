@@ -75,7 +75,7 @@ fun YogaDetectorScreen(
         if (!hasCameraPermission) {
             launcher.launch(Manifest.permission.CAMERA)
         }
-        viewModel.poseDetectionManager.setup(context, viewModel)
+        viewModel.yogaRepository.setup(context, viewModel)
     }
 
     val uiState by viewModel.uiState.collectAsState()
@@ -115,7 +115,7 @@ fun YogaDetectorScreen(
                 onImageAnalyzed = { imageProxy ->
                     val bitmap = imageProxy.toRotatedBitmap()
                     if (bitmap != null) {
-                        viewModel.poseDetectionManager.detectPose(
+                        viewModel.yogaRepository.detectPose(
                             bitmap,
                             imageProxy.imageInfo.rotationDegrees,
                             System.currentTimeMillis()

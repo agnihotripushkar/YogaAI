@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.core.model
+package me.pushkaragnihotri.yogaai.features.home.data.model
 
 import java.time.LocalDate
 

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.UserPreferences
-import me.pushkaragnihotri.yogaai.features.home.domain.repository.HomeRepository
+import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
 
 class SettingsViewModel(
     private val userPreferences: UserPreferences,

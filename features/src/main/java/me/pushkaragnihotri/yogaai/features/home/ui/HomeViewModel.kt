@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.model.RiskPrediction
-import me.pushkaragnihotri.yogaai.features.home.domain.repository.HomeRepository
+import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
 import me.pushkaragnihotri.yogaai.features.home.data.model.WellnessUiModel
 
 data class HomeUiState(
