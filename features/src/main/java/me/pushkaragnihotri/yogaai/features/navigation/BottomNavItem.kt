@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.SelfImprovement
 import androidx.compose.material.icons.outlined.SelfImprovement
 import androidx.compose.ui.graphics.vector.ImageVector
+import me.pushkaragnihotri.yogaai.features.R
 
 sealed class BottomNavItem(
     val route: String,
@@ -21,21 +22,21 @@ sealed class BottomNavItem(
         route = YogaDestinations.HOME_ROUTE,
         selectedIcon = Icons.Rounded.Home,
         unselectedIcon = Icons.Outlined.Home,
-        labelResId = me.pushkaragnihotri.yogaai.features.R.string.nav_home
+        labelResId = R.string.nav_home
     )
 
     data object Pose : BottomNavItem(
         route = YogaDestinations.YOGA_DETECTOR_ROUTE,
         selectedIcon = Icons.Rounded.SelfImprovement,
         unselectedIcon = Icons.Outlined.SelfImprovement,
-        labelResId = me.pushkaragnihotri.yogaai.features.R.string.title_yoga_detector
+        labelResId = R.string.title_yoga_detector
     )
 
     data object Settings : BottomNavItem(
         route = YogaDestinations.SETTINGS_ROUTE,
         selectedIcon = Icons.Rounded.Settings,
         unselectedIcon = Icons.Outlined.Settings,
-        labelResId = me.pushkaragnihotri.yogaai.features.R.string.title_settings
+        labelResId = R.string.title_settings
     )
 }
 

@@ -24,5 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "YogaAI"
 include(":app")
-include(":core")
 include(":features")

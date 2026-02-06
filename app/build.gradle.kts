@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -34,6 +36,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.core.os.BuildCompat.PrereleaseSdkCheck"
+        )
     }
     buildFeatures {
         compose = true
@@ -68,12 +75,9 @@ dependencies {
     // Timber
     implementation(libs.timber)
 
-    // Feature Modules
+    // Feature Module (Includes Core Logic)
     implementation(project(":features"))
     
-    // Core Module
-    implementation(project(":core"))
-
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
