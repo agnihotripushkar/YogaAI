@@ -1,4 +1,4 @@
-package me.pushkaragnihotri.yogaai.features.settings.ui
+package me.pushkaragnihotri.yogaai.features.settings.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -31,7 +31,7 @@ class SettingsViewModel(
     var hasPermissions = mutableStateOf(false)
         private set
 
-    var sdkStatus = mutableStateOf(HealthConnectManager.SDK_UNAVAILABLE)
+    var sdkStatus = mutableStateOf(HealthConnectManager.Companion.SDK_UNAVAILABLE)
         private set
 
     init {
@@ -46,8 +46,8 @@ class SettingsViewModel(
     fun initialLoad() {
         val currentStatus = healthConnectManager.checkAvailability()
         sdkStatus.value = currentStatus
-        
-        if (currentStatus == HealthConnectManager.SDK_AVAILABLE) {
+
+        if (currentStatus == HealthConnectManager.Companion.SDK_AVAILABLE) {
             viewModelScope.launch {
                 hasPermissions.value = healthConnectManager.hasAllPermissions()
                 if (hasPermissions.value) {

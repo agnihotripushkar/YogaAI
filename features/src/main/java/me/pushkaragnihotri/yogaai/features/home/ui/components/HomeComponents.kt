@@ -73,7 +73,7 @@ fun HomeScreenContent(
         // Recommended Relief
          uiState.riskPrediction?.let { 
              Text(
-                text = "Recommended Relief", // TODO: Extract this too if not already
+                text = stringResource(R.string.recommended_relief),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
              )
@@ -95,7 +95,7 @@ fun ProfileHeader() {
             // Real Profile Pic from Drawable
             Image(
                 painter = painterResource(id = R.drawable.profile_pic),
-                contentDescription = "Profile Picture",
+                contentDescription = stringResource(R.string.profile_picture_content_desc),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(50.dp)
@@ -129,7 +129,7 @@ fun ProfileHeader() {
         ) {
             Icon(
                 imageVector = Icons.Default.Notifications,
-                contentDescription = "Notifications",
+                contentDescription = stringResource(R.string.notifications_content_desc),
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
