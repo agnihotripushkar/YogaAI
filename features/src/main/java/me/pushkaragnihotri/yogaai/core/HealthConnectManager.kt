@@ -23,10 +23,11 @@ class HealthConnectManager(private val context: Context) {
     
     val healthConnectClient: HealthConnectClient? by lazy {
         try {
-            if (HealthConnectClient.getSdkStatus(context) == HealthConnectClient.SDK_AVAILABLE) {
+            val status = HealthConnectClient.getSdkStatus(context)
+            if (status == HealthConnectClient.SDK_AVAILABLE) {
                 HealthConnectClient.getOrCreate(context)
             } else {
-                Timber.w("Health Connect SDK not available on this device")
+                Timber.w("Health Connect SDK not available on this device (status=$status)")
                 null
             }
         } catch (e: Exception) {
@@ -43,23 +44,33 @@ class HealthConnectManager(private val context: Context) {
     )
 
     suspend fun hasAllPermissions(): Boolean {
-        val client = healthConnectClient ?: return false
-        val granted = client.permissionController.getGrantedPermissions()
-        val hasAll = granted.containsAll(permissions)
-        Timber.d("hasAllPermissions: $hasAll (granted: $granted, required: $permissions)")
-        return hasAll
+        return try {
+            val client = healthConnectClient ?: return false
+            val granted = client.permissionController.getGrantedPermissions()
+            val hasAll = granted.containsAll(permissions)
+            Timber.d("hasAllPermissions: $hasAll (granted: $granted, required: $permissions)")
+            hasAll
+        } catch (e: Exception) {
+            Timber.e(e, "hasAllPermissions check failed")
+            false
+        }
     }
 
     fun checkAvailability(): Int {
-        val status = HealthConnectClient.getSdkStatus(context)
-        val mappedStatus = when (status) {
-            HealthConnectClient.SDK_AVAILABLE -> SDK_AVAILABLE
-            HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> SDK_UPDATE_REQUIRED
-            HealthConnectClient.SDK_UNAVAILABLE -> SDK_UNAVAILABLE
-            else -> SDK_UNAVAILABLE
+        return try {
+            val status = HealthConnectClient.getSdkStatus(context)
+            val mappedStatus = when (status) {
+                HealthConnectClient.SDK_AVAILABLE -> SDK_AVAILABLE
+                HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> SDK_UPDATE_REQUIRED
+                HealthConnectClient.SDK_UNAVAILABLE -> SDK_UNAVAILABLE
+                else -> SDK_UNAVAILABLE
+            }
+            Timber.d("Health Connect SDK status: $status (mapped to: $mappedStatus)")
+            mappedStatus
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to check Health Connect availability")
+            SDK_UNAVAILABLE
         }
-        Timber.d("Health Connect SDK status: $status (mapped to: $mappedStatus)")
-        return mappedStatus
     }
 
     suspend fun readSteps(startTime: Instant, endTime: Instant): Long {
