@@ -21,7 +21,19 @@ class HealthConnectManager(private val context: Context) {
         const val SDK_UPDATE_REQUIRED = 3
     }
     
-    val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
+    val healthConnectClient: HealthConnectClient? by lazy {
+        try {
+            if (HealthConnectClient.getSdkStatus(context) == HealthConnectClient.SDK_AVAILABLE) {
+                HealthConnectClient.getOrCreate(context)
+            } else {
+                Timber.w("Health Connect SDK not available on this device")
+                null
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to create HealthConnectClient")
+            null
+        }
+    }
 
     val permissions = setOf(
         HealthPermission.getReadPermission(StepsRecord::class),
@@ -31,7 +43,8 @@ class HealthConnectManager(private val context: Context) {
     )
 
     suspend fun hasAllPermissions(): Boolean {
-        val granted = healthConnectClient.permissionController.getGrantedPermissions()
+        val client = healthConnectClient ?: return false
+        val granted = client.permissionController.getGrantedPermissions()
         val hasAll = granted.containsAll(permissions)
         Timber.d("hasAllPermissions: $hasAll (granted: $granted, required: $permissions)")
         return hasAll
@@ -58,7 +71,8 @@ class HealthConnectManager(private val context: Context) {
         
         // Try reading aggregated steps first as it's more efficient for totals
         return try {
-             val response = healthConnectClient.aggregate(
+             val client = healthConnectClient ?: return 0L
+             val response = client.aggregate(
                 AggregateRequest(
                     metrics = setOf(StepsRecord.COUNT_TOTAL),
                     timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
@@ -71,7 +85,8 @@ class HealthConnectManager(private val context: Context) {
             Timber.e(e, "readSteps (aggregation failed)")
             // Fallback to reading records if aggregation fails or is not supported in the way we expect
             try {
-                val response = healthConnectClient.readRecords(
+                val client2 = healthConnectClient ?: return 0L
+                val response = client2.readRecords(
                     ReadRecordsRequest(
                         StepsRecord::class,
                         timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
@@ -95,7 +110,8 @@ class HealthConnectManager(private val context: Context) {
         }
         
         return try {
-            val response = healthConnectClient.readRecords(
+            val client = healthConnectClient ?: return emptyList()
+            val response = client.readRecords(
                 ReadRecordsRequest(
                     SleepSessionRecord::class,
                     timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
@@ -117,7 +133,8 @@ class HealthConnectManager(private val context: Context) {
         }
         
         return try {
-            val response = healthConnectClient.readRecords(
+            val client = healthConnectClient ?: return emptyList()
+            val response = client.readRecords(
                 ReadRecordsRequest(
                     HeartRateRecord::class,
                     timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
@@ -138,7 +155,8 @@ class HealthConnectManager(private val context: Context) {
             return 0.0
         }
         return try {
-             val response = healthConnectClient.aggregate(
+             val client = healthConnectClient ?: return 0.0
+             val response = client.aggregate(
                 AggregateRequest(
                     metrics = setOf(TotalCaloriesBurnedRecord.ENERGY_TOTAL),
                     timeRangeFilter = TimeRangeFilter.between(startTime, endTime)

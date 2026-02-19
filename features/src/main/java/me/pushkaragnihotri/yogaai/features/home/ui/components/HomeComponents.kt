@@ -39,7 +39,10 @@ import java.time.LocalDate
 
 @Composable
 fun HomeScreenContent(
-    uiState: HomeUiState
+    uiState: HomeUiState,
+    hasPermissions: Boolean = true,
+    sdkAvailable: Boolean = true,
+    onGrantPermissionClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -52,7 +55,13 @@ fun HomeScreenContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 2. Daily Wellness Section
+        // 2. Permission Banner (shown when Health Connect is available but permissions not granted)
+        if (sdkAvailable && !hasPermissions) {
+            HealthConnectPermissionBanner(onGrantPermissionClick = onGrantPermissionClick)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // 3. Daily Wellness Section
         Text(
             text = stringResource(R.string.daily_wellness),
             style = MaterialTheme.typography.titleLarge,
@@ -80,6 +89,38 @@ fun HomeScreenContent(
              Spacer(modifier = Modifier.height(16.dp))
              RiskCard(it) 
          }
+    }
+}
+
+@Composable
+fun HealthConnectPermissionBanner(
+    onGrantPermissionClick: () -> Unit
+) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.profile_connect_prompt),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = onGrantPermissionClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(text = stringResource(R.string.profile_connect_button))
+            }
+        }
     }
 }
 

@@ -14,12 +14,12 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val featuresModule = module {
-    single<HomeRepository> { HomeRepositoryImpl(get(), isDemoMode = false) }
+    single<HomeRepository> { HomeRepositoryImpl(get()) }
     
     single { PoseClassifier() }
     single<YogaRepository> { YogaRepositoryImpl() }
 
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { OnboardingViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get()) }
     viewModel { YogaDetectorViewModel(get(), get()) }

@@ -9,24 +9,36 @@ import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
+import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
 class HomeRepositoryImpl(
-    private val healthConnectManager: HealthConnectManager,
-    private val isDemoMode: Boolean = false
+    private val healthConnectManager: HealthConnectManager
 ) : HomeRepository {
 
     private val _todayMetrics = MutableStateFlow(DailyMetric())
     override val todayMetrics: StateFlow<DailyMetric> = _todayMetrics.asStateFlow()
+
+    /**
+     * Returns true if Health Connect is available AND permissions are granted.
+     * If not, we fall back to demo/mock data.
+     */
+    private suspend fun shouldUseLiveData(): Boolean {
+        if (healthConnectManager.healthConnectClient == null) return false
+        return healthConnectManager.hasAllPermissions()
+    }
 
     override suspend fun refreshMetrics() {
         _todayMetrics.value = getTodayMetrics()
     }
 
     override suspend fun getTodayRisk(): RiskPrediction {
-        if (isDemoMode) return MockWellnessDataSource.getTodayRisk()
+        if (!shouldUseLiveData()) {
+            Timber.d("Using demo data for getTodayRisk (no Health Connect permissions)")
+            return MockWellnessDataSource.getTodayRisk()
+        }
 
         val metrics = getTodayMetrics()
 
@@ -45,16 +57,18 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun getRiskByDate(date: LocalDate): RiskPrediction? {
-        if (isDemoMode) {
-            // Simple mock return
-             return MockWellnessDataSource.getHistory().find { it.date == date }
+        if (!shouldUseLiveData()) {
+            return MockWellnessDataSource.getHistory().find { it.date == date }
                     ?: MockWellnessDataSource.getTodayRisk().takeIf { it.date == date }
         }
         return null // TODO real
     }
 
     override suspend fun getTodayMetrics(): DailyMetric {
-        if (isDemoMode) return MockWellnessDataSource.getTodayMetrics()
+        if (!shouldUseLiveData()) {
+            Timber.d("Using demo data for getTodayMetrics (no Health Connect permissions)")
+            return MockWellnessDataSource.getTodayMetrics()
+        }
 
         val now = Instant.now()
         val startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
@@ -75,7 +89,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun getRiskHistory(): List<RiskPrediction> {
-        if (isDemoMode) return MockWellnessDataSource.getHistory()
+        if (!shouldUseLiveData()) return MockWellnessDataSource.getHistory()
         return emptyList() // Implement real history storage/retrieval later
     }
 
