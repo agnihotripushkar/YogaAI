@@ -1,6 +1,7 @@
 package me.pushkaragnihotri.yogaai
 
 import android.app.Application
+import me.pushkaragnihotri.yogaai.core.di.featuresModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -24,7 +25,7 @@ class YogaApp : Application() {
             androidLogger()
             androidContext(this@YogaApp)
             modules(
-                me.pushkaragnihotri.yogaai.features.di.featuresModule,
+                featuresModule,
                 me.pushkaragnihotri.yogaai.core.di.coreDataModule,
                 appModule
             )

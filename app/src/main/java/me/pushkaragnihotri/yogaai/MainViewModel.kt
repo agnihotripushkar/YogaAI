@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import me.pushkaragnihotri.yogaai.core.UserPreferences
+import me.pushkaragnihotri.yogaai.navigation.AppDestinations
 
 class MainViewModel(
     userPreferences: UserPreferences
@@ -17,9 +18,9 @@ class MainViewModel(
         userPreferences.consentGiven
     ) { onboardingCompleted, consentGiven ->
         when {
-            onboardingCompleted -> "home"
-            consentGiven -> "connect"
-            else -> "onboarding"
+            onboardingCompleted -> AppDestinations.HOME
+            consentGiven -> AppDestinations.CONNECT
+            else -> AppDestinations.ONBOARDING
         }
     }
     .stateIn(viewModelScope, SharingStarted.Lazily, null)

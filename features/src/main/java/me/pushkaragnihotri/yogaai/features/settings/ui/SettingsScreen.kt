@@ -13,14 +13,21 @@ import androidx.health.connect.client.PermissionController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import me.pushkaragnihotri.yogaai.features.R
-import me.pushkaragnihotri.yogaai.features.common.ui.ResponsiveContainer
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import me.pushkaragnihotri.yogaai.features.settings.ui.components.SettingsScreenContent
 import org.koin.androidx.compose.koinViewModel
-
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
+import me.pushkaragnihotri.yogaai.features.settings.viewmodel.SettingsViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
@@ -56,28 +63,63 @@ fun SettingsScreen(
             )
         }
     ) { padding ->
-        ResponsiveContainer(
-            modifier = Modifier.padding(padding)
+        val windowSizeClass = calculateWindowSizeClass(context as android.app.Activity)
+        val widthSizeClass = windowSizeClass.widthSizeClass
+
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            SettingsScreenContent(
-                themeMode = themeMode,
-                sdkStatus = sdkStatus,
-                hasPermissions = hasPermissions,
-                steps = steps,
-                calories = calories,
-                language = language,
-                onThemeChange = viewModel::setTheme,
-                onLanguageChange = viewModel::setLanguage,
-                onDeleteData = viewModel::deleteData,
-                onConnectClick = {
-                     permissionLauncher.launch(viewModel.permissions)
-                },
-                onDisconnectWearable = viewModel::disconnectWearable,
-                onPrivacyPolicyClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com")) // Placeholder URL
-                    context.startActivity(intent)
-                }
-            )
+            val contentModifier = if (widthSizeClass == WindowWidthSizeClass.Compact) {
+                Modifier.fillMaxWidth()
+            } else {
+                Modifier.widthIn(max = 640.dp)
+            }
+            
+            Box(modifier = contentModifier) {
+                SettingsScreenContent(
+                    themeMode = themeMode,
+                    sdkStatus = sdkStatus,
+                    hasPermissions = hasPermissions,
+                    steps = steps,
+                    calories = calories,
+                    language = language,
+                    onThemeChange = viewModel::setTheme,
+                    onLanguageChange = viewModel::setLanguage,
+                    onDeleteData = viewModel::deleteData,
+                    onConnectClick = {
+                         permissionLauncher.launch(viewModel.permissions)
+                    },
+                    onDisconnectWearable = viewModel::disconnectWearable,
+                    onPrivacyPolicyClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com")) // Placeholder URL
+                        context.startActivity(intent)
+                    }
+                )
+            }
         }
+    }
+}
+
+@Preview
+@Composable
+fun SettingsScreenContentPreview() {
+    YogaAITheme {
+        SettingsScreenContent(
+            themeMode = 0,
+            sdkStatus = HealthConnectManager.SDK_AVAILABLE,
+            hasPermissions = true,
+            steps = 5201,
+            calories = 120.0,
+            language = "English",
+            onThemeChange = {},
+            onLanguageChange = {},
+            onDeleteData = {},
+            onConnectClick = {},
+            onDisconnectWearable = {},
+            onPrivacyPolicyClick = {}
+        )
     }
 }

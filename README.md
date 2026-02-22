@@ -1,14 +1,15 @@
 # YogaAI
 
-YogaAI is a modern Android application built with **Jetpack Compose** that helps users practice Yoga, track their progress, and view instructional videos. It leverages **AI** (via local or remote models) to personalize the yoga experience.
+YogaAI is a modern Android application built with **Jetpack Compose** that helps users practice Yoga, track their progress, and analyze their poses.
+It leverages **AI** (via local or remote models) to personalize the yoga experience and provide real-time feedback.
 
 ## ✨ Features
 
 - **Home**: Main dashboard for accessing daily practices, health metrics, and recommendations.
-- **Classes**: Browse and join various yoga classes categorized by difficulty and style.
 - **Health Tracking**: Integrated with **Health Connect** to track daily streaks, calories burned, and steps.
-- **Yoga Detector**: Real-time pose detection using the camera to analyze yoga poses.
-- **Profile**: Manage your user profile, settings, and health permissions.
+- **Yoga Detector**: Real-time privacy-first pose detection using on-device computer vision.
+- **Smart Onboarding**: Responsive and personalized introduction to the app's features.
+- **Settings**: Manage preferences, theme settings, and health permissions.
 
 ## 🛠 Tech Stack
 
@@ -20,19 +21,20 @@ YogaAI is a modern Android application built with **Jetpack Compose** that helps
 - **Database**: [Room](https://developer.android.com/training/data-storage/room)
 - **Navigation**: [Navigation Compose](https://developer.android.com/jetpack/compose/navigation)
 - **Health Data**: [Health Connect SDK](https://developer.android.com/health-and-fitness/guides/health-connect)
+- **Sustainability**: [Gemini Nano](https://ai.google.dev/edge/gemini/nano) (On-device LLM for explanations)
 - **Storage**: [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore)
 - **Logging**: [Timber](https://github.com/JakeWharton/timber)
-- **AI/ML**: [MediaPipe](https://developers.google.com/mediapipe) (Vision & GenAI)
+- **AI/ML**: [MediaPipe](https://developers.google.com/mediapipe) (Vision)
 - **Camera**: [CameraX](https://developer.android.com/media/camera/camerax)
 - **Analytics/Crash Reporting**: [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics)
+- **Background Work**: [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
 
 ## 📁 Project Structure
 
 The project follows a standard multi-module structure for better scalability:
 
-- **:app**: The main entry point that wires all features and core modules together.
-- **:features**: Contains all UI components and business logic for features (Home, Profile, etc.).
-- **:core**: Shared infrastructure, including networking, database, models, and repositories.
+- **:app**: The main entry point that wires all features together.
+- **:features**: Contains all UI components, business logic, and shared core infrastructure (networking, database, models, Health Connect integration, and navigation).
 
 ## 🚀 Setup & Build
 
@@ -43,7 +45,7 @@ The project follows a standard multi-module structure for better scalability:
 
 ## 🎨 Design
 
-YogaAI uses **Material 3 Expressive Design**, focusing on:
-- **Vibrant & Calm Colors**: A palette inspired by nature and energy.
-- **Expressive Shapes**: Rounded, organic shapes that feel friendly.
-- **Responsive Layouts**: Optimized for various screen sizes including tablets.
+YogaAI features a custom **Wellness Theme** designed for tranquility and clarity:
+- **Palette**: "Sage & Cream" - A soothing blend of Sage Green (`#95C495`), Cream White (`#F9F9F4`), and Earthy accents (`#BCAAA4`).
+- **Typography**: Clean, readable sans-serif type scale optimized for instructional content.
+- **Responsive**: Adaptive layouts verified for Phones, Foldables, and Tablets.

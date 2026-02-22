@@ -3,11 +3,13 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "me.pushkaragnihotri.yogaai"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "me.pushkaragnihotri.yogaai"
@@ -34,6 +36,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.core.os.BuildCompat.PrereleaseSdkCheck"
+        )
     }
     buildFeatures {
         compose = true
@@ -58,6 +65,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.window.size)
     implementation(libs.androidx.navigation.compose)
     
     // Koin
@@ -67,12 +75,9 @@ dependencies {
     // Timber
     implementation(libs.timber)
 
-    // Feature Modules
+    // Feature Module (Includes Core Logic)
     implementation(project(":features"))
     
-    // Core Module
-    implementation(project(":core"))
-
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
