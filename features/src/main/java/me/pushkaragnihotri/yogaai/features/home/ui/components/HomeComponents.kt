@@ -35,6 +35,8 @@ import me.pushkaragnihotri.yogaai.features.home.data.model.WellnessUiModel
 import me.pushkaragnihotri.yogaai.features.ui.theme.*
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeUiState
+import me.pushkaragnihotri.yogaai.features.common.ui.MascotState
+import me.pushkaragnihotri.yogaai.features.common.ui.ZenMascot
 import java.time.LocalDate
 
 @Composable
@@ -54,6 +56,20 @@ fun HomeScreenContent(
         ProfileHeader()
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        // Mascot Companion Section
+        val mascotState = uiState.riskPrediction?.let {
+            if (it.riskLevel == RiskLevel.LOW) MascotState.HAPPY else MascotState.ENCOURAGING
+        } ?: MascotState.HAPPY
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            ZenMascot(state = mascotState)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // 2. Permission Banner (shown when Health Connect is available but permissions not granted)
         if (sdkAvailable && !hasPermissions) {
@@ -181,19 +197,27 @@ fun ProfileHeader() {
 fun DailyWellnessGrid(items: List<WellnessUiModel>) {
     val rows = items.chunked(2)
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        rows.forEach { rowItems ->
+        rows.forEachIndexed { index, rowItems ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                rowItems.forEach { item ->
+                // If the first row is just one item (e.g. Daily Streak), make it span the whole width for a Bento vibe
+                if (index == 0 && rowItems.size == 1) {
                     WellnessCard(
-                        item = item,
-                        modifier = Modifier.weight(1f)
+                        item = rowItems.first(),
+                        modifier = Modifier.weight(1f).aspectRatio(2f) // Rectangular
                     )
-                }
-                if (rowItems.size < 2) {
-                    Spacer(modifier = Modifier.weight(1f))
+                } else {
+                    rowItems.forEach { item ->
+                        WellnessCard(
+                            item = item,
+                            modifier = Modifier.weight(1f).aspectRatio(1f) // Square
+                        )
+                    }
+                    if (rowItems.size < 2) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
@@ -222,12 +246,12 @@ fun WellnessCard(
     }
 
     Card(
-        modifier = modifier.aspectRatio(1f),
-        shape = RoundedCornerShape(24.dp),
+        modifier = modifier,
+        shape = MaterialTheme.shapes.large, // Advanced rounding 32dp
         colors = CardDefaults.cardColors(
             containerColor = CardBackgroundLight 
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier
@@ -331,7 +355,7 @@ fun RiskCard(risk: RiskPrediction) {
 
     Card(
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = RoundedCornerShape(24.dp),
+        shape = MaterialTheme.shapes.large,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(24.dp)) {

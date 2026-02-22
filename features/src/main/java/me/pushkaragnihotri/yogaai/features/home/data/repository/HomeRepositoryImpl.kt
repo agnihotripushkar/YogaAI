@@ -36,7 +36,7 @@ class HomeRepositoryImpl(
 
     override suspend fun getTodayRisk(): RiskPrediction {
         if (!shouldUseLiveData()) {
-            Timber.d("Using demo data for getTodayRisk (no Health Connect permissions)")
+            Timber.d("Using demo data for getTodayRisk (Health Connect unavailable or permissions denied)")
             return MockWellnessDataSource.getTodayRisk()
         }
 
@@ -66,7 +66,7 @@ class HomeRepositoryImpl(
 
     override suspend fun getTodayMetrics(): DailyMetric {
         if (!shouldUseLiveData()) {
-            Timber.d("Using demo data for getTodayMetrics (no Health Connect permissions)")
+            Timber.d("Using demo data for getTodayMetrics (Health Connect unavailable or permissions denied)")
             return MockWellnessDataSource.getTodayMetrics()
         }
 

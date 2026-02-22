@@ -3,7 +3,6 @@
     <!-- Navigation -->
     <string name="nav_home">Today</string>
     <string name="nav_goals">Goals</string>
-    <string name="nav_classes">Classes</string>
     <string name="nav_profile">Profile</string>
 
     <!-- Home Screen -->
@@ -17,6 +16,7 @@
     <string name="metric_sleep">Sleep</string>
     <string name="metric_hr">HR</string>
     <string name="metric_calories">Calories</string>
+    <string name="metric_streak">Daily Streak</string>
     
     <!-- Risk Levels -->
     <string name="risk_level_suffix">RISK</string>
@@ -25,7 +25,6 @@
     <string name="risk_level_high">HIGH</string>
 
     <!-- Classes Screen -->
-    <string name="classes_placeholder">Classes Screen Placeholder</string>
 
     <!-- Settings Screen -->
     <string name="title_settings">Settings</string>

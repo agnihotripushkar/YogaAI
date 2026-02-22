@@ -42,6 +42,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import me.pushkaragnihotri.yogaai.features.R
+import me.pushkaragnihotri.yogaai.features.common.ui.MascotState
+import me.pushkaragnihotri.yogaai.features.common.ui.ZenMascot
+import me.pushkaragnihotri.yogaai.features.ui.theme.*
 import me.pushkaragnihotri.yogaai.features.ui.theme.*
 import me.pushkaragnihotri.yogaai.features.yoga.viewmodel.YogaDetectorViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -356,6 +359,9 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
                         .background(Color.Gray.copy(alpha = 0.5f))
                 )
 
+                // Mascot (Meditative)
+                ZenMascot(state = MascotState.MEDITATIVE, modifier = Modifier.size(40.dp))
+
                 // Timer
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Icon(
@@ -456,7 +462,7 @@ fun PoseOverlay(result: PoseLandmarkerResult, isCorrect: Boolean) {
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )
                 drawCircle(
-                    color = if (isCorrect) BrightGreen else Color.White,
+                    color = if (isCorrect) BrightGreen else AccentTeal, // Neon cyan for detection
                     radius = 4f,
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )

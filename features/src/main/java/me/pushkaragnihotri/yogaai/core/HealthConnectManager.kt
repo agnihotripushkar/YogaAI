@@ -25,13 +25,17 @@ class HealthConnectManager(private val context: Context) {
         try {
             val status = HealthConnectClient.getSdkStatus(context)
             if (status == HealthConnectClient.SDK_AVAILABLE) {
+                Timber.d("Health Connect SDK is available. Attempting to get client...")
                 HealthConnectClient.getOrCreate(context)
             } else {
-                Timber.w("Health Connect SDK not available on this device (status=$status)")
+                Timber.w("Health Connect SDK not available on this device relative to context (status=$status)")
                 null
             }
+        } catch (e: IllegalStateException) {
+            Timber.e(e, "Health Connect service not available (IllegalStateException). This device likely does not support Health Connect despite status check.")
+            null
         } catch (e: Exception) {
-            Timber.e(e, "Failed to create HealthConnectClient")
+            Timber.e(e, "Failed to create HealthConnectClient due to unexpected error.")
             null
         }
     }

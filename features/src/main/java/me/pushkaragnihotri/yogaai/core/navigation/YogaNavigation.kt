@@ -8,6 +8,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.splash.ui.SplashScreen
@@ -28,7 +33,31 @@ fun YogaNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = YogaDestinations.SPLASH_ROUTE
+        startDestination = YogaDestinations.SPLASH_ROUTE,
+        enterTransition = {
+            slideInVertically(
+                initialOffsetY = { 300 },
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        exitTransition = {
+            slideOutVertically(
+                targetOffsetY = { -300 },
+                animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
+        },
+        popEnterTransition = {
+            slideInVertically(
+                initialOffsetY = { -300 },
+                animationSpec = tween(300)
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = {
+            slideOutVertically(
+                targetOffsetY = { 300 },
+                animationSpec = tween(300)
+            ) + fadeOut(animationSpec = tween(300))
+        }
     ) {
         composable(YogaDestinations.SPLASH_ROUTE) {
             SplashScreen(

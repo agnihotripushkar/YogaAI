@@ -1,11 +1,11 @@
 # YogaAI
 
-YogaAI is a modern Android application built with **Jetpack Compose** that helps users practice Yoga, track their progress, and view instructional videos. It leverages **AI** (via local or remote models) to personalize the yoga experience.
+YogaAI is a modern Android application built with **Jetpack Compose** that helps users practice Yoga, track their progress, and analyze their poses.
+It leverages **AI** (via local or remote models) to personalize the yoga experience and provide real-time feedback.
 
 ## ✨ Features
 
 - **Home**: Main dashboard for accessing daily practices, health metrics, and recommendations.
-- **Classes**: Browse and join various yoga classes categorized by difficulty and style.
 - **Health Tracking**: Integrated with **Health Connect** to track daily streaks, calories burned, and steps.
 - **Yoga Detector**: Real-time privacy-first pose detection using on-device computer vision.
 - **Smart Onboarding**: Responsive and personalized introduction to the app's features.
@@ -27,14 +27,14 @@ YogaAI is a modern Android application built with **Jetpack Compose** that helps
 - **AI/ML**: [MediaPipe](https://developers.google.com/mediapipe) (Vision)
 - **Camera**: [CameraX](https://developer.android.com/media/camera/camerax)
 - **Analytics/Crash Reporting**: [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics)
+- **Background Work**: [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
 
 ## 📁 Project Structure
 
 The project follows a standard multi-module structure for better scalability:
 
-- **:app**: The main entry point that wires all features and core modules together.
-- **:features**: Contains all UI components and business logic for features (Home, Settings, Onboarding, etc.).
-- **:core**: Shared infrastructure, including networking, database, models, and repositories.
+- **:app**: The main entry point that wires all features together.
+- **:features**: Contains all UI components, business logic, and shared core infrastructure (networking, database, models, Health Connect integration, and navigation).
 
 ## 🚀 Setup & Build
 

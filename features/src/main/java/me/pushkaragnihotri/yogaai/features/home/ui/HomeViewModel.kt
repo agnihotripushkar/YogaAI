@@ -1,6 +1,11 @@
 package me.pushkaragnihotri.yogaai.features.home.ui
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DirectionsRun
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +16,7 @@ import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
+import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.home.data.model.WellnessUiModel
 import timber.log.Timber
 
@@ -80,10 +86,34 @@ class HomeViewModel(
             _uiState.update { it.copy(isLoading = true) }
             try {
                 homeRepository.refreshMetrics()
+                val metrics = homeRepository.todayMetrics.value
                 val risk = homeRepository.getTodayRisk()
+
+                val streakItem = WellnessUiModel(
+                    titleRes = R.string.metric_streak,
+                    value = "5 Days", // Mocked for now
+                    icon = Icons.Rounded.EmojiEvents,
+                    color = Color(0xFFFFB300)
+                )
+
+                val caloriesItem = WellnessUiModel(
+                    titleRes = R.string.metric_calories,
+                    value = "${metrics.calories.toInt()} kcal",
+                    icon = Icons.Rounded.LocalFireDepartment,
+                    color = Color(0xFFEF5350)
+                )
+
+                val stepsItem = WellnessUiModel(
+                    titleRes = R.string.metric_steps,
+                    value = "${metrics.steps}",
+                    icon = Icons.Rounded.DirectionsRun,
+                    color = Color(0xFF42A5F5)
+                )
+
                 _uiState.update {
                     it.copy(
                         riskPrediction = risk,
+                        wellnessItems = listOf(streakItem, caloriesItem, stepsItem),
                         isLoading = false
                     )
                 }

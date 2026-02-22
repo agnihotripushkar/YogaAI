@@ -15,7 +15,7 @@ class YogaRepositoryImpl : YogaRepository {
     override fun setup(context: Context, listener: YogaRepositoryListener) {
         try {
             val baseOptions = BaseOptions.builder()
-                .setModelAssetPath("pose_landmarker.task")
+                .setModelAssetPath("models/pose_landmarker.task")
                 .build()
 
             val optionsBuilder = PoseLandmarker.PoseLandmarkerOptions.builder()

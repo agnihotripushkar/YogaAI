@@ -16,6 +16,8 @@ import androidx.compose.ui.res.stringResource
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.yoga.domain.model.PoseRepository
 import me.pushkaragnihotri.yogaai.features.R
+import me.pushkaragnihotri.yogaai.features.common.ui.MascotState
+import me.pushkaragnihotri.yogaai.features.common.ui.ZenMascot
 
 @Composable
 fun PoseResultScreen(
@@ -41,9 +43,16 @@ fun PoseResultScreen(
         
         Spacer(modifier = Modifier.height(24.dp))
         
+        // Mascot
+        val isGreat = feedback.contains("Great", ignoreCase = true)
+        ZenMascot(state = if (isGreat) MascotState.HAPPY else MascotState.ENCOURAGING, modifier = Modifier.size(100.dp))
+        
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Result Card
         Card(
             modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.large,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             )
