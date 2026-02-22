@@ -59,79 +59,39 @@ fun SettingsScreenContent(
              }
         }
 
-        HorizontalDivider(Modifier.padding(vertical = 16.dp))
-
-        SettingsSection(stringResource(R.string.settings_section_appearance)) {
-            Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyMedium)
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    selected = themeMode == 0,
-                    onClick = { onThemeChange(0) },
-                    label = { Text(stringResource(R.string.settings_theme_system)) }
-                )
-                FilterChip(
-                    selected = themeMode == 1,
-                    onClick = { onThemeChange(1) },
-                    label = { Text(stringResource(R.string.settings_theme_light)) }
-                )
-                FilterChip(
-                    selected = themeMode == 2,
-                    onClick = { onThemeChange(2) },
-                    label = { Text(stringResource(R.string.settings_theme_dark)) }
-                )
-            }
-            
-            Spacer(Modifier.height(16.dp))
-            
-            Text("Language", style = MaterialTheme.typography.bodyMedium)
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    selected = language == "English",
-                    onClick = { onLanguageChange("English") },
-                    label = { Text("English") }
-                )
-                FilterChip(
-                    selected = language == "Hindi",
-                    onClick = { onLanguageChange("Hindi") },
-                    label = { Text("Hindi") }
-                )
-                FilterChip(
-                    selected = language == "Spanish",
-                    onClick = { onLanguageChange("Spanish") },
-                    label = { Text("Español") }
-                )
-            }
-        }
-
-        HorizontalDivider(Modifier.padding(vertical = 16.dp))
-
-        SettingsSection(stringResource(R.string.settings_section_account)) {
-             Button(
-                 onClick = onDeleteData,
-                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-             ) {
-                 Text(stringResource(R.string.settings_delete_data))
-             }
-             Text(
-                 stringResource(R.string.settings_delete_data_desc),
-                 style = MaterialTheme.typography.bodySmall,
-                 modifier = Modifier.padding(top = 4.dp)
-             )
-        }
-
-        HorizontalDivider(Modifier.padding(vertical = 16.dp))
-
-        SettingsSection(stringResource(R.string.settings_section_about)) {
-            Text(stringResource(R.string.settings_app_version))
-            // Version Name
-            Text("Version: 1.0.0 (Pilot)", style = MaterialTheme.typography.bodyMedium)
-            
-            Spacer(Modifier.height(8.dp))
-            
-            TextButton(onClick = onPrivacyPolicyClick) {
-                Text("Privacy Policy")
+        Text(stringResource(R.string.settings_section_appearance), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp))
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.large,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Theme
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyMedium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            selected = themeMode == 0,
+                            onClick = { onThemeChange(0) },
+                            label = { Text(stringResource(R.string.settings_theme_system)) }
+                        )
+                        FilterChip(
+                            selected = themeMode == 1,
+                            onClick = { onThemeChange(1) },
+                            label = { Text(stringResource(R.string.settings_theme_light)) }
+                        )
+                        FilterChip(
+                            selected = themeMode == 2,
+                            onClick = { onThemeChange(2) },
+                            label = { Text(stringResource(R.string.settings_theme_dark)) }
+                        )
+                    }
+                }
             }
         }
     }
@@ -149,7 +109,7 @@ fun InfoRow(text: String) {
 @Composable
 fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) {
     Column {
-        Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.secondary, modifier = Modifier.padding(horizontal = 8.dp))
+        Text(title, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 4.dp))
         Spacer(Modifier.height(8.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -157,7 +117,10 @@ fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) 
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 content()
             }
         }
