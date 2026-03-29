@@ -1,5 +1,8 @@
 package me.pushkaragnihotri.yogaai.features.connect.ui.components
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,9 +13,14 @@ import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.MonitorHeart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -20,11 +28,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import me.pushkaragnihotri.yogaai.features.R
+import androidx.compose.ui.tooling.preview.Preview
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun ConnectScreenContent(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {
+    val heroOffset  = remember { Animatable(48f) }
+    val heroAlpha   = remember { Animatable(0f) }
+    val sheetOffset = remember { Animatable(72f) }
+    val sheetAlpha  = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        launch { heroOffset.animateTo(0f, tween(520, easing = FastOutSlowInEasing)) }
+        launch { heroAlpha.animateTo(1f, tween(420)) }
+        delay(160)
+        launch { sheetOffset.animateTo(0f, tween(480, easing = FastOutSlowInEasing)) }
+        launch { sheetAlpha.animateTo(1f, tween(400)) }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -52,6 +74,8 @@ fun ConnectScreenContent(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 90.dp)
+                .offset(y = heroOffset.value.dp)
+                .alpha(heroAlpha.value)
                 .size(300.dp)
                 .clip(CircleShape)
         ) {
@@ -67,7 +91,9 @@ fun ConnectScreenContent(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .offset(y = sheetOffset.value.dp)
+                .alpha(sheetAlpha.value),
             shape = MaterialTheme.shapes.extraLarge.copy(
                 bottomStart = androidx.compose.foundation.shape.CornerSize(0.dp),
                 bottomEnd = androidx.compose.foundation.shape.CornerSize(0.dp)
@@ -166,9 +192,37 @@ fun FeatureItem(
     }
 }
 
+@Preview(name = "Feature Item — Privacy", showBackground = true)
+@Composable
+private fun FeatureItemPrivacyPreview() {
+    YogaAITheme {
+        FeatureItem(
+            icon = Icons.Rounded.Lock,
+            iconColor = MaterialTheme.colorScheme.secondaryContainer,
+            iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
+            title = "Privacy-First AI",
+            description = "Your practice stays private. All analysis happens on-device."
+        )
+    }
+}
+
+@Preview(name = "Feature Item — Health Connect", showBackground = true)
+@Composable
+private fun FeatureItemHealthPreview() {
+    YogaAITheme {
+        FeatureItem(
+            icon = Icons.Rounded.MonitorHeart,
+            iconColor = MaterialTheme.colorScheme.tertiaryContainer,
+            iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
+            title = "Health Connect Integration",
+            description = "Syncs with Health Connect for holistic wellness tracking."
+        )
+    }
+}
+
 @DevicePreviews
 @Composable
-fun ConnectScreenPreview() {
+private fun ConnectScreenContentPreview() {
     YogaAITheme {
         ConnectScreenContent(onConnectClick = {}, onSkipClick = {})
     }

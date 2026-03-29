@@ -16,10 +16,10 @@ fun SplashScreen(onFinished: () -> Unit) {
     SplashScreenContent()
 }
 
-@Preview
+@Preview(name = "Splash Screen")
 @Composable
-fun SplashScreenPreview() {
+private fun SplashScreenPreview() {
     YogaAITheme {
-        SplashScreen(onFinished = {})
+        SplashScreenContent()
     }
 }

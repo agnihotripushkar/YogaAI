@@ -1,5 +1,10 @@
 package me.pushkaragnihotri.yogaai.features.onboarding.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -106,8 +112,19 @@ fun IntroScreen(
 @Composable
 fun IndicatorDots(pagerState: androidx.compose.foundation.pager.PagerState) {
     repeat(3) { iteration ->
-        val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        val width = if (pagerState.currentPage == iteration) 32.dp else 8.dp
+        val color by animateColorAsState(
+            targetValue = if (pagerState.currentPage == iteration)
+                MaterialTheme.colorScheme.primary
+            else
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            animationSpec = tween(durationMillis = 300),
+            label = "dot_color_$iteration"
+        )
+        val width by animateDpAsState(
+            targetValue = if (pagerState.currentPage == iteration) 32.dp else 8.dp,
+            animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+            label = "dot_width_$iteration"
+        )
         Box(
             modifier = Modifier
                 .padding(horizontal = 4.dp)
@@ -412,7 +429,7 @@ fun IntroPageCompact(
 
 @DevicePreviews
 @Composable
-fun IntroScreenPreview() {
+private fun IntroScreenCompactPreview() {
     YogaAITheme {
         IntroScreen(
             windowSizeClass = WindowWidthSizeClass.Compact,
@@ -421,10 +438,20 @@ fun IntroScreenPreview() {
     }
 }
 
-@Preview(name = "Compact", widthDp = 360, heightDp = 640)
-@Preview(name = "Expanded", widthDp = 840, heightDp = 600)
+@Preview(name = "Expanded Layout", widthDp = 840, heightDp = 600)
 @Composable
-fun IntroPagePreview() {
+private fun IntroScreenExpandedPreview() {
+    YogaAITheme {
+        IntroScreen(
+            windowSizeClass = WindowWidthSizeClass.Expanded,
+            onFinished = {}
+        )
+    }
+}
+
+@Preview(name = "Page 1 — Compact", widthDp = 360, heightDp = 640)
+@Composable
+private fun IntroPageFirstPreview() {
     val pagerState = rememberPagerState { 3 }
     YogaAITheme {
         IntroPage(
@@ -434,5 +461,29 @@ fun IntroPagePreview() {
             onFinished = {},
             isLastPage = false
         )
+    }
+}
+
+@Preview(name = "Last Page — Get Started", widthDp = 360, heightDp = 640)
+@Composable
+private fun IntroPageLastPreview() {
+    val pagerState = rememberPagerState { 3 }
+    YogaAITheme {
+        IntroPage(
+            page = 2,
+            pagerState = pagerState,
+            onNext = {},
+            onFinished = {},
+            isLastPage = true
+        )
+    }
+}
+
+@Preview(name = "Indicator Dots — Page 0", showBackground = true)
+@Composable
+private fun IndicatorDotsFirstPreview() {
+    val pagerState = rememberPagerState { 3 }
+    YogaAITheme {
+        Row { IndicatorDots(pagerState = pagerState) }
     }
 }

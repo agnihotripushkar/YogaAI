@@ -1,11 +1,15 @@
-package me.pushkaragnihotri.yogaai.features.settings.viewmodel
+package me.pushkaragnihotri.yogaai.features.settings.ui
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.UserPreferences
@@ -17,83 +21,83 @@ class SettingsViewModel(
     private val homeRepository: HomeRepository
 ) : ViewModel() {
 
-    val themeMode = userPreferences.themeMode
-    val language = userPreferences.language
+    private val _state = MutableStateFlow(SettingsState())
+    val state = _state.asStateFlow()
 
-    private val _steps = MutableStateFlow(0L)
-    val steps: StateFlow<Long> = _steps.asStateFlow()
-
-    private val _calories = MutableStateFlow(0.0)
-    val calories: StateFlow<Double> = _calories.asStateFlow()
+    private val _events = Channel<SettingsEvent>()
+    val events = _events.receiveAsFlow()
 
     val permissions = healthConnectManager.permissions
 
-    var hasPermissions = mutableStateOf(false)
-        private set
-
-    var sdkStatus = mutableStateOf(HealthConnectManager.Companion.SDK_UNAVAILABLE)
-        private set
-
     init {
         viewModelScope.launch {
-            homeRepository.todayMetrics.collect { metrics ->
-                _steps.value = metrics.steps
-                _calories.value = metrics.calories
-            }
-        }
-    }
-
-    fun initialLoad() {
-        val currentStatus = healthConnectManager.checkAvailability()
-        sdkStatus.value = currentStatus
-
-        if (currentStatus == HealthConnectManager.Companion.SDK_AVAILABLE) {
-            viewModelScope.launch {
-                hasPermissions.value = healthConnectManager.hasAllPermissions()
-                if (hasPermissions.value) {
-                    readHealthData()
+            combine(
+                userPreferences.themeMode,
+                userPreferences.language,
+                homeRepository.todayMetrics
+            ) { theme, lang, metrics ->
+                Triple(theme, lang, metrics)
+            }.collect { (theme, lang, metrics) ->
+                _state.update {
+                    it.copy(
+                        themeMode = theme,
+                        language = lang,
+                        steps = metrics.steps,
+                        calories = metrics.calories
+                    )
                 }
             }
+        }
+    }
+
+    fun onAction(action: SettingsAction) {
+        when (action) {
+            SettingsAction.OnInitialLoad -> initialLoad()
+            is SettingsAction.OnThemeChange -> {
+                viewModelScope.launch { userPreferences.setThemeMode(action.mode) }
+            }
+            is SettingsAction.OnLanguageChange -> {
+                viewModelScope.launch { userPreferences.setLanguage(action.language) }
+            }
+            SettingsAction.OnConnectClick -> {
+                viewModelScope.launch {
+                    _events.send(SettingsEvent.RequestPermissions(healthConnectManager.permissions))
+                }
+            }
+            is SettingsAction.OnPermissionsResult -> {
+                val granted = action.granted.containsAll(permissions)
+                _state.update { it.copy(hasPermissions = granted) }
+                if (granted) {
+                    viewModelScope.launch { homeRepository.refreshMetrics() }
+                }
+            }
+            SettingsAction.OnDisconnectWearable -> { /* Clear tokens if applicable */ }
+            SettingsAction.OnDeleteData -> {
+                viewModelScope.launch {
+                    userPreferences.setConsent(false)
+                    userPreferences.setOnboardingCompleted(false)
+                }
+            }
+            SettingsAction.OnPrivacyPolicyClick -> {
+                viewModelScope.launch {
+                    _events.send(SettingsEvent.OpenUrl("https://www.google.com"))
+                }
+            }
+        }
+    }
+
+    private fun initialLoad() {
+        val sdkAvailable = healthConnectManager.checkAvailability() == HealthConnectManager.SDK_AVAILABLE
+        _state.update { it.copy(sdkAvailable = sdkAvailable) }
+
+        if (sdkAvailable) {
+            viewModelScope.launch {
+                val hasPerms = healthConnectManager.hasAllPermissions()
+                _state.update { it.copy(hasPermissions = hasPerms) }
+                if (hasPerms) homeRepository.refreshMetrics()
+            }
         } else {
-            hasPermissions.value = false
-        }
-    }
-
-    fun onPermissionsResult(granted: Set<String>) {
-        if (granted.containsAll(permissions)) {
-            hasPermissions.value = true
-            readHealthData()
-        }
-    }
-
-    private fun readHealthData() {
-        viewModelScope.launch {
-            homeRepository.refreshMetrics()
-        }
-    }
-
-    fun setTheme(mode: Int) {
-        viewModelScope.launch {
-            userPreferences.setThemeMode(mode)
-        }
-    }
-
-    fun setLanguage(language: String) {
-        viewModelScope.launch {
-            userPreferences.setLanguage(language)
-        }
-    }
-
-    // Logic to disconnect or delete data
-    fun disconnectWearable() {
-        // Clear tokens if any. For demo, just maybe unset connection flag if we had one.
-    }
-
-    fun deleteData() {
-        viewModelScope.launch {
-            userPreferences.setConsent(false)
-            userPreferences.setOnboardingCompleted(false)
-            // Trigger app restart or nav to splash in real app
+            _state.update { it.copy(hasPermissions = false) }
         }
     }
 }

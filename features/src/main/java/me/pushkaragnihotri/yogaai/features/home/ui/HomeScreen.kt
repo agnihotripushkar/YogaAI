@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.presentation.ObserveAsEvents
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
@@ -23,57 +23,50 @@ import me.pushkaragnihotri.yogaai.features.home.ui.components.HomeScreenContent
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun HomeRoot(
     viewModel: HomeViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val hasPermissions = viewModel.hasPermissions.value
-    val sdkStatus = viewModel.sdkStatus.value
+    val state by viewModel.state.collectAsState()
 
-    // Permission launcher for Health Connect
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = PermissionController.createRequestPermissionResultContract(),
         onResult = { granted ->
-            Timber.d("HomeScreen: Health Connect permissions result: $granted")
-            viewModel.onPermissionsResult(granted)
+            Timber.d("HomeRoot: Health Connect permissions result: $granted")
+            viewModel.onAction(HomeAction.OnPermissionsResult(granted))
         }
     )
 
-    // Lifecycle observer: re-check permissions every time the screen resumes
-    // (user may have revoked them in system settings while the app was backgrounded)
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is HomeEvent.RequestPermissions -> permissionLauncher.launch(event.permissions)
+            is HomeEvent.ShowSnackbar -> { /* Snackbar handled via state.error */ }
+        }
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                Timber.d("HomeScreen: ON_RESUME — re-checking Health Connect permissions")
-                viewModel.checkPermissionsAndLoad()
+                Timber.d("HomeRoot: ON_RESUME — re-checking Health Connect permissions")
+                viewModel.onAction(HomeAction.OnResumed)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    StatelessHomeScreen(
-        uiState = uiState,
-        hasPermissions = hasPermissions,
-        sdkAvailable = sdkStatus == HealthConnectManager.SDK_AVAILABLE,
-        onGrantPermissionClick = {
-            permissionLauncher.launch(viewModel.permissions)
-        }
+    HomeScreen(
+        state = state,
+        onAction = viewModel::onAction
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StatelessHomeScreen(
-    uiState: HomeUiState,
-    hasPermissions: Boolean = true,
-    sdkAvailable: Boolean = true,
-    onGrantPermissionClick: () -> Unit = {}
+fun HomeScreen(
+    state: HomeState,
+    onAction: (HomeAction) -> Unit
 ) {
     Scaffold { padding ->
         Column(
@@ -83,10 +76,8 @@ fun StatelessHomeScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             HomeScreenContent(
-                uiState = uiState,
-                hasPermissions = hasPermissions,
-                sdkAvailable = sdkAvailable,
-                onGrantPermissionClick = onGrantPermissionClick
+                state = state,
+                onGrantPermissionClick = { onAction(HomeAction.OnGrantPermissionClick) }
             )
         }
     }
@@ -94,18 +85,47 @@ fun StatelessHomeScreen(
 
 @DevicePreviews
 @Composable
-fun HomeScreenPreview() {
+private fun HomeScreenLoadedPreview() {
     YogaAITheme {
-        StatelessHomeScreen(
-            uiState = HomeUiState(
+        HomeScreen(
+            state = HomeState(
                 isLoading = false,
+                hasPermissions = true,
+                sdkAvailable = true,
                 riskPrediction = RiskPrediction(
                     riskLevel = RiskLevel.LOW,
                     explanation = "Your stress levels are low and recovery is high. Great day for a workout!",
                     contributingSignals = emptyList()
                 ),
                 wellnessItems = emptyList()
-            )
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@DevicePreviews
+@Composable
+private fun HomeScreenLoadingPreview() {
+    YogaAITheme {
+        HomeScreen(
+            state = HomeState(isLoading = true),
+            onAction = {}
+        )
+    }
+}
+
+@DevicePreviews
+@Composable
+private fun HomeScreenNoPermissionsPreview() {
+    YogaAITheme {
+        HomeScreen(
+            state = HomeState(
+                isLoading = false,
+                hasPermissions = false,
+                sdkAvailable = true
+            ),
+            onAction = {}
         )
     }
 }

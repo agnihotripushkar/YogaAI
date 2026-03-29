@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.health.connect.client.PermissionController
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.features.connect.ui.components.ConnectScreenContent
+import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingAction
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
 import timber.log.Timber
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,7 +20,7 @@ fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = PermissionController.createRequestPermissionResultContract(),
         onResult = { granted ->
-            viewModel.onPermissionsResult(granted)
+            viewModel.onAction(OnboardingAction.OnPermissionsResult(granted))
             onFinished() // Proceed after permissions are handled
         }
     )
@@ -39,9 +40,9 @@ fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
     )
 }
 
-@Preview
+@Preview(name = "Connect Screen")
 @Composable
-fun ConnectScreenPreview() {
+private fun ConnectScreenPreview() {
     YogaAITheme {
         ConnectScreenContent(
             onConnectClick = {},

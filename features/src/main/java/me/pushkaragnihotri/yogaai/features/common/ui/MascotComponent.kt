@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 enum class MascotState {
     HAPPY,
@@ -142,4 +144,22 @@ fun ZenMascot(
             }
         }
     }
+}
+
+@Preview(name = "Happy", showBackground = true)
+@Composable
+private fun ZenMascotHappyPreview() {
+    YogaAITheme { ZenMascot(state = MascotState.HAPPY) }
+}
+
+@Preview(name = "Meditative", showBackground = true)
+@Composable
+private fun ZenMascotMeditativePreview() {
+    YogaAITheme { ZenMascot(state = MascotState.MEDITATIVE) }
+}
+
+@Preview(name = "Encouraging", showBackground = true)
+@Composable
+private fun ZenMascotEncouragingPreview() {
+    YogaAITheme { ZenMascot(state = MascotState.ENCOURAGING) }
 }

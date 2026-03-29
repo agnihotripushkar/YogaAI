@@ -1,12 +1,23 @@
 package me.pushkaragnihotri.yogaai.features.yoga.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -32,6 +43,33 @@ fun PoseResultScreen(
     val poseDetail = PoseRepository.getPoseDetail(poseName)
     val isGreat = feedback.contains("Great", ignoreCase = true)
 
+    val titleAlpha    = remember { Animatable(0f) }
+    val mascotScale   = remember { Animatable(0.6f) }
+    val mascotAlpha   = remember { Animatable(0f) }
+    val cardAlpha     = remember { Animatable(0f) }
+    val cardOffset    = remember { Animatable(28f) }
+    val sectionsAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        launch { titleAlpha.animateTo(1f, tween(300)) }
+        delay(140)
+        launch { mascotAlpha.animateTo(1f, tween(350)) }
+        launch {
+            mascotScale.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessMediumLow
+                )
+            )
+        }
+        delay(120)
+        launch { cardAlpha.animateTo(1f, tween(380)) }
+        launch { cardOffset.animateTo(0f, tween(380, easing = FastOutSlowInEasing)) }
+        delay(260)
+        sectionsAlpha.animateTo(1f, tween(400))
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -56,21 +94,28 @@ fun PoseResultScreen(
                 text = stringResource(R.string.result_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.alpha(titleAlpha.value)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             ZenMascot(
                 state = if (isGreat) MascotState.HAPPY else MascotState.ENCOURAGING,
-                modifier = Modifier.size(110.dp)
+                modifier = Modifier
+                    .size(110.dp)
+                    .alpha(mascotAlpha.value)
+                    .scale(mascotScale.value)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             // Result hero card
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .alpha(cardAlpha.value)
+                    .offset(y = cardOffset.value.dp),
                 shape = MaterialTheme.shapes.large,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
@@ -135,31 +180,33 @@ fun PoseResultScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (poseDetail.benefits.isNotEmpty()) {
-                DetailSection(title = stringResource(R.string.result_section_benefits), items = poseDetail.benefits)
-            }
-            if (poseDetail.alignmentCues.isNotEmpty()) {
-                DetailSection(title = stringResource(R.string.result_section_alignment), items = poseDetail.alignmentCues)
-            }
-            if (poseDetail.instructions.isNotEmpty()) {
-                DetailSection(title = stringResource(R.string.result_section_instructions), items = poseDetail.instructions, isOrdered = true)
-            }
-            if (poseDetail.contraindications.isNotEmpty()) {
-                DetailSection(
-                    title = stringResource(R.string.result_section_contraindications),
-                    items = poseDetail.contraindications,
-                    bulletColor = MaterialTheme.colorScheme.error
-                )
-            }
+            Column(modifier = Modifier.alpha(sectionsAlpha.value)) {
+                if (poseDetail.benefits.isNotEmpty()) {
+                    DetailSection(title = stringResource(R.string.result_section_benefits), items = poseDetail.benefits)
+                }
+                if (poseDetail.alignmentCues.isNotEmpty()) {
+                    DetailSection(title = stringResource(R.string.result_section_alignment), items = poseDetail.alignmentCues)
+                }
+                if (poseDetail.instructions.isNotEmpty()) {
+                    DetailSection(title = stringResource(R.string.result_section_instructions), items = poseDetail.instructions, isOrdered = true)
+                }
+                if (poseDetail.contraindications.isNotEmpty()) {
+                    DetailSection(
+                        title = stringResource(R.string.result_section_contraindications),
+                        items = poseDetail.contraindications,
+                        bulletColor = MaterialTheme.colorScheme.error
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
-                onClick = onHomeClick,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = MaterialTheme.shapes.extraLarge
-            ) {
-                Text(stringResource(R.string.result_back_home), style = MaterialTheme.typography.titleMedium)
+                Button(
+                    onClick = onHomeClick,
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = MaterialTheme.shapes.extraLarge
+                ) {
+                    Text(stringResource(R.string.result_back_home), style = MaterialTheme.typography.titleMedium)
+                }
             }
         }
     }
@@ -195,15 +242,60 @@ fun DetailSection(
     }
 }
 
-@Preview
+@Preview(name = "Pose Result — Great Performance")
 @Composable
-fun PoseResultScreenPreview() {
+private fun PoseResultScreenGreatPreview() {
     YogaAITheme {
         PoseResultScreen(
             poseName = "Warrior II",
             duration = "60",
             feedback = "Great job! Your form was perfect.",
             onHomeClick = {}
+        )
+    }
+}
+
+@Preview(name = "Pose Result — Session Stopped")
+@Composable
+private fun PoseResultScreenStoppedPreview() {
+    YogaAITheme {
+        PoseResultScreen(
+            poseName = "Tree Pose",
+            duration = "12",
+            feedback = "Session Stopped",
+            onHomeClick = {}
+        )
+    }
+}
+
+@Preview(name = "Detail Section — Ordered", showBackground = true)
+@Composable
+private fun DetailSectionOrderedPreview() {
+    YogaAITheme {
+        DetailSection(
+            title = "Instructions",
+            items = listOf(
+                "Stand with feet hip-width apart",
+                "Shift weight onto left foot",
+                "Place right foot on inner left thigh",
+                "Bring palms together at chest"
+            ),
+            isOrdered = true
+        )
+    }
+}
+
+@Preview(name = "Detail Section — Bullets", showBackground = true)
+@Composable
+private fun DetailSectionBulletsPreview() {
+    YogaAITheme {
+        DetailSection(
+            title = "Benefits",
+            items = listOf(
+                "Improves balance and stability",
+                "Strengthens thighs, ankles, and spine",
+                "Stretches the groins and inner thighs"
+            )
         )
     }
 }

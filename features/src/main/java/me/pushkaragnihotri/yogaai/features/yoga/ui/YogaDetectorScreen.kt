@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview as CameraXPreview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -29,142 +28,156 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import me.pushkaragnihotri.yogaai.features.ui.theme.*
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import me.pushkaragnihotri.yogaai.features.R
+import me.pushkaragnihotri.yogaai.features.common.audio.TextToSpeechManager
 import me.pushkaragnihotri.yogaai.features.common.ui.MascotState
 import me.pushkaragnihotri.yogaai.features.common.ui.ZenMascot
 import me.pushkaragnihotri.yogaai.features.ui.theme.*
-import me.pushkaragnihotri.yogaai.features.ui.theme.*
-import me.pushkaragnihotri.yogaai.features.yoga.viewmodel.YogaDetectorViewModel
+import me.pushkaragnihotri.yogaai.core.presentation.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
-import androidx.compose.ui.tooling.preview.Preview
-import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
-fun YogaDetectorScreen(
-    viewModel: YogaDetectorViewModel = koinViewModel(),
-    onNavigateToResult: (String, String, String) -> Unit = { _, _, _ -> }
+fun YogaDetectorRoot(
+    onNavigateToResult: (String, String, String) -> Unit = { _, _, _ -> },
+    viewModel: YogaDetectorViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    var hasCameraPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.CAMERA
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        )
-    }
-
-    val launcher = androidx.activity.compose.rememberLauncherForActivityResult(
-        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            hasCameraPermission = isGranted
-        }
-    )
-
-    LaunchedEffect(Unit) {
-        if (!hasCameraPermission) {
-            launcher.launch(Manifest.permission.CAMERA)
-        }
-        viewModel.yogaRepository.setup(context, viewModel)
-    }
-
-    val uiState by viewModel.uiState.collectAsState()
+    val state by viewModel.state.collectAsState()
     var isMuted by remember { mutableStateOf(false) }
     var cameraSelector by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
 
-    // TTS Integration
-    val ttsManager = remember { me.pushkaragnihotri.yogaai.features.common.audio.TextToSpeechManager(context) }
-
+    val ttsManager = remember { TextToSpeechManager(context) }
     DisposableEffect(Unit) {
-        onDispose {
-            ttsManager.shutdown()
+        onDispose { ttsManager.shutdown() }
+    }
+
+    LaunchedEffect(state.feedback, isMuted) {
+        if (!isMuted && state.feedback.isNotEmpty()) {
+            ttsManager.speak(state.feedback)
         }
     }
 
-    LaunchedEffect(uiState.feedback, isMuted) {
-        if (!isMuted && uiState.feedback.isNotEmpty()) {
-            ttsManager.speak(uiState.feedback)
-        }
-    }
-
-    LaunchedEffect(uiState.isPoseCompleted) {
-        if (uiState.isPoseCompleted) {
-            ttsManager.stop() // Stop speaking on completion
-            onNavigateToResult(
-                uiState.poseName,
-                uiState.holdTimeSeconds.toString(),
-                uiState.feedback.ifEmpty { "Great job!" } 
-            )
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-        if (hasCameraPermission) {
-            CameraPreview(
-                cameraSelector = cameraSelector,
-                onImageAnalyzed = { imageProxy ->
-                    val bitmap = imageProxy.toRotatedBitmap()
-                    if (bitmap != null) {
-                        viewModel.yogaRepository.detectPose(
-                            bitmap,
-                            imageProxy.imageInfo.rotationDegrees,
-                            System.currentTimeMillis()
-                        )
-                    }
-                    imageProxy.close()
-                }
-            )
-            
-            // Draw skeleton overlay
-            val poseResult = uiState.poseResult
-            if (poseResult != null) {
-                PoseOverlay(
-                    result = poseResult,
-                    isCorrect = uiState.isPoseCorrect
-                )
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is YogaDetectorEvent.NavigateToResult -> {
+                ttsManager.stop()
+                onNavigateToResult(event.poseName, event.duration, event.feedback)
             }
+            is YogaDetectorEvent.ShowError -> { /* error shown via state.errorMessage */ }
+        }
+    }
 
-            // --- Top HUD ---
-            TopHud(
-                poseName = uiState.poseName,
-                timeSeconds = uiState.holdTimeSeconds,
-                confidence = uiState.confidence
+    // Navigate on pose completion (state-driven)
+    LaunchedEffect(state.isPoseCompleted) {
+        if (state.isPoseCompleted) {
+            ttsManager.stop()
+            onNavigateToResult(
+                state.poseName,
+                state.holdTimeSeconds.toString(),
+                state.feedback.ifEmpty { "Great job!" }
             )
+        }
+    }
 
-            // --- Bottom Sheet & Controls ---
-            BottomSheetControls(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                isCorrect = uiState.isPoseCorrect,
-                feedback = uiState.feedback,
-                isMuted = isMuted,
-                onToggleMute = { isMuted = !isMuted },
-                onStop = { 
-                     onNavigateToResult(uiState.poseName, uiState.holdTimeSeconds.toString(), "Session Stopped")
-                },
-                onSwitchCamera = { 
+    LaunchedEffect(Unit) {
+        viewModel.yogaRepository.setup(context, viewModel)
+    }
+
+    YogaDetectorScreen(
+        state = state,
+        isMuted = isMuted,
+        cameraSelector = cameraSelector,
+        onAction = { action ->
+            when (action) {
+                YogaDetectorAction.OnToggleMute -> isMuted = !isMuted
+                YogaDetectorAction.OnSwitchCamera -> {
                     cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
                         CameraSelector.DEFAULT_FRONT_CAMERA
                     } else {
                         CameraSelector.DEFAULT_BACK_CAMERA
                     }
                 }
+                else -> viewModel.onAction(action)
+            }
+        },
+        onImageAnalyzed = { imageProxy ->
+            val bitmap = imageProxy.toRotatedBitmap()
+            if (bitmap != null) {
+                viewModel.yogaRepository.detectPose(
+                    bitmap,
+                    imageProxy.imageInfo.rotationDegrees,
+                    System.currentTimeMillis()
+                )
+            }
+            imageProxy.close()
+        }
+    )
+}
+
+@Composable
+fun YogaDetectorScreen(
+    state: YogaDetectorState,
+    isMuted: Boolean,
+    cameraSelector: CameraSelector,
+    onAction: (YogaDetectorAction) -> Unit,
+    onImageAnalyzed: (androidx.camera.core.ImageProxy) -> Unit
+) {
+    val context = LocalContext.current
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.CAMERA
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val launcher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted -> hasCameraPermission = isGranted }
+    )
+
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) launcher.launch(Manifest.permission.CAMERA)
+    }
+
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        if (hasCameraPermission) {
+            CameraPreview(
+                cameraSelector = cameraSelector,
+                onImageAnalyzed = onImageAnalyzed
             )
-            
+
+            val poseResult = state.poseResult
+            if (poseResult != null) {
+                PoseOverlay(result = poseResult, isCorrect = state.isPoseCorrect)
+            }
+
+            TopHud(
+                poseName = state.poseName,
+                timeSeconds = state.holdTimeSeconds,
+                confidence = state.confidence
+            )
+
+            BottomSheetControls(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                isCorrect = state.isPoseCorrect,
+                feedback = state.feedback,
+                isMuted = isMuted,
+                onToggleMute = { onAction(YogaDetectorAction.OnToggleMute) },
+                onStop = { onAction(YogaDetectorAction.OnStopClick) },
+                onSwitchCamera = { onAction(YogaDetectorAction.OnSwitchCamera) }
+            )
         } else {
-            // Permission Request State
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -179,11 +192,11 @@ fun YogaDetectorScreen(
             }
         }
 
-        val errorMessage = uiState.errorMessage
+        val errorMessage = state.errorMessage
         if (errorMessage != null) {
-             Snackbar(
+            Snackbar(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp)
-            ) { Text(text = errorMessage) }
+            ) { Text(text = errorMessage.asString(context)) }
         }
     }
 }
@@ -191,7 +204,7 @@ fun YogaDetectorScreen(
 @Composable
 fun BottomSheetControls(
     modifier: Modifier = Modifier,
-    isCorrect: Boolean, 
+    isCorrect: Boolean,
     feedback: String,
     isMuted: Boolean,
     onToggleMute: () -> Unit,
@@ -200,9 +213,7 @@ fun BottomSheetControls(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Gunmetal.copy(alpha = 0.97f)
-        ),
+        colors = CardDefaults.cardColors(containerColor = Gunmetal.copy(alpha = 0.97f)),
         shape = MaterialTheme.shapes.large.copy(
             bottomStart = androidx.compose.foundation.shape.CornerSize(0.dp),
             bottomEnd = androidx.compose.foundation.shape.CornerSize(0.dp)
@@ -212,20 +223,17 @@ fun BottomSheetControls(
             modifier = Modifier.padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-             // Handle bar
             Box(
                 modifier = Modifier
-                    .width(40.dp)
-                    .height(4.dp)
+                    .width(40.dp).height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
                     .background(Color.Gray.copy(alpha = 0.3f))
             )
-            
+
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Feedback Section
             if (isCorrect) {
-                 Icon(
+                Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Correct",
                     tint = BrightGreen,
@@ -244,47 +252,43 @@ fun BottomSheetControls(
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.LightGray,
                         textAlign = TextAlign.Center,
-                         modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             } else {
-                 Text(
+                Text(
                     text = stringResource(R.string.feedback_adjust_pose),
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
-                 if (feedback.isNotEmpty()) {
-                     Text(
+                if (feedback.isNotEmpty()) {
+                    Text(
                         text = feedback,
                         style = MaterialTheme.typography.titleMedium,
                         color = AccentTeal,
                         textAlign = TextAlign.Center,
-                         modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 } else {
-                     Text(
+                    Text(
                         text = stringResource(R.string.feedback_aligning),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color.Gray
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
-            // Integrated Key Controls
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Switch Cam
                 IconButton(
                     onClick = onSwitchCamera,
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                    modifier = Modifier.size(56.dp).background(Color.White.copy(alpha = 0.1f), CircleShape)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Cameraswitch,
@@ -292,8 +296,7 @@ fun BottomSheetControls(
                         tint = Color.White
                     )
                 }
-        
-                // Stop Button (Big Red)
+
                 Button(
                     onClick = onStop,
                     shape = MaterialTheme.shapes.extraLarge,
@@ -301,19 +304,12 @@ fun BottomSheetControls(
                     modifier = Modifier.size(72.dp),
                     contentPadding = PaddingValues(0.dp)
                 ) {
-                     Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .background(Color.White, RoundedCornerShape(4.dp))
-                    )
+                    Box(modifier = Modifier.size(32.dp).background(Color.White, RoundedCornerShape(4.dp)))
                 }
-        
-                // Audio
+
                 IconButton(
                     onClick = onToggleMute,
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                    modifier = Modifier.size(56.dp).background(Color.White.copy(alpha = 0.1f), CircleShape)
                 ) {
                     Icon(
                         imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
@@ -322,7 +318,7 @@ fun BottomSheetControls(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -331,9 +327,7 @@ fun BottomSheetControls(
 @Composable
 fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 48.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
         contentAlignment = Alignment.Center
     ) {
         Surface(
@@ -346,31 +340,17 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Pose Name
-                Text(
-                    text = poseName,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
+                Text(text = poseName, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
 
-                // Divider
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(20.dp)
-                        .background(Color.Gray.copy(alpha = 0.5f))
-                )
+                Box(modifier = Modifier.width(1.dp).height(20.dp).background(Color.Gray.copy(alpha = 0.5f)))
 
-                // Mascot (Meditative)
                 ZenMascot(state = MascotState.MEDITATIVE, modifier = Modifier.size(40.dp))
 
-                // Timer
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Icon(
                         imageVector = Icons.Default.Timer,
-                        contentDescription = "Timer", // This could also be extracted
-                        tint = BrightGreen, 
+                        contentDescription = null,
+                        tint = BrightGreen,
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
@@ -380,20 +360,15 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
                         fontSize = 16.sp
                     )
                 }
-                
-                // Confidence Pill
-                Surface(
-                    color = Color(0xFF004D40), // Dark Teal - Consider extracting or keeping specific if very contextual
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier
-                ) {
-                   Text(
+
+                Surface(color = Color(0xFF004D40), shape = RoundedCornerShape(50)) {
+                    Text(
                         text = "${(confidence * 100).toInt()}%",
                         color = AccentTeal,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                   )
+                    )
                 }
             }
         }
@@ -428,19 +403,12 @@ fun CameraPreview(
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also {
-                        it.setAnalyzer(executor) { imageProxy ->
-                            onImageAnalyzed(imageProxy)
-                        }
+                        it.setAnalyzer(executor) { imageProxy -> onImageAnalyzed(imageProxy) }
                     }
 
                 try {
                     cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(
-                        lifecycleOwner,
-                        cameraSelector,
-                        preview,
-                        imageAnalysis
-                    )
+                    cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalysis)
                 } catch (e: Exception) {
                     // Handle error
                 }
@@ -454,18 +422,14 @@ fun PoseOverlay(result: PoseLandmarkerResult, isCorrect: Boolean) {
     Canvas(modifier = Modifier.fillMaxSize()) {
         val landmarks = result.landmarks()
         if (landmarks.isNotEmpty()) {
-            val firstPersonLandmarks = landmarks[0]
-            
-            // Draw connections could be added here for full stick figure
-            
-            for (landmark in firstPersonLandmarks) {
+            for (landmark in landmarks[0]) {
                 drawCircle(
                     color = Color.White.copy(alpha = 0.5f),
                     radius = 8f,
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )
                 drawCircle(
-                    color = if (isCorrect) BrightGreen else AccentTeal, // Neon cyan for detection
+                    color = if (isCorrect) BrightGreen else AccentTeal,
                     radius = 4f,
                     center = Offset(landmark.x() * size.width, landmark.y() * size.height)
                 )
@@ -474,7 +438,7 @@ fun PoseOverlay(result: PoseLandmarkerResult, isCorrect: Boolean) {
     }
 }
 
-fun ImageProxy.toRotatedBitmap(): Bitmap? {
+fun androidx.camera.core.ImageProxy.toRotatedBitmap(): Bitmap? {
     val bitmap = this.toBitmap() ?: return null
     val matrix = Matrix().apply {
         postRotate(this@toRotatedBitmap.imageInfo.rotationDegrees.toFloat())
@@ -482,21 +446,21 @@ fun ImageProxy.toRotatedBitmap(): Bitmap? {
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
 
-@Preview
+@Preview(name = "Top HUD", showBackground = true, backgroundColor = 0xFF000000)
 @Composable
-fun TopHudPreview() {
+private fun TopHudPreview() {
     YogaAITheme {
         TopHud(poseName = "Warrior II", timeSeconds = 30, confidence = 0.95f)
     }
 }
 
-@Preview
+@Preview(name = "Bottom Controls — Correct Pose", showBackground = true, backgroundColor = 0xFF1A1A2E)
 @Composable
-fun BottomSheetControlsCorrectPreview() {
+private fun BottomSheetControlsCorrectPreview() {
     YogaAITheme {
         BottomSheetControls(
             isCorrect = true,
-            feedback = "Keep your back straight",
+            feedback = "Keep your back straight and arms extended",
             isMuted = false,
             onToggleMute = {},
             onStop = {},
@@ -505,17 +469,40 @@ fun BottomSheetControlsCorrectPreview() {
     }
 }
 
-@Preview
+@Preview(name = "Bottom Controls — Incorrect Pose", showBackground = true, backgroundColor = 0xFF1A1A2E)
 @Composable
-fun BottomSheetControlsIncorrectPreview() {
+private fun BottomSheetControlsIncorrectPreview() {
     YogaAITheme {
         BottomSheetControls(
             isCorrect = false,
-            feedback = "Lower your hips",
+            feedback = "Lower your hips and bend your front knee more",
             isMuted = true,
             onToggleMute = {},
             onStop = {},
             onSwitchCamera = {}
         )
+    }
+}
+
+@Preview(name = "Bottom Controls — Aligning (no feedback)", showBackground = true, backgroundColor = 0xFF1A1A2E)
+@Composable
+private fun BottomSheetControlsAligningPreview() {
+    YogaAITheme {
+        BottomSheetControls(
+            isCorrect = false,
+            feedback = "",
+            isMuted = false,
+            onToggleMute = {},
+            onStop = {},
+            onSwitchCamera = {}
+        )
+    }
+}
+
+@Preview(name = "Top HUD — High Hold Time", showBackground = true, backgroundColor = 0xFF000000)
+@Composable
+private fun TopHudHighTimePreview() {
+    YogaAITheme {
+        TopHud(poseName = "Tree Pose", timeSeconds = 125, confidence = 0.88f)
     }
 }

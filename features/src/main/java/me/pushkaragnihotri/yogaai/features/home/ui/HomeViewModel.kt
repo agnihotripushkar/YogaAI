@@ -4,86 +4,76 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.LocalFireDepartment
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.presentation.UiText
+import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
-import me.pushkaragnihotri.yogaai.features.R
-import me.pushkaragnihotri.yogaai.features.home.data.model.WellnessUiModel
 import timber.log.Timber
-
-data class HomeUiState(
-    val riskPrediction: RiskPrediction? = null,
-    val wellnessItems: List<WellnessUiModel> = emptyList(),
-    val isLoading: Boolean = true
-)
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val healthConnectManager: HealthConnectManager
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val _state = MutableStateFlow(HomeState())
+    val state = _state.asStateFlow()
 
-    /** Expose the Health Connect permission set so the UI can launch the request. */
-    val permissions get() = healthConnectManager.permissions
-
-    /** Observable permission state for the UI. */
-    var hasPermissions = mutableStateOf(false)
-        private set
-
-    /** Observable SDK status for the UI. */
-    var sdkStatus = mutableStateOf(HealthConnectManager.SDK_UNAVAILABLE)
-        private set
+    private val _events = Channel<HomeEvent>()
+    val events = _events.receiveAsFlow()
 
     init {
-        loadData()
+        checkPermissionsAndLoad()
     }
 
-    /**
-     * Called from the screen on every ON_RESUME to re-verify permissions
-     * (the user may have revoked them while the app was backgrounded).
-     */
-    fun checkPermissionsAndLoad() {
-        val currentStatus = healthConnectManager.checkAvailability()
-        sdkStatus.value = currentStatus
+    fun onAction(action: HomeAction) {
+        when (action) {
+            HomeAction.OnRefreshClick -> loadData()
+            HomeAction.OnGrantPermissionClick -> {
+                viewModelScope.launch {
+                    _events.send(HomeEvent.RequestPermissions(healthConnectManager.permissions))
+                }
+            }
+            is HomeAction.OnPermissionsResult -> {
+                val granted = action.granted.containsAll(healthConnectManager.permissions)
+                _state.update { it.copy(hasPermissions = granted) }
+                Timber.d("HomeViewModel onPermissionsResult: hasPermissions=$granted")
+                if (granted) loadData()
+            }
+            HomeAction.OnResumed -> checkPermissionsAndLoad()
+        }
+    }
 
-        if (currentStatus == HealthConnectManager.SDK_AVAILABLE) {
+    private fun checkPermissionsAndLoad() {
+        val sdkAvailable = healthConnectManager.checkAvailability() == HealthConnectManager.SDK_AVAILABLE
+        _state.update { it.copy(sdkAvailable = sdkAvailable) }
+
+        if (sdkAvailable) {
             viewModelScope.launch {
-                hasPermissions.value = healthConnectManager.hasAllPermissions()
-                Timber.d("HomeViewModel checkPermissionsAndLoad: hasPermissions=${hasPermissions.value}")
+                val hasPerms = healthConnectManager.hasAllPermissions()
+                _state.update { it.copy(hasPermissions = hasPerms) }
+                Timber.d("HomeViewModel checkPermissionsAndLoad: hasPermissions=$hasPerms")
                 loadData()
             }
         } else {
-            hasPermissions.value = false
-            Timber.d("HomeViewModel: Health Connect SDK not available (status=$currentStatus)")
+            _state.update { it.copy(hasPermissions = false) }
+            Timber.d("HomeViewModel: Health Connect SDK not available")
             loadData()
         }
     }
 
-    /**
-     * Called after the user responds to the permission dialog.
-     */
-    fun onPermissionsResult(granted: Set<String>) {
-        hasPermissions.value = granted.containsAll(permissions)
-        Timber.d("HomeViewModel onPermissionsResult: hasPermissions=${hasPermissions.value}")
-        if (hasPermissions.value) {
-            loadData()
-        }
-    }
-
-    fun loadData() {
+    private fun loadData() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true) }
             try {
                 homeRepository.refreshMetrics()
                 val metrics = homeRepository.todayMetrics.value
@@ -91,18 +81,16 @@ class HomeViewModel(
 
                 val streakItem = WellnessUiModel(
                     titleRes = R.string.metric_streak,
-                    value = "5 Days", // Mocked for now
+                    value = "5 Days",
                     icon = Icons.Rounded.EmojiEvents,
                     color = Color(0xFFFFB300)
                 )
-
                 val caloriesItem = WellnessUiModel(
                     titleRes = R.string.metric_calories,
                     value = "${metrics.calories.toInt()} kcal",
                     icon = Icons.Rounded.LocalFireDepartment,
                     color = Color(0xFFEF5350)
                 )
-
                 val stepsItem = WellnessUiModel(
                     titleRes = R.string.metric_steps,
                     value = "${metrics.steps}",
@@ -110,16 +98,19 @@ class HomeViewModel(
                     color = Color(0xFF42A5F5)
                 )
 
-                _uiState.update {
+                _state.update {
                     it.copy(
                         riskPrediction = risk,
                         wellnessItems = listOf(streakItem, caloriesItem, stepsItem),
-                        isLoading = false
+                        isLoading = false,
+                        error = null
                     )
                 }
             } catch (e: Exception) {
                 Timber.e(e, "Failed to load home data")
-                _uiState.update { it.copy(isLoading = false) }
+                val errorText = UiText.DynamicString(e.message ?: "Failed to load data")
+                _state.update { it.copy(isLoading = false, error = errorText) }
+                _events.send(HomeEvent.ShowSnackbar(errorText))
             }
         }
     }
