@@ -90,4 +90,7 @@ dependencies {
     
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Google Fonts
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 }

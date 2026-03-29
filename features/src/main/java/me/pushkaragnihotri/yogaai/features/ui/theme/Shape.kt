@@ -5,7 +5,14 @@ import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
 val Shapes = Shapes(
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(24.dp), // Bento grid cards
-    large = RoundedCornerShape(32.dp)
+    // Chips, small badges
+    extraSmall = RoundedCornerShape(8.dp),
+    // Input fields, small cards
+    small = RoundedCornerShape(16.dp),
+    // Standard cards, dialogs
+    medium = RoundedCornerShape(28.dp),
+    // Hero cards, bottom sheets
+    large = RoundedCornerShape(36.dp),
+    // Full pill buttons, FABs
+    extraLarge = RoundedCornerShape(50.dp)
 )

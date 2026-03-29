@@ -201,9 +201,12 @@ fun BottomSheetControls(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = Gunmetal.copy(alpha = 0.95f)
+            containerColor = Gunmetal.copy(alpha = 0.97f)
         ),
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        shape = MaterialTheme.shapes.large.copy(
+            bottomStart = androidx.compose.foundation.shape.CornerSize(0.dp),
+            bottomEnd = androidx.compose.foundation.shape.CornerSize(0.dp)
+        )
     ) {
         Column(
             modifier = Modifier.padding(24.dp),
@@ -293,7 +296,7 @@ fun BottomSheetControls(
                 // Stop Button (Big Red)
                 Button(
                     onClick = onStop,
-                    shape = CircleShape,
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(containerColor = RedButton),
                     modifier = Modifier.size(72.dp),
                     contentPadding = PaddingValues(0.dp)
@@ -335,7 +338,7 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
     ) {
         Surface(
             color = DarkOverlay.copy(alpha = 0.8f),
-            shape = RoundedCornerShape(50),
+            shape = MaterialTheme.shapes.extraLarge,
             modifier = Modifier.height(48.dp)
         ) {
             Row(

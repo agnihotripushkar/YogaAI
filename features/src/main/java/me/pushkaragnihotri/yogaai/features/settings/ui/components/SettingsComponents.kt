@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.features.R
@@ -32,65 +33,69 @@ fun SettingsScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // Health Dashboard Section
+        // Health Data Section
         SettingsSection(stringResource(R.string.profile_health_data_header)) {
-             if (sdkStatus != HealthConnectManager.SDK_AVAILABLE) {
-                 Text("Health Connect Status: $sdkStatus", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
-                 Spacer(Modifier.height(8.dp))
-             }
-
-             when (sdkStatus) {
+            if (sdkStatus != HealthConnectManager.SDK_AVAILABLE) {
+                Text(
+                    "Health Connect Status: $sdkStatus",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+                Spacer(Modifier.height(8.dp))
+            }
+            when (sdkStatus) {
                 HealthConnectManager.SDK_AVAILABLE -> {
                     if (hasPermissions) {
                         InfoRow(stringResource(R.string.profile_steps_format, steps))
                         InfoRow(stringResource(R.string.profile_calories_format, calories))
                     } else {
-                        Text(stringResource(R.string.profile_connect_prompt))
-                        Button(onClick = onConnectClick) {
+                        Text(
+                            stringResource(R.string.profile_connect_prompt),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        FilledTonalButton(
+                            onClick = onConnectClick,
+                            shape = MaterialTheme.shapes.extraLarge
+                        ) {
                             Text(stringResource(R.string.profile_connect_button))
                         }
                     }
                 }
                 else -> {
-                    Text("Health Connect not available.")
+                    Text(
+                        "Health Connect not available.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-             }
+            }
         }
 
-        Text(stringResource(R.string.settings_section_appearance), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp))
-        
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.large,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Theme
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyMedium)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FilterChip(
-                            selected = themeMode == 0,
-                            onClick = { onThemeChange(0) },
-                            label = { Text(stringResource(R.string.settings_theme_system)) }
-                        )
-                        FilterChip(
-                            selected = themeMode == 1,
-                            onClick = { onThemeChange(1) },
-                            label = { Text(stringResource(R.string.settings_theme_light)) }
-                        )
-                        FilterChip(
-                            selected = themeMode == 2,
-                            onClick = { onThemeChange(2) },
-                            label = { Text(stringResource(R.string.settings_theme_dark)) }
-                        )
-                    }
+        // Appearance Section
+        SettingsSection(stringResource(R.string.settings_section_appearance)) {
+            Text(
+                stringResource(R.string.settings_theme),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    0 to stringResource(R.string.settings_theme_system),
+                    1 to stringResource(R.string.settings_theme_light),
+                    2 to stringResource(R.string.settings_theme_dark)
+                ).forEach { (mode, label) ->
+                    FilterChip(
+                        selected = themeMode == mode,
+                        onClick = { onThemeChange(mode) },
+                        label = { Text(label) },
+                        shape = MaterialTheme.shapes.extraLarge
+                    )
                 }
             }
         }
@@ -102,6 +107,7 @@ fun InfoRow(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary
     )
 }
@@ -109,20 +115,27 @@ fun InfoRow(text: String) {
 @Composable
 fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) {
     Column {
-        Text(title, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 4.dp))
-        Spacer(Modifier.height(8.dp))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+        )
+        Spacer(Modifier.height(10.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.large,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+            ),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                content()
-            }
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                content = content
+            )
         }
     }
 }

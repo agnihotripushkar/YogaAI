@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Lock
@@ -16,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -30,32 +29,30 @@ fun ConnectScreenContent(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.radialGradient(
+                Brush.verticalGradient(
                     colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
                         MaterialTheme.colorScheme.background
-                    ),
-                    center = Offset(0.5f, -0.2f),
-                    radius = 1200f
+                    )
                 )
             )
     ) {
-        // Decorative Circles
+        // Decorative blob
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = (-50).dp)
-                .size(400.dp)
+                .offset(y = (-60).dp)
+                .size(420.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f))
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f))
         )
-        
-        // Hero Image
+
+        // Hero image
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 100.dp)
-                .size(320.dp)
+                .padding(top = 90.dp)
+                .size(300.dp)
                 .clip(CircleShape)
         ) {
             Image(
@@ -66,82 +63,75 @@ fun ConnectScreenContent(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {
             )
         }
 
-        // Bottom Sheet Content
+        // Bottom sheet
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+            shape = MaterialTheme.shapes.extraLarge.copy(
+                bottomStart = androidx.compose.foundation.shape.CornerSize(0.dp),
+                bottomEnd = androidx.compose.foundation.shape.CornerSize(0.dp)
+            ),
             color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 8.dp
+            tonalElevation = 6.dp
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Handle
                 Box(
                     modifier = Modifier
-                        .width(40.dp)
+                        .width(44.dp)
                         .height(4.dp)
-                        .clip(RoundedCornerShape(2.dp))
-                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
+                        .clip(MaterialTheme.shapes.extraSmall)
+                        .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
                 )
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 Text(
                     text = "Your AI Yoga Coach",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // Features
+
+                Spacer(modifier = Modifier.height(28.dp))
+
                 FeatureItem(
                     icon = Icons.Rounded.Lock,
                     iconColor = MaterialTheme.colorScheme.secondaryContainer,
-                    iconTint = MaterialTheme.colorScheme.secondary,
+                    iconTint = MaterialTheme.colorScheme.onSecondaryContainer,
                     title = "Privacy-First AI",
                     description = "Your practice stays private. All analysis happens on-device."
                 )
-                
+
                 Spacer(modifier = Modifier.height(20.dp))
-                
+
                 FeatureItem(
                     icon = Icons.Rounded.MonitorHeart,
                     iconColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    iconTint = MaterialTheme.colorScheme.tertiary,
+                    iconTint = MaterialTheme.colorScheme.onTertiaryContainer,
                     title = "Health Connect Integration",
                     description = "Syncs with Health Connect for holistic wellness tracking."
                 )
-                
-                Spacer(modifier = Modifier.height(40.dp))
-                
-                // Get Started Button
+
+                Spacer(modifier = Modifier.height(36.dp))
+
                 Button(
                     onClick = onConnectClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    shape = RoundedCornerShape(50)
+                    )
                 ) {
-                    Text(
-                        text = "Get Started",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    Text(text = "Get Started", style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowForward,
-                        contentDescription = null
-                    )
+                    Icon(imageVector = Icons.Rounded.ArrowForward, contentDescription = null)
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -150,44 +140,28 @@ fun ConnectScreenContent(onConnectClick: () -> Unit, onSkipClick: () -> Unit) {
 
 @Composable
 fun FeatureItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     iconColor: Color,
     iconTint: Color,
     title: String,
     description: String
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top
-    ) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
         Box(
             modifier = Modifier
-                .size(48.dp)
-                .background(iconColor, CircleShape),
+                .size(52.dp)
+                .background(iconColor, MaterialTheme.shapes.medium),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(24.dp)
-            )
+            Icon(imageVector = icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(26.dp))
         }
-        
+
         Spacer(modifier = Modifier.width(16.dp))
-        
+
         Column {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Text(text = title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Text(text = description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

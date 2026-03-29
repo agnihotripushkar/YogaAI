@@ -2,89 +2,91 @@ package me.pushkaragnihotri.yogaai.features.splash.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.SelfImprovement
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.CircleShape
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 
 @Composable
 fun SplashScreenContent() {
+    val primary   = MaterialTheme.colorScheme.primary
+    val secondary = MaterialTheme.colorScheme.secondary
+    val tertiary  = MaterialTheme.colorScheme.tertiary
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.radialGradient(
+                Brush.radialGradient(
                     colors = listOf(
-                        Color(0xFFFFFFFF), // Center White
-                        Color(0xFFF1F8E9)  // Outer Light Green
+                        primary.copy(alpha = 0.18f),
+                        secondary.copy(alpha = 0.10f),
+                        MaterialTheme.colorScheme.background
                     ),
-                    radius = 1500f // Approximate radius
+                    radius = 1800f
                 )
             ),
         contentAlignment = Alignment.Center
     ) {
-        // Center Content: Logo + Title + Subtitle
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo Container
+            // Logo — pill-shaped container with gradient
             Box(
                 modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(Color(0xFF557168)), // Slate Green from image
+                    .size(width = 120.dp, height = 120.dp)
+                    .clip(RoundedCornerShape(36.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(primary, tertiary)
+                        )
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Rounded.SelfImprovement,
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = Color(0xFFC8E6C9) // Light Green Tint
+                    modifier = Modifier.size(68.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-            
-            Spacer(Modifier.height(24.dp))
-            
-            // Title
+
+            Spacer(Modifier.height(32.dp))
+
             Text(
                 text = stringResource(R.string.app_name_splash),
-                style = MaterialTheme.typography.displayMedium.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = Color(0xFF557168) // Match Logo Bg
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.primary
             )
-            
+
             Spacer(Modifier.height(8.dp))
-            
-            // Subtitle
+
             Text(
                 text = stringResource(R.string.app_tagline),
                 style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFF8FA39D) // Muted Green/Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        
-        // Bottom Content: Loading
+
+        // Bottom loading indicator
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 64.dp)
-                .padding(horizontal = 48.dp)
+                .padding(bottom = 64.dp, start = 48.dp, end = 48.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -94,18 +96,16 @@ fun SplashScreenContent() {
                     letterSpacing = 2.sp,
                     fontWeight = FontWeight.Medium
                 ),
-                color = Color(0xFF6B877B)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
             Spacer(Modifier.height(12.dp))
-            
             LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp)
                     .clip(CircleShape),
-                color = Color(0xFF4CAF50), // Bright Green
-                trackColor = Color(0xFFE8F5E9) // Very Light Green
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primaryContainer
             )
         }
     }

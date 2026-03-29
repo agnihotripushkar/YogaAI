@@ -5,8 +5,7 @@ It leverages **AI** (via local or remote models) to personalize the yoga experie
 
 ## ✨ Features
 
-- **Home**: Main dashboard for accessing daily practices, health metrics, and recommendations.
-- **Health Tracking**: Integrated with **Health Connect** to track daily streaks, calories burned, and steps.
+- **Home (with Health Tracking)**: Main dashboard for accessing daily practices, recommendations, and integrated health metrics. Connected with **Health Connect** to track daily streaks, calories burned, and steps.
 - **Yoga Detector**: Real-time privacy-first pose detection using on-device computer vision.
 - **Smart Onboarding**: Responsive and personalized introduction to the app's features.
 - **Settings**: Manage preferences, theme settings, and health permissions.
@@ -49,3 +48,60 @@ YogaAI features a custom **Wellness Theme** designed for tranquility and clarity
 - **Palette**: "Sage & Cream" - A soothing blend of Sage Green (`#95C495`), Cream White (`#F9F9F4`), and Earthy accents (`#BCAAA4`).
 - **Typography**: Clean, readable sans-serif type scale optimized for instructional content.
 - **Responsive**: Adaptive layouts verified for Phones, Foldables, and Tablets.
+
+## 📊 Entity Relationship Diagram
+
+The following ER diagram outlines the core data models and their relationships within the YogaAI application.
+
+```mermaid
+erDiagram
+    %% Core Entities
+    UserPreferences {
+        boolean consentGiven
+        boolean onboardingCompleted
+        boolean isDemoMode
+        int stepGoal
+        int sleepGoal
+        string userName
+        int userAge
+        string userLevel
+        int themeMode
+        string language
+    }
+
+    DailyMetric {
+        long steps
+        long sleepDurationMinutes
+        int restingHeartRate
+        float calories
+    }
+
+    RiskPrediction {
+        RiskLevel riskLevel
+        string explanation
+        string[] contributingSignals
+        LocalDate date
+    }
+
+    PoseDetail {
+        string name
+        string sanskritName
+        string meaning
+        string[] benefits
+        string[] instructions
+        string[] alignmentCues
+        string[] contraindications
+    }
+
+    PoseClassification {
+        string poseName
+        float confidence
+        boolean isCorrect
+        string feedback
+    }
+
+    %% Logical Relationships
+    UserPreferences ||--o| DailyMetric : "has daily goal constraints"
+    DailyMetric ||--o{ RiskPrediction : "influences"
+    PoseClassification }|--|| PoseDetail : "references"
+```

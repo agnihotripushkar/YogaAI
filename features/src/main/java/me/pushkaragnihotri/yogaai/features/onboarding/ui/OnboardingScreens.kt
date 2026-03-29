@@ -254,7 +254,8 @@ fun IntroPageExpanded(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    ),
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
                         text = stringResource(R.string.intro_button_start),
@@ -268,7 +269,8 @@ fun IntroPageExpanded(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    ),
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
                         text = stringResource(R.string.intro_button_next),
@@ -335,8 +337,8 @@ fun IntroPageCompact(
             modifier = Modifier
                 .weight(0.3f)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                .background(MaterialTheme.colorScheme.surface) // Bottom sheet background
+                .clip(MaterialTheme.shapes.large)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 24.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top 
@@ -380,7 +382,8 @@ fun IntroPageCompact(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    ),
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
                         text = stringResource(R.string.intro_button_start),
@@ -394,7 +397,8 @@ fun IntroPageCompact(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    ),
+                    shape = MaterialTheme.shapes.extraLarge
                 ) {
                     Text(
                         text = stringResource(R.string.intro_button_next),

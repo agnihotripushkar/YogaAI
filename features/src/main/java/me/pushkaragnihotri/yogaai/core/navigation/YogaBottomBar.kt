@@ -35,21 +35,17 @@ fun YogaBottomBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.97f),
+        shadowElevation = 8.dp,
         modifier = modifier
-            .padding(horizontal = 24.dp, vertical = 24.dp)
-            .clip(RoundedCornerShape(32.dp))
-            .graphicsLayer {
-                shadowElevation = 12.dp.toPx()
-                shape = RoundedCornerShape(32.dp)
-                clip = true
-            }
+            .padding(horizontal = 20.dp, vertical = 20.dp)
+            .clip(MaterialTheme.shapes.extraLarge)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -57,12 +53,12 @@ fun YogaBottomBar(
 
             bottomNavItems.forEach { screen ->
                 val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                
+
                 val scale by animateFloatAsState(
-                    targetValue = if (selected) 1.05f else 1.0f,
+                    targetValue = if (selected) 1.08f else 1.0f,
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
+                        stiffness = Spring.StiffnessMediumLow
                     )
                 )
 
@@ -71,12 +67,15 @@ fun YogaBottomBar(
                 )
 
                 val contentColor by animateColorAsState(
-                    targetValue = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Gray
+                    targetValue = if (selected)
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
+                        .clip(MaterialTheme.shapes.large)
                         .background(backgroundColor)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
@@ -91,19 +90,16 @@ fun YogaBottomBar(
                                 }
                             }
                         )
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                        .graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                        },
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .graphicsLayer { scaleX = scale; scaleY = scale },
                     contentAlignment = Alignment.Center
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Icon(
-                            imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon, 
+                            imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon,
                             contentDescription = stringResource(screen.labelResId),
                             tint = contentColor,
                             modifier = Modifier.size(24.dp)
@@ -111,7 +107,7 @@ fun YogaBottomBar(
                         if (selected) {
                             Text(
                                 text = stringResource(screen.labelResId),
-                                style = MaterialTheme.typography.labelMedium,
+                                style = MaterialTheme.typography.labelLarge,
                                 color = contentColor,
                                 fontWeight = FontWeight.Bold
                             )
