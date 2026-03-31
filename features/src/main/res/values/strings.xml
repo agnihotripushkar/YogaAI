@@ -125,4 +125,10 @@
     <string name="result_section_alignment">Alignment Cues</string>
     <string name="result_section_instructions">Instructions</string>
     <string name="result_section_contraindications">Contraindications</string>
+
+    <!-- Mock Wellness Data -->
+    <string name="wellness_explanation_good_sleep">Your activity levels are good and sleep is sufficient.</string>
+    <string name="wellness_explanation_elevated_hr">Slightly elevated heart rate.</string>
+    <string name="wellness_signal_hr_70">Resting HR > 70</string>
+    <string name="wellness_explanation_recovery_day">Great recovery day.</string>
 </resources>

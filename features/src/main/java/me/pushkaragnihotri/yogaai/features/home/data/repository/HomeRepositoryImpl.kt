@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
@@ -44,9 +45,13 @@ class HomeRepositoryImpl(
 
         // Simple heuristic for risk level
         val riskLevel = if (metrics.sleepDurationMinutes < 300) RiskLevel.HIGH else RiskLevel.LOW
-        val signals = if (riskLevel == RiskLevel.HIGH) listOf("Sleep < 5h") else emptyList()
+        val signals = if (riskLevel == RiskLevel.HIGH) listOf(UiText.DynamicString("Sleep < 5h")) else emptyList()
 
-        val explanation = if (riskLevel == RiskLevel.HIGH) "Short sleep detected." else "Wellness looks good."
+        val explanation = if (riskLevel == RiskLevel.HIGH) {
+            UiText.DynamicString("Short sleep detected.")
+        } else {
+            UiText.DynamicString("Wellness looks good.")
+        }
 
         return RiskPrediction(
             riskLevel = riskLevel,
@@ -99,7 +104,7 @@ class HomeRepositoryImpl(
 
     override suspend fun generateExplanation(
         riskLevel: RiskLevel,
-        contributingSignals: List<String>,
+        contributingSignals: List<UiText>,
         metricsSummary: String
     ): String {
         return "Your wellness looks ${riskLevel.name.lowercase()} based on your activity and sleep."

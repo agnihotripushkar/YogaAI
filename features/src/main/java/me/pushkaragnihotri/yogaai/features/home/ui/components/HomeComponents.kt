@@ -35,9 +35,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.R
+import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.home.ui.WellnessUiModel
 import me.pushkaragnihotri.yogaai.features.ui.theme.*
@@ -346,6 +348,7 @@ fun WellnessCard(item: WellnessUiModel, modifier: Modifier = Modifier, animation
 @Composable
 fun RiskCard(risk: RiskPrediction) {
     val isDark = isSystemInDarkTheme()
+    val context = LocalContext.current
     val riskAlpha  = remember { Animatable(0f) }
     val riskOffset = remember { Animatable(24f) }
     LaunchedEffect(Unit) {
@@ -392,7 +395,7 @@ fun RiskCard(risk: RiskPrediction) {
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = risk.explanation,
+                text = risk.explanation.asString(context),
                 style = MaterialTheme.typography.headlineSmall,
                 color = if (isDark) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onBackground
             )
@@ -411,7 +414,7 @@ private fun HomeScreenContentPreview() {
                 sdkAvailable = true,
                 riskPrediction = RiskPrediction(
                     riskLevel = RiskLevel.LOW,
-                    explanation = "Your stress levels are low and recovery is high. Great day for a workout!",
+                    explanation = UiText.DynamicString("Your stress levels are low and recovery is high. Great day for a workout!"),
                     date = LocalDate.now(),
                     contributingSignals = emptyList()
                 ),
@@ -493,7 +496,7 @@ private fun RiskCardLowPreview() {
         RiskCard(
             risk = RiskPrediction(
                 riskLevel = RiskLevel.LOW,
-                explanation = "Your recovery is excellent. Great conditions for an intense session.",
+                explanation = UiText.DynamicString("Your recovery is excellent. Great conditions for an intense session."),
                 date = LocalDate.now(),
                 contributingSignals = emptyList()
             )
@@ -508,7 +511,7 @@ private fun RiskCardMediumPreview() {
         RiskCard(
             risk = RiskPrediction(
                 riskLevel = RiskLevel.MEDIUM,
-                explanation = "Moderate stress detected. Consider a lighter yoga flow today.",
+                explanation = UiText.DynamicString("Moderate stress detected. Consider a lighter yoga flow today."),
                 date = LocalDate.now(),
                 contributingSignals = emptyList()
             )
@@ -523,7 +526,7 @@ private fun RiskCardHighPreview() {
         RiskCard(
             risk = RiskPrediction(
                 riskLevel = RiskLevel.HIGH,
-                explanation = "High stress and low sleep detected. Restorative poses recommended.",
+                explanation = UiText.DynamicString("High stress and low sleep detected. Restorative poses recommended."),
                 date = LocalDate.now(),
                 contributingSignals = emptyList()
             )

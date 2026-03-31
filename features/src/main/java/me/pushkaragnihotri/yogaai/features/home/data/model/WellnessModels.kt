@@ -1,5 +1,6 @@
 package me.pushkaragnihotri.yogaai.features.home.data.model
 
+import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import java.time.LocalDate
 
 enum class RiskLevel {
@@ -15,7 +16,7 @@ data class DailyMetric(
 
 data class RiskPrediction(
     val riskLevel: RiskLevel,
-    val explanation: String,
-    val contributingSignals: List<String>,
+    val explanation: UiText,
+    val contributingSignals: List<UiText>,
     val date: LocalDate? = null
 )

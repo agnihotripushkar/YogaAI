@@ -1,8 +1,10 @@
 package me.pushkaragnihotri.yogaai.features.home.data.repository
 
+import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
+import me.pushkaragnihotri.yogaai.features.R
 import java.time.LocalDate
 
 object MockWellnessDataSource {
@@ -19,7 +21,7 @@ object MockWellnessDataSource {
     fun getTodayRisk(): RiskPrediction {
         return RiskPrediction(
             riskLevel = RiskLevel.LOW,
-            explanation = "Your activity levels are good and sleep is sufficient.",
+            explanation = UiText.StringResource(R.string.wellness_explanation_good_sleep),
             contributingSignals = emptyList(),
             date = LocalDate.now()
         )
@@ -29,8 +31,18 @@ object MockWellnessDataSource {
         val today = LocalDate.now()
         return listOf(
             getTodayRisk(),
-            RiskPrediction(RiskLevel.MEDIUM, "Slightly elevated heart rate.", listOf("Resting HR > 70"), today.minusDays(1)),
-            RiskPrediction(RiskLevel.LOW, "Great recovery day.", emptyList(), today.minusDays(2))
+            RiskPrediction(
+                riskLevel = RiskLevel.MEDIUM,
+                explanation = UiText.StringResource(R.string.wellness_explanation_elevated_hr),
+                contributingSignals = listOf(UiText.StringResource(R.string.wellness_signal_hr_70)),
+                date = today.minusDays(1)
+            ),
+            RiskPrediction(
+                riskLevel = RiskLevel.LOW,
+                explanation = UiText.StringResource(R.string.wellness_explanation_recovery_day),
+                contributingSignals = emptyList(),
+                date = today.minusDays(2)
+            )
         )
     }
 }

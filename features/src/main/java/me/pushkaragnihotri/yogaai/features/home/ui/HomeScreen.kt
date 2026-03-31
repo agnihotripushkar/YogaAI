@@ -15,6 +15,7 @@ import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import me.pushkaragnihotri.yogaai.core.presentation.ObserveAsEvents
+import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
@@ -94,7 +95,7 @@ private fun HomeScreenLoadedPreview() {
                 sdkAvailable = true,
                 riskPrediction = RiskPrediction(
                     riskLevel = RiskLevel.LOW,
-                    explanation = "Your stress levels are low and recovery is high. Great day for a workout!",
+                    explanation = UiText.DynamicString("Your stress levels are low and recovery is high. Great day for a workout!"),
                     contributingSignals = emptyList()
                 ),
                 wellnessItems = emptyList()

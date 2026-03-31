@@ -1,6 +1,7 @@
 package me.pushkaragnihotri.yogaai.features.home.domain
 
 import kotlinx.coroutines.flow.StateFlow
+import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskLevel
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
@@ -17,7 +18,7 @@ interface HomeRepository {
 
     suspend fun generateExplanation(
         riskLevel: RiskLevel,
-        contributingSignals: List<String>,
+        contributingSignals: List<UiText>,
         metricsSummary: String
     ): String
 
