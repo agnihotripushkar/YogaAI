@@ -1,5 +1,6 @@
 package me.pushkaragnihotri.yogaai.features.settings.ui
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -49,6 +50,23 @@ fun SettingsRoot(
             is SettingsEvent.OpenUrl -> {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.url))
                 context.startActivity(intent)
+            }
+            SettingsEvent.RateApp -> {
+                val pkg = context.packageName
+                val market = Uri.parse("market://details?id=$pkg")
+                val web = Uri.parse("https://play.google.com/store/apps/details?id=$pkg")
+                try {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, market))
+                } catch (_: ActivityNotFoundException) {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, web))
+                }
+            }
+            is SettingsEvent.ShareApp -> {
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, event.text)
+                }
+                context.startActivity(Intent.createChooser(send, null))
             }
         }
     }
@@ -128,7 +146,12 @@ private fun SettingsScreenPreview() {
                 steps = 5201,
                 calories = 120.0,
                 language = "English",
-                dynamicColor = false
+                dynamicColor = false,
+                userName = "Alex",
+                userAge = 30,
+                userLevel = "Beginner",
+                appVersionName = "1.0",
+                appVersionCode = 1L
             )
         )
     }

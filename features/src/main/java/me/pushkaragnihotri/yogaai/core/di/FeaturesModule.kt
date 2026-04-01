@@ -21,6 +21,6 @@ val featuresModule = module {
 
     viewModel { HomeViewModel(get(), get(), get(), androidContext()) }
     viewModel { OnboardingViewModel(get(), get()) }
-    viewModel { SettingsViewModel(get(), get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get(), androidContext()) }
     viewModel { YogaDetectorViewModel(get(), get()) }
 }
