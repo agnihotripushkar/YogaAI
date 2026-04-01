@@ -9,5 +9,6 @@ data class WellnessUiModel(
     val icon: ImageVector,
     val color: Color,
     val progress: Float = 0f,
-    val score: Int? = null
+    val score: Int? = null,
+    val subtitle: String? = null
 )

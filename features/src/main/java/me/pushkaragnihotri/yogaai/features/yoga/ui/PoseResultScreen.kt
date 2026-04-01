@@ -1,5 +1,6 @@
 package me.pushkaragnihotri.yogaai.features.yoga.ui
 
+import android.net.Uri
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -27,7 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.stringResource
+import me.pushkaragnihotri.yogaai.core.UserPreferences
+import me.pushkaragnihotri.yogaai.features.ui.theme.ExpressiveHeroStyle
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
+import org.koin.core.context.GlobalContext
 import me.pushkaragnihotri.yogaai.features.yoga.domain.model.PoseRepository
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.MascotState
@@ -40,8 +44,23 @@ fun PoseResultScreen(
     feedback: String,
     onHomeClick: () -> Unit
 ) {
-    val poseDetail = PoseRepository.getPoseDetail(poseName)
-    val isGreat = feedback.contains("Great", ignoreCase = true)
+    val decodedName = Uri.decode(poseName)
+    val decodedFeedback = Uri.decode(feedback)
+    val poseDetail = PoseRepository.getPoseDetail(decodedName)
+    val isGreat = decodedFeedback.contains("Great", ignoreCase = true)
+
+    LaunchedEffect(decodedName, duration) {
+        val dur = duration.toIntOrNull() ?: 0
+        if (decodedName.isBlank() ||
+            decodedName == "Detecting..." ||
+            decodedName == "No Pose Detected"
+        ) {
+            return@LaunchedEffect
+        }
+        val prefs = runCatching { GlobalContext.get().get<UserPreferences>() }.getOrNull()
+            ?: return@LaunchedEffect
+        prefs.appendYogaSession(decodedName, dur)
+    }
 
     val titleAlpha    = remember { Animatable(0f) }
     val mascotScale   = remember { Animatable(0.6f) }
@@ -92,7 +111,7 @@ fun PoseResultScreen(
         ) {
             Text(
                 text = stringResource(R.string.result_title),
-                style = MaterialTheme.typography.headlineLarge,
+                style = ExpressiveHeroStyle,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.alpha(titleAlpha.value)
@@ -127,7 +146,7 @@ fun PoseResultScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = poseName,
+                        text = decodedName,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -170,7 +189,7 @@ fun PoseResultScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = feedback,
+                        text = decodedFeedback,
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         color = if (isGreat) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error

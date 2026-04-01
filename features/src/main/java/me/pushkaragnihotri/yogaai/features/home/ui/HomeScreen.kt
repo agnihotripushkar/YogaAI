@@ -26,6 +26,7 @@ import timber.log.Timber
 
 @Composable
 fun HomeRoot(
+    onOpenPoseLibrary: () -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -59,7 +60,8 @@ fun HomeRoot(
 
     HomeScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onOpenPoseLibrary = onOpenPoseLibrary
     )
 }
 
@@ -67,7 +69,8 @@ fun HomeRoot(
 @Composable
 fun HomeScreen(
     state: HomeState,
-    onAction: (HomeAction) -> Unit
+    onAction: (HomeAction) -> Unit,
+    onOpenPoseLibrary: () -> Unit = {}
 ) {
     Scaffold { padding ->
         Column(
@@ -78,7 +81,8 @@ fun HomeScreen(
         ) {
             HomeScreenContent(
                 state = state,
-                onGrantPermissionClick = { onAction(HomeAction.OnGrantPermissionClick) }
+                onGrantPermissionClick = { onAction(HomeAction.OnGrantPermissionClick) },
+                onOpenPoseLibrary = onOpenPoseLibrary
             )
         }
     }

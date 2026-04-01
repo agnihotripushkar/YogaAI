@@ -31,13 +31,14 @@ class MainActivity : ComponentActivity() {
             val finalDestination = finalDestinationState.value
             
             val themeMode by viewModel.themeMode.collectAsState()
+            val dynamicColor by viewModel.dynamicColorEnabled.collectAsState()
             val isDarkTheme = when (themeMode) {
                 1 -> false // Light
                 2 -> true  // Dark
                 else -> isSystemInDarkTheme() // System (Default)
             }
             
-            YogaAITheme(darkTheme = isDarkTheme) {
+            YogaAITheme(darkTheme = isDarkTheme, dynamicColor = dynamicColor) {
                 if (finalDestination != null) {
                     MainScreen(
                         windowSizeClass = windowSizeClass.widthSizeClass,

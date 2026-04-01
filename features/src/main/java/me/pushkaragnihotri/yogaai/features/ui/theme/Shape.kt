@@ -1,8 +1,12 @@
 package me.pushkaragnihotri.yogaai.features.ui.theme
 
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
+
+/** Emphasis cards (e.g. risk / alerts) — asymmetric, Material-forward. */
+val ExpressiveCutCardShape = CutCornerShape(topStart = 20.dp, bottomEnd = 24.dp)
 
 val Shapes = Shapes(
     // Chips, small badges

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.UserPreferences
+import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
 
 class SettingsViewModel(
@@ -34,16 +35,18 @@ class SettingsViewModel(
             combine(
                 userPreferences.themeMode,
                 userPreferences.language,
+                userPreferences.dynamicColorEnabled,
                 homeRepository.todayMetrics
-            ) { theme, lang, metrics ->
-                Triple(theme, lang, metrics)
-            }.collect { (theme, lang, metrics) ->
+            ) { theme, lang, dynamic, metrics ->
+                SettingsSnapshot(theme, lang, dynamic, metrics)
+            }.collect { snap ->
                 _state.update {
                     it.copy(
-                        themeMode = theme,
-                        language = lang,
-                        steps = metrics.steps,
-                        calories = metrics.calories
+                        themeMode = snap.theme,
+                        language = snap.lang,
+                        dynamicColor = snap.dynamic,
+                        steps = snap.metrics.steps,
+                        calories = snap.metrics.calories
                     )
                 }
             }
@@ -55,6 +58,9 @@ class SettingsViewModel(
             SettingsAction.OnInitialLoad -> initialLoad()
             is SettingsAction.OnThemeChange -> {
                 viewModelScope.launch { userPreferences.setThemeMode(action.mode) }
+            }
+            is SettingsAction.OnDynamicColorChange -> {
+                viewModelScope.launch { userPreferences.setDynamicColor(action.enabled) }
             }
             is SettingsAction.OnLanguageChange -> {
                 viewModelScope.launch { userPreferences.setLanguage(action.language) }
@@ -100,4 +106,11 @@ class SettingsViewModel(
             _state.update { it.copy(hasPermissions = false) }
         }
     }
+
+    private data class SettingsSnapshot(
+        val theme: Int,
+        val lang: String,
+        val dynamic: Boolean,
+        val metrics: DailyMetric
+    )
 }

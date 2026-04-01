@@ -1,10 +1,12 @@
 package me.pushkaragnihotri.yogaai.features.settings.ui.components
 
+import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -90,6 +92,31 @@ fun SettingsScreenContent(
                     )
                 }
             }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                Spacer(Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            stringResource(R.string.settings_dynamic_color),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            stringResource(R.string.settings_dynamic_color_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = state.dynamicColor,
+                        onCheckedChange = { onAction(SettingsAction.OnDynamicColorChange(it)) }
+                    )
+                }
+            }
         }
     }
 }
@@ -164,7 +191,8 @@ private fun SettingsScreenContentWithPermissionsPreview() {
                 hasPermissions = true,
                 steps = 8432,
                 calories = 420.0,
-                language = "English"
+                language = "English",
+                dynamicColor = false
             ),
             onAction = {}
         )
@@ -180,7 +208,8 @@ private fun SettingsScreenContentNoPermissionsPreview() {
                 themeMode = 2,
                 sdkAvailable = true,
                 hasPermissions = false,
-                language = "English"
+                language = "English",
+                dynamicColor = false
             ),
             onAction = {}
         )

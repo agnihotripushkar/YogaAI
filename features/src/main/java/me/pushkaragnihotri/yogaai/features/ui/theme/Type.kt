@@ -34,6 +34,24 @@ val DmSansFamily = FontFamily(
     Font(googleFont = DmSansFont, fontProvider = provider, weight = FontWeight.Bold),
 )
 
+// Fraunces — expressive serif for hero moments (results, splash-style headlines)
+private val FrauncesFont = GoogleFont("Fraunces")
+val FrauncesFamily = FontFamily(
+    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Normal),
+    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Medium),
+    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.SemiBold),
+    Font(googleFont = FrauncesFont, fontProvider = provider, weight = FontWeight.Bold),
+)
+
+/** Use for short celebratory or editorial titles (not full app body). */
+val ExpressiveHeroStyle = TextStyle(
+    fontFamily = FrauncesFamily,
+    fontWeight = FontWeight.Bold,
+    fontSize = 34.sp,
+    lineHeight = 40.sp,
+    letterSpacing = (-0.5).sp
+)
+
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = NunitoFamily,

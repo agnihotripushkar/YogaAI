@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -42,6 +43,7 @@ import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.home.ui.WellnessUiModel
+import me.pushkaragnihotri.yogaai.features.ui.theme.ExpressiveCutCardShape
 import me.pushkaragnihotri.yogaai.features.ui.theme.*
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeState
@@ -52,7 +54,8 @@ import java.time.LocalDate
 @Composable
 fun HomeScreenContent(
     state: HomeState,
-    onGrantPermissionClick: () -> Unit = {}
+    onGrantPermissionClick: () -> Unit = {},
+    onOpenPoseLibrary: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -73,6 +76,47 @@ fun HomeScreenContent(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onOpenPoseLibrary),
+            shape = MaterialTheme.shapes.medium,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.pose_library_open),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Text(
+                        text = stringResource(R.string.pose_library_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
+                    )
+                }
+                FilledTonalButton(
+                    onClick = onOpenPoseLibrary,
+                    shape = MaterialTheme.shapes.extraLarge
+                ) {
+                    Text(stringResource(R.string.pose_library_cta))
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         if (state.sdkAvailable && !state.hasPermissions) {
             HealthConnectPermissionBanner(onGrantPermissionClick = onGrantPermissionClick)
@@ -340,6 +384,14 @@ fun WellnessCard(item: WellnessUiModel, modifier: Modifier = Modifier, animation
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                item.subtitle?.let { sub ->
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = sub,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
@@ -369,7 +421,7 @@ fun RiskCard(risk: RiskPrediction) {
 
     Card(
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = MaterialTheme.shapes.large,
+        shape = ExpressiveCutCardShape,
         modifier = Modifier
             .fillMaxWidth()
             .alpha(riskAlpha.value)

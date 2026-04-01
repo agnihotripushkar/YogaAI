@@ -11,6 +11,9 @@ data class PoseDetail(
 )
 
 object PoseRepository {
+    /** Poses the live detector is trained to recognize — library matches these names. */
+    fun libraryPoses(): List<PoseDetail> = listOf(treePoseDetail, warriorIIDetail, plankDetail)
+
     fun getPoseDetail(poseName: String): PoseDetail {
         return when (poseName) {
             "Tree Pose" -> treePoseDetail

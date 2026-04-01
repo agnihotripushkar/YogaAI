@@ -27,4 +27,7 @@ class MainViewModel(
         
     val themeMode: StateFlow<Int> = userPreferences.themeMode
         .stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
+    val dynamicColorEnabled: StateFlow<Boolean> = userPreferences.dynamicColorEnabled
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
 }

@@ -1,5 +1,6 @@
 package me.pushkaragnihotri.yogaai.features.home.ui
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.EmojiEvents
@@ -10,19 +11,27 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.UserPreferences
+import me.pushkaragnihotri.yogaai.core.YogaSessionRecord
 import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.R
+import me.pushkaragnihotri.yogaai.features.home.data.YogaPracticeStats
+import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
 import timber.log.Timber
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,
-    private val healthConnectManager: HealthConnectManager
+    private val healthConnectManager: HealthConnectManager,
+    private val userPreferences: UserPreferences,
+    private val appContext: Context
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -33,6 +42,17 @@ class HomeViewModel(
 
     init {
         checkPermissionsAndLoad()
+        viewModelScope.launch {
+            combine(
+                userPreferences.yogaSessions,
+                homeRepository.todayMetrics
+            ) { sessions, metrics -> sessions to metrics }
+                .collect { (sessions, metrics) ->
+                    if (!_state.value.isLoading) {
+                        patchPracticeWellness(metrics, sessions)
+                    }
+                }
+        }
     }
 
     fun onAction(action: HomeAction) {
@@ -78,30 +98,12 @@ class HomeViewModel(
                 homeRepository.refreshMetrics()
                 val metrics = homeRepository.todayMetrics.value
                 val risk = homeRepository.getTodayRisk()
-
-                val streakItem = WellnessUiModel(
-                    titleRes = R.string.metric_streak,
-                    value = "5 Days",
-                    icon = Icons.Rounded.EmojiEvents,
-                    color = Color(0xFFFFB300)
-                )
-                val caloriesItem = WellnessUiModel(
-                    titleRes = R.string.metric_calories,
-                    value = "${metrics.calories.toInt()} kcal",
-                    icon = Icons.Rounded.LocalFireDepartment,
-                    color = Color(0xFFEF5350)
-                )
-                val stepsItem = WellnessUiModel(
-                    titleRes = R.string.metric_steps,
-                    value = "${metrics.steps}",
-                    icon = Icons.Rounded.DirectionsRun,
-                    color = Color(0xFF42A5F5)
-                )
-
+                val sessions = userPreferences.yogaSessions.first()
+                val items = buildWellnessItems(metrics, sessions)
                 _state.update {
                     it.copy(
                         riskPrediction = risk,
-                        wellnessItems = listOf(streakItem, caloriesItem, stepsItem),
+                        wellnessItems = items,
                         isLoading = false,
                         error = null
                     )
@@ -113,5 +115,37 @@ class HomeViewModel(
                 _events.send(HomeEvent.ShowSnackbar(errorText))
             }
         }
+    }
+
+    private fun patchPracticeWellness(metrics: DailyMetric, sessions: List<YogaSessionRecord>) {
+        _state.update {
+            it.copy(wellnessItems = buildWellnessItems(metrics, sessions))
+        }
+    }
+
+    private fun buildWellnessItems(metrics: DailyMetric, sessions: List<YogaSessionRecord>): List<WellnessUiModel> {
+        val streak = YogaPracticeStats.streakDays(sessions)
+        val week = YogaPracticeStats.sessionsLast7Days(sessions)
+        return listOf(
+            WellnessUiModel(
+                titleRes = R.string.metric_streak,
+                value = appContext.getString(R.string.practice_streak_days, streak),
+                icon = Icons.Rounded.EmojiEvents,
+                color = Color(0xFFFFB300),
+                subtitle = appContext.getString(R.string.practice_sessions_week_line, week)
+            ),
+            WellnessUiModel(
+                titleRes = R.string.metric_calories,
+                value = "${metrics.calories.toInt()} kcal",
+                icon = Icons.Rounded.LocalFireDepartment,
+                color = Color(0xFFEF5350)
+            ),
+            WellnessUiModel(
+                titleRes = R.string.metric_steps,
+                value = "${metrics.steps}",
+                icon = Icons.Rounded.DirectionsRun,
+                color = Color(0xFF42A5F5)
+            )
+        )
     }
 }

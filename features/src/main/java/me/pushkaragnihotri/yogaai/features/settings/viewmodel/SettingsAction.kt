@@ -9,4 +9,5 @@ sealed interface SettingsAction {
     data object OnDeleteData : SettingsAction
     data object OnPrivacyPolicyClick : SettingsAction
     data object OnInitialLoad : SettingsAction
+    data class OnDynamicColorChange(val enabled: Boolean) : SettingsAction
 }

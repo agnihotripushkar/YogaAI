@@ -1,8 +1,11 @@
 package me.pushkaragnihotri.yogaai.core.navigation
 
+import android.net.Uri
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -19,6 +22,7 @@ import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
 import me.pushkaragnihotri.yogaai.features.settings.ui.SettingsRoot
 import me.pushkaragnihotri.yogaai.features.splash.ui.SplashScreen
+import me.pushkaragnihotri.yogaai.features.yoga.ui.PoseLibraryScreen
 import me.pushkaragnihotri.yogaai.features.yoga.ui.PoseResultScreen
 import me.pushkaragnihotri.yogaai.features.yoga.ui.YogaDetectorRoot
 import org.koin.androidx.compose.koinViewModel
@@ -86,13 +90,21 @@ fun YogaNavigation(
         }
 
         composable(YogaDestinations.HOME_ROUTE) {
-            HomeRoot()
+            HomeRoot(
+                onOpenPoseLibrary = { navController.navigate(YogaDestinations.POSE_LIBRARY_ROUTE) }
+            )
+        }
+
+        composable(YogaDestinations.POSE_LIBRARY_ROUTE) {
+            PoseLibraryScreen(onNavigateUp = { navController.navigateUp() })
         }
 
         composable(YogaDestinations.YOGA_DETECTOR_ROUTE) {
             YogaDetectorRoot(
                 onNavigateToResult = { poseName, duration, feedback ->
-                    navController.navigate("pose_result/$poseName/$duration/$feedback")
+                    navController.navigate(
+                        "pose_result/${Uri.encode(poseName)}/$duration/${Uri.encode(feedback)}"
+                    )
                 }
             )
         }
@@ -103,7 +115,21 @@ fun YogaNavigation(
                 navArgument("poseName") { type = NavType.StringType },
                 navArgument("duration") { type = NavType.StringType },
                 navArgument("feedback") { type = NavType.StringType }
-            )
+            ),
+            enterTransition = {
+                fadeIn(animationSpec = tween(320)) +
+                    scaleIn(initialScale = 0.92f, animationSpec = tween(340))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(240))
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(240))
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(280)) +
+                    scaleOut(targetScale = 0.94f, animationSpec = tween(280))
+            }
         ) { backStackEntry ->
             val poseName = backStackEntry.arguments?.getString("poseName") ?: ""
             val duration = backStackEntry.arguments?.getString("duration") ?: ""

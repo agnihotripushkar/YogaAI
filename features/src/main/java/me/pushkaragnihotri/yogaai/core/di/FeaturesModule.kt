@@ -9,6 +9,7 @@ import me.pushkaragnihotri.yogaai.features.yoga.data.repository.YogaRepositoryIm
 import me.pushkaragnihotri.yogaai.features.yoga.data.source.PoseClassifier
 import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepository
 import me.pushkaragnihotri.yogaai.features.yoga.ui.YogaDetectorViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -18,7 +19,7 @@ val featuresModule = module {
     single { PoseClassifier() }
     single<YogaRepository> { YogaRepositoryImpl() }
 
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), androidContext()) }
     viewModel { OnboardingViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get()) }
     viewModel { YogaDetectorViewModel(get(), get()) }

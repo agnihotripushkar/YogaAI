@@ -35,6 +35,16 @@
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
+    <string name="settings_dynamic_color">Dynamic color</string>
+    <string name="settings_dynamic_color_desc">Use wallpaper colors on Android 12+</string>
+
+    <string name="pose_library_title">Pose library</string>
+    <string name="pose_library_open">Browse poses</string>
+    <string name="pose_library_cta">Open</string>
+    <string name="pose_library_subtitle">Steps that match what the camera recognizes</string>
+    <string name="practice_sessions_week">Sessions (7 days)</string>
+    <string name="practice_streak_days">%1$d-day streak</string>
+    <string name="practice_sessions_week_line">%1$d sessions · last 7 days</string>
     
     <string name="settings_section_account">Account &amp; Data</string>
     <string name="settings_delete_data">Delete My Data</string>

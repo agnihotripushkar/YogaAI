@@ -29,6 +29,10 @@ class YogaDetectorViewModel(
 
     private var timerJob: Job? = null
 
+    companion object {
+        private const val HOLD_TARGET_SECONDS = 30
+    }
+
     fun onAction(action: YogaDetectorAction) {
         when (action) {
             YogaDetectorAction.OnStopClick -> {
@@ -73,9 +77,22 @@ class YogaDetectorViewModel(
     private fun startTimer() {
         if (timerJob == null && !_state.value.isPoseCompleted) {
             timerJob = viewModelScope.launch {
-                while (true) {
-                    delay(1000)
-                    _state.update { it.copy(holdTimeSeconds = it.holdTimeSeconds + 1) }
+                try {
+                    while (true) {
+                        delay(1000)
+                        val next = _state.value.holdTimeSeconds + 1
+                        val done = next >= HOLD_TARGET_SECONDS
+                        _state.update {
+                            it.copy(
+                                holdTimeSeconds = next,
+                                holdTargetSeconds = HOLD_TARGET_SECONDS,
+                                isPoseCompleted = done || it.isPoseCompleted
+                            )
+                        }
+                        if (done) break
+                    }
+                } finally {
+                    timerJob = null
                 }
             }
         }

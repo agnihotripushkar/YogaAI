@@ -6,5 +6,6 @@ data class SettingsState(
     val steps: Long = 0L,
     val calories: Double = 0.0,
     val hasPermissions: Boolean = false,
-    val sdkAvailable: Boolean = false
+    val sdkAvailable: Boolean = false,
+    val dynamicColor: Boolean = false
 )

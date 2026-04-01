@@ -27,8 +27,7 @@ render.experimental.xml
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
-
-
+google-services.json
 # Android Profiling
 *.hprof
 features/src/.DS_Store
@@ -36,3 +35,9 @@ features/src/main/.DS_Store
 features/src/main/assets/.DS_Store
 .DS_Store
 **/.DS_Store
+
+# VS Code
+.vscode/
+
+# Agent
+.agent/

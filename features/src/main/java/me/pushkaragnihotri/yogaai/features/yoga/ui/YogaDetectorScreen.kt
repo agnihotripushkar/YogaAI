@@ -8,6 +8,12 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview as CameraXPreview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -165,7 +171,9 @@ fun YogaDetectorScreen(
             TopHud(
                 poseName = state.poseName,
                 timeSeconds = state.holdTimeSeconds,
-                confidence = state.confidence
+                confidence = state.confidence,
+                holdTargetSeconds = state.holdTargetSeconds,
+                isCorrect = state.isPoseCorrect
             )
 
             BottomSheetControls(
@@ -325,7 +333,13 @@ fun BottomSheetControls(
 }
 
 @Composable
-fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
+fun TopHud(
+    poseName: String,
+    timeSeconds: Int,
+    confidence: Float,
+    holdTargetSeconds: Int = 30,
+    isCorrect: Boolean = false
+) {
     Box(
         modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
         contentAlignment = Alignment.Center
@@ -333,32 +347,71 @@ fun TopHud(poseName: String, timeSeconds: Int, confidence: Float) {
         Surface(
             color = DarkOverlay.copy(alpha = 0.8f),
             shape = MaterialTheme.shapes.extraLarge,
-            modifier = Modifier.height(48.dp)
+            modifier = Modifier.wrapContentHeight()
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 24.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(text = poseName, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                AnimatedContent(
+                    targetState = poseName,
+                    transitionSpec = {
+                        (fadeIn(tween(220)) + slideInVertically(initialOffsetY = { it / 4 }))
+                            .togetherWith(fadeOut(tween(180)))
+                    },
+                    label = "poseName"
+                ) { name ->
+                    Text(
+                        text = name,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier.widthIn(max = 120.dp)
+                    )
+                }
 
                 Box(modifier = Modifier.width(1.dp).height(20.dp).background(Color.Gray.copy(alpha = 0.5f)))
 
                 ZenMascot(state = MascotState.MEDITATIVE, modifier = Modifier.size(40.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Icon(
-                        imageVector = Icons.Default.Timer,
-                        contentDescription = null,
-                        tint = BrightGreen,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = String.format("%02d:%02d", timeSeconds / 60, timeSeconds % 60),
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
-                    )
+                val showHoldRing = isCorrect && holdTargetSeconds > 0
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.size(44.dp)) {
+                    if (showHoldRing) {
+                        val progress = (timeSeconds.coerceAtMost(holdTargetSeconds).toFloat() / holdTargetSeconds)
+                            .coerceIn(0f, 1f)
+                        CircularProgressIndicator(
+                            progress = { 1f },
+                            modifier = Modifier.fillMaxSize(),
+                            color = Color.White.copy(alpha = 0.12f),
+                            strokeWidth = 3.dp,
+                            trackColor = Color.Transparent
+                        )
+                        CircularProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier.fillMaxSize(),
+                            color = BrightGreen,
+                            strokeWidth = 3.dp,
+                            trackColor = Color.Transparent
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Timer,
+                            contentDescription = null,
+                            tint = BrightGreen,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = String.format("%02d:%02d", timeSeconds / 60, timeSeconds % 60),
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp
+                        )
+                    }
                 }
 
                 Surface(color = Color(0xFF004D40), shape = RoundedCornerShape(50)) {
@@ -450,7 +503,13 @@ fun androidx.camera.core.ImageProxy.toRotatedBitmap(): Bitmap? {
 @Composable
 private fun TopHudPreview() {
     YogaAITheme {
-        TopHud(poseName = "Warrior II", timeSeconds = 30, confidence = 0.95f)
+        TopHud(
+            poseName = "Warrior II",
+            timeSeconds = 18,
+            confidence = 0.95f,
+            holdTargetSeconds = 30,
+            isCorrect = true
+        )
     }
 }
 

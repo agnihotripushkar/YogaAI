@@ -127,7 +127,8 @@ private fun SettingsScreenPreview() {
                 hasPermissions = true,
                 steps = 5201,
                 calories = 120.0,
-                language = "English"
+                language = "English",
+                dynamicColor = false
             )
         )
     }
