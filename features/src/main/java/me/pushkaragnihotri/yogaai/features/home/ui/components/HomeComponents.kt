@@ -501,7 +501,7 @@ private fun WellnessCardPreview() {
                 titleRes = R.string.metric_steps,
                 value = "8,432",
                 icon = Icons.Rounded.DirectionsRun,
-                color = Color(0xFF42A5F5),
+                color = WellnessSteps,
                 progress = 0.72f
             ),
             modifier = Modifier.size(160.dp)
@@ -518,7 +518,7 @@ private fun WellnessCardWithScorePreview() {
                 titleRes = R.string.metric_streak,
                 value = "5 Days",
                 icon = Icons.Rounded.EmojiEvents,
-                color = Color(0xFFFFB300),
+                color = WellnessStreak,
                 progress = 0.5f,
                 score = 85
             ),
@@ -533,9 +533,9 @@ private fun DailyWellnessGridPreview() {
     YogaAITheme {
         DailyWellnessGrid(
             items = listOf(
-                WellnessUiModel(R.string.metric_streak, "5 Days", Icons.Rounded.EmojiEvents, Color(0xFFFFB300), 0.5f, 85),
-                WellnessUiModel(R.string.metric_calories, "420 kcal", Icons.Rounded.LocalFireDepartment, Color(0xFFEF5350), 0.6f),
-                WellnessUiModel(R.string.metric_steps, "8,432", Icons.Rounded.DirectionsRun, Color(0xFF42A5F5), 0.72f)
+                WellnessUiModel(R.string.metric_streak, "5 Days", Icons.Rounded.EmojiEvents, WellnessStreak, 0.5f, 85),
+                WellnessUiModel(R.string.metric_calories, "420 kcal", Icons.Rounded.LocalFireDepartment, WellnessCalories, 0.6f),
+                WellnessUiModel(R.string.metric_steps, "8,432", Icons.Rounded.DirectionsRun, WellnessSteps, 0.72f)
             )
         )
     }

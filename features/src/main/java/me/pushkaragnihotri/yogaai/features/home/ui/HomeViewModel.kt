@@ -5,7 +5,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.LocalFireDepartment
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -22,6 +21,9 @@ import me.pushkaragnihotri.yogaai.core.YogaSessionRecord
 import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.home.data.YogaPracticeStats
+import me.pushkaragnihotri.yogaai.features.ui.theme.WellnessCalories
+import me.pushkaragnihotri.yogaai.features.ui.theme.WellnessSteps
+import me.pushkaragnihotri.yogaai.features.ui.theme.WellnessStreak
 import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
 import me.pushkaragnihotri.yogaai.features.home.data.model.RiskPrediction
 import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
@@ -131,20 +133,20 @@ class HomeViewModel(
                 titleRes = R.string.metric_streak,
                 value = appContext.getString(R.string.practice_streak_days, streak),
                 icon = Icons.Rounded.EmojiEvents,
-                color = Color(0xFFFFB300),
+                color = WellnessStreak,
                 subtitle = appContext.getString(R.string.practice_sessions_week_line, week)
             ),
             WellnessUiModel(
                 titleRes = R.string.metric_calories,
                 value = "${metrics.calories.toInt()} kcal",
                 icon = Icons.Rounded.LocalFireDepartment,
-                color = Color(0xFFEF5350)
+                color = WellnessCalories
             ),
             WellnessUiModel(
                 titleRes = R.string.metric_steps,
                 value = "${metrics.steps}",
                 icon = Icons.Rounded.DirectionsRun,
-                color = Color(0xFF42A5F5)
+                color = WellnessSteps
             )
         )
     }

@@ -41,12 +41,14 @@ val BrightGreen        = Color(0xFF00E676)
 val AccentTeal         = Color(0xFF70EFDE)
 val RedButton          = Color(0xFFB3261E)
 val DarkOverlay        = Color(0x99000000)
+val ConfidenceBg       = Color(0xFF004D40)  // Deep teal for confidence badge
 
 // ── Wellness metric colours ────────────────────────────────────────────────
 val WellnessSleep      = Color(0xFF7986CB)  // Indigo-ish
-val WellnessSteps      = Color(0xFFFFB300)  // Amber
+val WellnessStreak     = Color(0xFFFFB300)  // Amber
+val WellnessSteps      = Color(0xFF42A5F5)  // Blue
 val WellnessHR         = Color(0xFFE91E63)  // Pink
-val WellnessCalories   = Color(0xFFFF7043)  // Deep Orange
+val WellnessCalories   = Color(0xFFEF5350)  // Red
 val CardBackgroundLight= Color(0xFFFFFFFF)
 
 // ── Status ─────────────────────────────────────────────────────────────────

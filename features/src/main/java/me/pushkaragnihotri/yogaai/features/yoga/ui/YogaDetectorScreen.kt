@@ -414,7 +414,7 @@ fun TopHud(
                     }
                 }
 
-                Surface(color = Color(0xFF004D40), shape = RoundedCornerShape(50)) {
+                Surface(color = ConfidenceBg, shape = RoundedCornerShape(50)) {
                     Text(
                         text = "${(confidence * 100).toInt()}%",
                         color = AccentTeal,

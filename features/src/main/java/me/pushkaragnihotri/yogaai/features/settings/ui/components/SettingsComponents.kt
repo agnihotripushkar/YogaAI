@@ -160,7 +160,7 @@ fun SettingsScreenContent(
         SettingsSection(stringResource(R.string.profile_health_data_header)) {
             if (!state.sdkAvailable) {
                 Text(
-                    "Health Connect Status: $sdkStatus",
+                    stringResource(R.string.health_connect_status_format, sdkStatus),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
                 )
@@ -186,7 +186,7 @@ fun SettingsScreenContent(
                 }
             } else {
                 Text(
-                    "Health Connect not available.",
+                    stringResource(R.string.health_connect_not_available),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

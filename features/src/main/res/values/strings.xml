@@ -80,6 +80,10 @@
     <string name="settings_app_version">Wellness Risk App v1.0</string>
     <string name="settings_pilot_build">Pilot Study Build</string>
 
+    <!-- Health Connect status -->
+    <string name="health_connect_status_format">Health Connect Status: %1$d</string>
+    <string name="health_connect_not_available">Health Connect not available.</string>
+
     <!-- Profile Screen -->
     <string name="title_profile">Profile</string>
     <string name="profile_health_data_header">Health Data (Last 24h):</string>
