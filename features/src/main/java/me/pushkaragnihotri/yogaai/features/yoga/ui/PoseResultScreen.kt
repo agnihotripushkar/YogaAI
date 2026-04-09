@@ -28,10 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.stringResource
-import me.pushkaragnihotri.yogaai.core.UserPreferences
 import me.pushkaragnihotri.yogaai.features.ui.theme.ExpressiveHeroStyle
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
-import org.koin.core.context.GlobalContext
 import me.pushkaragnihotri.yogaai.features.yoga.domain.model.PoseRepository
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.common.ui.MascotState
@@ -48,19 +46,6 @@ fun PoseResultScreen(
     val decodedFeedback = Uri.decode(feedback)
     val poseDetail = PoseRepository.getPoseDetail(decodedName)
     val isGreat = decodedFeedback.contains("Great", ignoreCase = true)
-
-    LaunchedEffect(decodedName, duration) {
-        val dur = duration.toIntOrNull() ?: 0
-        if (decodedName.isBlank() ||
-            decodedName == "Detecting..." ||
-            decodedName == "No Pose Detected"
-        ) {
-            return@LaunchedEffect
-        }
-        val prefs = runCatching { GlobalContext.get().get<UserPreferences>() }.getOrNull()
-            ?: return@LaunchedEffect
-        prefs.appendYogaSession(decodedName, dur)
-    }
 
     val titleAlpha    = remember { Animatable(0f) }
     val mascotScale   = remember { Animatable(0.6f) }

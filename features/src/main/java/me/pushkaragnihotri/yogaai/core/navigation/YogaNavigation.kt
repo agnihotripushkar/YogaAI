@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
+import me.pushkaragnihotri.yogaai.features.history.ui.PoseHistoryRoot
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeRoot
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingViewModel
@@ -144,6 +145,10 @@ fun YogaNavigation(
                     }
                 }
             )
+        }
+
+        composable(YogaDestinations.POSE_HISTORY_ROUTE) {
+            PoseHistoryRoot()
         }
 
         composable(YogaDestinations.SETTINGS_ROUTE) {

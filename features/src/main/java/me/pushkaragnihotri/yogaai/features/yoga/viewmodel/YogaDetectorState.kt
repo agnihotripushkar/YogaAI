@@ -13,5 +13,7 @@ data class YogaDetectorState(
     /** Target hold (seconds) before auto-complete; shown as ring progress in HUD. */
     val holdTargetSeconds: Int = 30,
     val isPoseCompleted: Boolean = false,
-    val feedback: String = ""
+    val feedback: String = "",
+    /** Number of times the hold timer was started (each correct-pose streak = 1 attempt). */
+    val attemptCount: Int = 0
 )

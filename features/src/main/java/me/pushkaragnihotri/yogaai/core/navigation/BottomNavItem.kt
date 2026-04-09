@@ -1,7 +1,9 @@
 package me.pushkaragnihotri.yogaai.core.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.outlined.Settings
@@ -30,6 +32,13 @@ sealed class BottomNavItem(
         labelResId = R.string.title_yoga_detector
     )
 
+    data object History : BottomNavItem(
+        route = YogaDestinations.POSE_HISTORY_ROUTE,
+        selectedIcon = Icons.Rounded.History,
+        unselectedIcon = Icons.Outlined.History,
+        labelResId = R.string.nav_history
+    )
+
     data object Settings : BottomNavItem(
         route = YogaDestinations.SETTINGS_ROUTE,
         selectedIcon = Icons.Rounded.Settings,
@@ -41,5 +50,6 @@ sealed class BottomNavItem(
 val bottomNavItems = listOf(
     BottomNavItem.Home,
     BottomNavItem.Pose,
+    BottomNavItem.History,
     BottomNavItem.Settings
 )

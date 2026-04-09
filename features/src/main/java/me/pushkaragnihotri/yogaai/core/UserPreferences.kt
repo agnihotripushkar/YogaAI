@@ -82,7 +82,12 @@ class UserPreferences(private val context: Context) {
         }
     }
 
-    suspend fun appendYogaSession(poseName: String, durationSeconds: Int) {
+    suspend fun appendYogaSession(
+        poseName: String,
+        durationSeconds: Int,
+        isCompleted: Boolean = false,
+        attemptCount: Int = 1
+    ) {
         if (poseName.isBlank()) return
         context.dataStore.edit { preferences ->
             val json = preferences[KEY_YOGA_SESSIONS]
@@ -100,7 +105,9 @@ class UserPreferences(private val context: Context) {
                 YogaSessionRecord(
                     poseName = poseName,
                     durationSeconds = durationSeconds.coerceAtLeast(0),
-                    completedAtEpochMs = System.currentTimeMillis()
+                    completedAtEpochMs = System.currentTimeMillis(),
+                    isCompleted = isCompleted,
+                    attemptCount = attemptCount.coerceAtLeast(1)
                 )
             )
             while (current.size > MAX_YOGA_SESSIONS) current.removeAt(current.lastIndex)
@@ -108,6 +115,12 @@ class UserPreferences(private val context: Context) {
                 ListSerializer(YogaSessionRecord.serializer()),
                 current
             )
+        }
+    }
+
+    suspend fun clearYogaSessions() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(KEY_YOGA_SESSIONS)
         }
     }
 

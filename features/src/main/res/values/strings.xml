@@ -162,6 +162,19 @@
     <string name="result_section_instructions">Instructions</string>
     <string name="result_section_contraindications">Contraindications</string>
 
+    <!-- Pose History -->
+    <string name="nav_history">History</string>
+    <string name="history_title">Pose History</string>
+    <string name="history_empty_title">No sessions yet</string>
+    <string name="history_empty_desc">Complete a yoga session to see your history here.</string>
+    <string name="history_completed">Completed</string>
+    <string name="history_stopped">Stopped</string>
+    <string name="history_attempts_format">%1$d tries</string>
+    <string name="history_attempt_single">1 try</string>
+    <string name="history_duration_format">%1$ds</string>
+    <string name="history_date_today">Today</string>
+    <string name="history_date_yesterday">Yesterday</string>
+
     <!-- Mock Wellness Data -->
     <string name="wellness_explanation_good_sleep">Your activity levels are good and sleep is sufficient.</string>
     <string name="wellness_explanation_elevated_hr">Slightly elevated heart rate.</string>

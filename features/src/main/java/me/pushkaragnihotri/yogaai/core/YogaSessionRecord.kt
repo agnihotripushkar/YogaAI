@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 data class YogaSessionRecord(
     val poseName: String,
     val durationSeconds: Int,
-    val completedAtEpochMs: Long
+    val completedAtEpochMs: Long,
+    val isCompleted: Boolean = false,
+    val attemptCount: Int = 1
 )

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.pushkaragnihotri.yogaai.core.UserPreferences
 import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.yoga.data.source.PoseClassifier
 import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepository
@@ -18,7 +19,8 @@ import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepository
 
 class YogaDetectorViewModel(
     val yogaRepository: YogaRepository,
-    private val poseClassifier: PoseClassifier
+    private val poseClassifier: PoseClassifier,
+    private val userPreferences: UserPreferences
 ) : ViewModel(), YogaRepositoryListener {
 
     private val _state = MutableStateFlow(YogaDetectorState())
@@ -38,6 +40,14 @@ class YogaDetectorViewModel(
             YogaDetectorAction.OnStopClick -> {
                 viewModelScope.launch {
                     val s = _state.value
+                    if (!s.isPoseCompleted) {
+                        saveSession(
+                            poseName = s.poseName,
+                            durationSeconds = s.holdTimeSeconds,
+                            isCompleted = false,
+                            attemptCount = s.attemptCount
+                        )
+                    }
                     _events.send(
                         YogaDetectorEvent.NavigateToResult(
                             poseName = s.poseName,
@@ -76,6 +86,7 @@ class YogaDetectorViewModel(
 
     private fun startTimer() {
         if (timerJob == null && !_state.value.isPoseCompleted) {
+            _state.update { it.copy(attemptCount = it.attemptCount + 1) }
             timerJob = viewModelScope.launch {
                 try {
                     while (true) {
@@ -89,7 +100,16 @@ class YogaDetectorViewModel(
                                 isPoseCompleted = done || it.isPoseCompleted
                             )
                         }
-                        if (done) break
+                        if (done) {
+                            val s = _state.value
+                            saveSession(
+                                poseName = s.poseName,
+                                durationSeconds = HOLD_TARGET_SECONDS,
+                                isCompleted = true,
+                                attemptCount = s.attemptCount
+                            )
+                            break
+                        }
                     }
                 } finally {
                     timerJob = null
@@ -103,6 +123,23 @@ class YogaDetectorViewModel(
         timerJob?.cancel()
         timerJob = null
         _state.update { it.copy(holdTimeSeconds = 0, isPoseCompleted = false) }
+    }
+
+    private fun saveSession(
+        poseName: String,
+        durationSeconds: Int,
+        isCompleted: Boolean,
+        attemptCount: Int
+    ) {
+        if (poseName.isBlank() || poseName == "Detecting..." || poseName == "No Pose Detected") return
+        viewModelScope.launch {
+            userPreferences.appendYogaSession(
+                poseName = poseName,
+                durationSeconds = durationSeconds,
+                isCompleted = isCompleted,
+                attemptCount = attemptCount.coerceAtLeast(1)
+            )
+        }
     }
 
     override fun onError(error: String) {
