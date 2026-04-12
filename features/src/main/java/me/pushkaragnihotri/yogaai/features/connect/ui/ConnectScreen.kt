@@ -20,8 +20,8 @@ fun ConnectScreen(viewModel: OnboardingViewModel, onFinished: () -> Unit) {
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = PermissionController.createRequestPermissionResultContract(),
         onResult = { granted ->
-            viewModel.onAction(OnboardingAction.OnPermissionsResult(granted))
-            onFinished() // Proceed after permissions are handled
+            viewModel.onAction(OnboardingAction.HealthPermissionsResult(granted))
+            onFinished()
         }
     )
 
