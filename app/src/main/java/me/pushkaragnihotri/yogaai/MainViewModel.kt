@@ -30,4 +30,10 @@ class MainViewModel(
 
     val dynamicColorEnabled: StateFlow<Boolean> = userPreferences.dynamicColorEnabled
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    val colorTheme: StateFlow<String> = userPreferences.colorTheme
+        .stateIn(viewModelScope, SharingStarted.Lazily, "Default")
+
+    val appFont: StateFlow<String> = userPreferences.appFont
+        .stateIn(viewModelScope, SharingStarted.Lazily, "Default")
 }

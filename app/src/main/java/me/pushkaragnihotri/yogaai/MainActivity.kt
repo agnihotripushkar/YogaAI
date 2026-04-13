@@ -32,13 +32,20 @@ class MainActivity : ComponentActivity() {
             
             val themeMode by viewModel.themeMode.collectAsState()
             val dynamicColor by viewModel.dynamicColorEnabled.collectAsState()
+            val colorTheme by viewModel.colorTheme.collectAsState()
+            val appFont by viewModel.appFont.collectAsState()
             val isDarkTheme = when (themeMode) {
                 1 -> false // Light
                 2 -> true  // Dark
                 else -> isSystemInDarkTheme() // System (Default)
             }
-            
-            YogaAITheme(darkTheme = isDarkTheme, dynamicColor = dynamicColor) {
+
+            YogaAITheme(
+                darkTheme = isDarkTheme,
+                dynamicColor = dynamicColor,
+                colorTheme = colorTheme,
+                appFont = appFont
+            ) {
                 if (finalDestination != null) {
                     MainScreen(
                         windowSizeClass = windowSizeClass.widthSizeClass,

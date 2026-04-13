@@ -51,6 +51,41 @@ val WellnessHR         = Color(0xFFE91E63)  // Pink
 val WellnessCalories   = Color(0xFFEF5350)  // Red
 val CardBackgroundLight= Color(0xFFFFFFFF)
 
+// ── Sakura (Rose / Pink) ───────────────────────────────────────────────────
+val SakuraLight         = androidx.compose.ui.graphics.Color(0xFFC2185B)
+val SakuraDark          = androidx.compose.ui.graphics.Color(0xFFF48FB1)
+val SakuraContainer     = androidx.compose.ui.graphics.Color(0xFFFFD6E0)
+val OnSakuraContainer   = androidx.compose.ui.graphics.Color(0xFF4A0020)
+val SakuraSwatch        = androidx.compose.ui.graphics.Color(0xFFE91E8C)
+
+// ── Canyon (Terracotta / Warm Brown) ──────────────────────────────────────
+val CanyonLight         = androidx.compose.ui.graphics.Color(0xFF8D4E2A)
+val CanyonDark          = androidx.compose.ui.graphics.Color(0xFFFFB68F)
+val CanyonContainer     = androidx.compose.ui.graphics.Color(0xFFFFDBC9)
+val OnCanyonContainer   = androidx.compose.ui.graphics.Color(0xFF330F00)
+val CanyonSwatch        = androidx.compose.ui.graphics.Color(0xFFBF6540)
+
+// ── Harvest (Olive / Warm Ochre) ───────────────────────────────────────────
+val HarvestLight        = androidx.compose.ui.graphics.Color(0xFF6D6C19)
+val HarvestDark         = androidx.compose.ui.graphics.Color(0xFFD2CA67)
+val HarvestContainer    = androidx.compose.ui.graphics.Color(0xFFF0EC80)
+val OnHarvestContainer  = androidx.compose.ui.graphics.Color(0xFF202000)
+val HarvestSwatch       = androidx.compose.ui.graphics.Color(0xFF8E8C2A)
+
+// ── Forest (Vivid Green) ──────────────────────────────────────────────────
+val ForestLight         = androidx.compose.ui.graphics.Color(0xFF2E7D32)
+val ForestDark          = androidx.compose.ui.graphics.Color(0xFF81C784)
+val ForestContainer     = androidx.compose.ui.graphics.Color(0xFFC8E6C9)
+val OnForestContainer   = androidx.compose.ui.graphics.Color(0xFF003300)
+val ForestSwatch        = androidx.compose.ui.graphics.Color(0xFF43A047)
+
+// ── Ocean (Deep Teal / Cyan) ──────────────────────────────────────────────
+val OceanLight          = androidx.compose.ui.graphics.Color(0xFF006688)
+val OceanDark           = androidx.compose.ui.graphics.Color(0xFF5BD8F5)
+val OceanContainer      = androidx.compose.ui.graphics.Color(0xFFBCEAF8)
+val OnOceanContainer    = androidx.compose.ui.graphics.Color(0xFF001F2A)
+val OceanSwatch         = androidx.compose.ui.graphics.Color(0xFF0097B2)
+
 // ── Status ─────────────────────────────────────────────────────────────────
 val StatusGreen        = Color(0xFF4CAF50)
 val StatusOrange       = Color(0xFFFF9800)

@@ -1,5 +1,7 @@
 package me.pushkaragnihotri.yogaai.core.di
 
+import me.pushkaragnihotri.yogaai.core.database.YogaSessionDao
+import me.pushkaragnihotri.yogaai.features.appearance.ui.AppearanceViewModel
 import me.pushkaragnihotri.yogaai.features.history.ui.PoseHistoryViewModel
 import me.pushkaragnihotri.yogaai.features.home.data.repository.HomeRepositoryImpl
 import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
@@ -20,9 +22,10 @@ val featuresModule = module {
     single { PoseClassifier() }
     single<YogaRepository> { YogaRepositoryImpl() }
 
-    viewModel { HomeViewModel(get(), get(), get(), androidContext()) }
+    viewModel { HomeViewModel(get(), get(), get<YogaSessionDao>(), androidContext()) }
     viewModel { OnboardingViewModel(get(), get()) }
-    viewModel { SettingsViewModel(get(), get(), get(), androidContext()) }
-    viewModel { YogaDetectorViewModel(get(), get(), get()) }
-    viewModel { PoseHistoryViewModel(get()) }
+    viewModel { SettingsViewModel(get(), get(), androidContext()) }
+    viewModel { YogaDetectorViewModel(get(), get(), get<YogaSessionDao>()) }
+    viewModel { PoseHistoryViewModel(get<YogaSessionDao>()) }
+    viewModel { AppearanceViewModel(get()) }
 }

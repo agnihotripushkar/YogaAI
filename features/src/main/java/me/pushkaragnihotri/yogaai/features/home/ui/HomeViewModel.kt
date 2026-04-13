@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
-import me.pushkaragnihotri.yogaai.core.UserPreferences
 import me.pushkaragnihotri.yogaai.core.YogaSessionRecord
+import me.pushkaragnihotri.yogaai.core.database.YogaSessionDao
+import me.pushkaragnihotri.yogaai.core.database.toRecord
 import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.R
 import me.pushkaragnihotri.yogaai.features.home.data.YogaPracticeStats
@@ -32,7 +33,7 @@ import timber.log.Timber
 class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val healthConnectManager: HealthConnectManager,
-    private val userPreferences: UserPreferences,
+    private val yogaSessionDao: YogaSessionDao,
     private val appContext: Context
 ) : ViewModel() {
 
@@ -46,9 +47,9 @@ class HomeViewModel(
         checkPermissionsAndLoad()
         viewModelScope.launch {
             combine(
-                userPreferences.yogaSessions,
+                yogaSessionDao.getAllSessions(),
                 homeRepository.todayMetrics
-            ) { sessions, metrics -> sessions to metrics }
+            ) { sessions, metrics -> sessions.map { it.toRecord() } to metrics }
                 .collect { (sessions, metrics) ->
                     if (!_state.value.isLoading) {
                         patchPracticeWellness(metrics, sessions)
@@ -100,7 +101,7 @@ class HomeViewModel(
                 homeRepository.refreshMetrics()
                 val metrics = homeRepository.todayMetrics.value
                 val risk = homeRepository.getTodayRisk()
-                val sessions = userPreferences.yogaSessions.first()
+                val sessions = yogaSessionDao.getAllSessions().first().map { it.toRecord() }
                 val items = buildWellnessItems(metrics, sessions)
                 _state.update {
                     it.copy(

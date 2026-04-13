@@ -8,22 +8,22 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.UserPreferences
-import me.pushkaragnihotri.yogaai.core.YogaSessionRecord
+import me.pushkaragnihotri.yogaai.core.database.YogaSessionDao
+import me.pushkaragnihotri.yogaai.core.database.YogaSessionEntity
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 class PoseHistoryViewModel(
-    private val userPreferences: UserPreferences
+    private val yogaSessionDao: YogaSessionDao
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PoseHistoryState())
     val state = _state.asStateFlow()
 
     init {
-        userPreferences.yogaSessions
+        yogaSessionDao.getAllSessions()
             .onEach { sessions -> _state.update { it.copy(sessions = sessions.toUiItems(), isLoading = false) } }
             .launchIn(viewModelScope)
     }
@@ -31,12 +31,12 @@ class PoseHistoryViewModel(
     fun onAction(action: PoseHistoryAction) {
         when (action) {
             PoseHistoryAction.OnClearHistory -> viewModelScope.launch {
-                userPreferences.clearYogaSessions()
+                yogaSessionDao.deleteAll()
             }
         }
     }
 
-    private fun List<YogaSessionRecord>.toUiItems(): List<PoseHistoryUiItem> {
+    private fun List<YogaSessionEntity>.toUiItems(): List<PoseHistoryUiItem> {
         val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
         val today = Calendar.getInstance()
         val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }

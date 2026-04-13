@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.pushkaragnihotri.yogaai.core.UserPreferences
+import me.pushkaragnihotri.yogaai.core.database.YogaSessionDao
+import me.pushkaragnihotri.yogaai.core.database.YogaSessionEntity
 import me.pushkaragnihotri.yogaai.core.presentation.UiText
 import me.pushkaragnihotri.yogaai.features.yoga.data.source.PoseClassifier
 import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepository
@@ -20,7 +21,7 @@ import me.pushkaragnihotri.yogaai.features.yoga.domain.repository.YogaRepository
 class YogaDetectorViewModel(
     val yogaRepository: YogaRepository,
     private val poseClassifier: PoseClassifier,
-    private val userPreferences: UserPreferences
+    private val yogaSessionDao: YogaSessionDao
 ) : ViewModel(), YogaRepositoryListener {
 
     private val _state = MutableStateFlow(YogaDetectorState())
@@ -133,11 +134,14 @@ class YogaDetectorViewModel(
     ) {
         if (poseName.isBlank() || poseName == "Detecting..." || poseName == "No Pose Detected") return
         viewModelScope.launch {
-            userPreferences.appendYogaSession(
-                poseName = poseName,
-                durationSeconds = durationSeconds,
-                isCompleted = isCompleted,
-                attemptCount = attemptCount.coerceAtLeast(1)
+            yogaSessionDao.insert(
+                YogaSessionEntity(
+                    poseName = poseName,
+                    durationSeconds = durationSeconds,
+                    completedAtEpochMs = System.currentTimeMillis(),
+                    isCompleted = isCompleted,
+                    attemptCount = attemptCount.coerceAtLeast(1)
+                )
             )
         }
     }

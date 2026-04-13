@@ -9,8 +9,9 @@ YogaAI is a modern Android application built with **Jetpack Compose** that helps
 - **Home Dashboard** — Daily wellness overview with risk prediction, streaks, calories, and step count. Integrates with [Health Connect](https://developer.android.com/health-and-fitness/guides/health-connect) to pull live health data.
 - **Yoga Detector** — Real-time pose detection via [MediaPipe](https://developers.google.com/mediapipe) and [CameraX](https://developer.android.com/media/camera/camerax). Provides live audio feedback via Text-to-Speech and tracks hold time per pose.
 - **Pose Results** — Post-session summary with pose details, benefits, alignment cues, and instructions sourced from an on-device pose library.
-- **Smart Onboarding** — Multi-step, responsive onboarding with consent flow and Health Connect permission setup. Adapts layout for phones, foldables, and tablets.
-- **Settings** — Theme selection (system/light/dark), language preferences, Health Connect management, and data deletion.
+- **Pose History** — Per-session records (pose name, hold duration, attempt count, completion status) persisted in a Room database and displayed in a grouped timeline (Today / Yesterday / date).
+- **Smart Onboarding** — 12-screen questionnaire collecting name, age, experience level, goals, and health consent. Responsive layout adapts for phones, foldables, and tablets.
+- **Settings** — Theme selection (system/light/dark), dynamic color (Android 12+), language preferences, profile info, Health Connect management, rate/share, and app version.
 
 ---
 
@@ -26,7 +27,7 @@ YogaAI is a modern Android application built with **Jetpack Compose** that helps
 | Health Data | [Health Connect SDK](https://developer.android.com/health-and-fitness/guides/health-connect) |
 | AI / Pose Detection | [MediaPipe Tasks Vision](https://developers.google.com/mediapipe/solutions/vision/pose_landmarker) |
 | Camera | [CameraX](https://developer.android.com/media/camera/camerax) |
-| Storage | [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) |
+| Storage | [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) (settings) + [Room](https://developer.android.com/training/data-storage/room) (session history) |
 | Logging | [Timber](https://github.com/JakeWharton/timber) |
 | Crash Reporting | [Firebase Crashlytics](https://firebase.google.com/docs/crashlytics) |
 | Background Work | [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) |
@@ -132,6 +133,9 @@ YogaAI/
             ├── onboarding/
             │   └── ui/           # OnboardingState/Action/Event, OnboardingViewModel,
             │                     # OnboardingScreen
+            ├── history/
+            │   └── ui/           # PoseHistoryState/Action, PoseHistoryViewModel,
+            │                     # PoseHistoryScreen, PoseHistoryUiItem
             ├── connect/
             │   └── ui/           # ConnectScreen, ConnectComponents
             ├── splash/
@@ -187,6 +191,15 @@ erDiagram
         string language
     }
 
+    YogaSessionEntity {
+        long id PK
+        string poseName
+        long completedAtEpochMs
+        boolean isCompleted
+        int attemptCount
+        int durationSeconds
+    }
+
     DailyMetric {
         long steps
         long sleepDurationMinutes
@@ -228,7 +241,9 @@ erDiagram
     }
 
     UserPreferences ||--o| DailyMetric : "has daily goal constraints"
+    YogaSessionDao ||--o{ YogaSessionEntity : "queries"
     DailyMetric ||--o{ RiskPrediction : "influences"
     DailyMetric ||--o{ WellnessUiModel : "displayed as"
     PoseClassification }|--|| PoseDetail : "references"
+    YogaSessionEntity }|--|| PoseDetail : "references"
 ```

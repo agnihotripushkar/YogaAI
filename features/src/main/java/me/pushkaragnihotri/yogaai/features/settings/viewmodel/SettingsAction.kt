@@ -12,7 +12,17 @@ sealed interface SettingsAction {
     data class OnDynamicColorChange(val enabled: Boolean) : SettingsAction
     data object OnRateAppClick : SettingsAction
     data object OnShareAppClick : SettingsAction
+    data object OnAppearanceClick : SettingsAction
+    data object OnFeedbackClick : SettingsAction
     data object OnProfileEditorOpen : SettingsAction
     data object OnProfileEditorDismiss : SettingsAction
-    data class OnProfileSave(val name: String, val age: Int, val level: String) : SettingsAction
+    data class OnProfileSave(
+        val name: String,
+        val age: Int,
+        val sex: String,
+        val height: Int,
+        val weight: Float,
+        val targetWeight: Float,
+        val level: String
+    ) : SettingsAction
 }

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -107,11 +108,18 @@ fun HomeScreenContent(
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
                     )
                 }
-                FilledTonalButton(
+                OutlinedButton(
                     onClick = onOpenPoseLibrary,
-                    shape = MaterialTheme.shapes.extraLarge
+                    shape = MaterialTheme.shapes.extraLarge,
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                    )
                 ) {
-                    Text(stringResource(R.string.pose_library_cta))
+                    Text(
+                        stringResource(R.string.pose_library_cta),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 }
             }
         }

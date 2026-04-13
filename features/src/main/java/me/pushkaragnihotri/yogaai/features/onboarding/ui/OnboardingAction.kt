@@ -8,6 +8,10 @@ sealed interface OnboardingAction {
     data object TinderCardAdvanced : OnboardingAction
     data class NameChanged(val name: String) : OnboardingAction
     data class AgeChanged(val age: String) : OnboardingAction
+    data class SexSelected(val sex: String) : OnboardingAction
+    data class HeightChanged(val height: String) : OnboardingAction
+    data class WeightChanged(val weight: String) : OnboardingAction
+    data class TargetWeightChanged(val targetWeight: String) : OnboardingAction
     data class LevelSelected(val level: String) : OnboardingAction
     data class StepGoalChanged(val steps: Int) : OnboardingAction
     data class SleepGoalChanged(val hours: Int) : OnboardingAction

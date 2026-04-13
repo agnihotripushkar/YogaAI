@@ -15,13 +15,10 @@ import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
 import me.pushkaragnihotri.yogaai.core.UserPreferences
 import me.pushkaragnihotri.yogaai.features.R
-import me.pushkaragnihotri.yogaai.features.home.data.model.DailyMetric
-import me.pushkaragnihotri.yogaai.features.home.domain.HomeRepository
 
 class SettingsViewModel(
     private val userPreferences: UserPreferences,
     private val healthConnectManager: HealthConnectManager,
-    private val homeRepository: HomeRepository,
     private val appContext: Context
 ) : ViewModel() {
 
@@ -50,8 +47,15 @@ class SettingsViewModel(
                 ) { userName, userAge, userLevel ->
                     Triple(userName, userAge, userLevel)
                 },
-                homeRepository.todayMetrics
-            ) { themeTriple, profileTriple, metrics ->
+                combine(
+                    userPreferences.userSex,
+                    userPreferences.userHeight,
+                    userPreferences.userWeight,
+                    userPreferences.userTargetWeight
+                ) { sex, height, weight, targetWeight ->
+                    listOf(sex, height.toString(), weight.toString(), targetWeight.toString())
+                }
+            ) { themeTriple, profileTriple, bodyList ->
                 SettingsSnapshot(
                     theme = themeTriple.first,
                     lang = themeTriple.second,
@@ -59,7 +63,10 @@ class SettingsViewModel(
                     userName = profileTriple.first,
                     userAge = profileTriple.second,
                     userLevel = profileTriple.third,
-                    metrics = metrics
+                    userSex = bodyList[0],
+                    userHeight = bodyList[1].toIntOrNull() ?: 0,
+                    userWeight = bodyList[2].toFloatOrNull() ?: 0f,
+                    userTargetWeight = bodyList[3].toFloatOrNull() ?: 0f
                 )
             }.collect { snap ->
                 _state.update {
@@ -70,8 +77,10 @@ class SettingsViewModel(
                         userName = snap.userName,
                         userAge = snap.userAge,
                         userLevel = snap.userLevel,
-                        steps = snap.metrics.steps,
-                        calories = snap.metrics.calories
+                        userSex = snap.userSex,
+                        userHeight = snap.userHeight,
+                        userWeight = snap.userWeight,
+                        userTargetWeight = snap.userTargetWeight
                     )
                 }
             }
@@ -97,12 +106,14 @@ class SettingsViewModel(
             }
             is SettingsAction.OnPermissionsResult -> {
                 val granted = action.granted.containsAll(permissions)
-                _state.update { it.copy(hasPermissions = granted) }
-                if (granted) {
-                    viewModelScope.launch { homeRepository.refreshMetrics() }
-                }
+                _state.update { it }
             }
             SettingsAction.OnDisconnectWearable -> { /* Clear tokens if applicable */ }
+            SettingsAction.OnFeedbackClick -> {
+                viewModelScope.launch {
+                    _events.send(SettingsEvent.OpenUrl("mailto:${appContext.getString(R.string.settings_feedback_email)}"))
+                }
+            }
             SettingsAction.OnDeleteData -> {
                 viewModelScope.launch {
                     userPreferences.setConsent(false)
@@ -125,6 +136,9 @@ class SettingsViewModel(
                     _events.send(SettingsEvent.ShareApp(message))
                 }
             }
+            SettingsAction.OnAppearanceClick -> {
+                viewModelScope.launch { _events.send(SettingsEvent.NavigateToAppearance) }
+            }
             SettingsAction.OnProfileEditorOpen -> {
                 _state.update { it.copy(showProfileEditor = true) }
             }
@@ -135,6 +149,10 @@ class SettingsViewModel(
                 viewModelScope.launch {
                     userPreferences.setUserName(action.name.trim())
                     userPreferences.setUserAge(action.age.coerceAtLeast(0))
+                    if (action.sex.isNotBlank()) userPreferences.setUserSex(action.sex)
+                    if (action.height > 0) userPreferences.setUserHeight(action.height)
+                    if (action.weight > 0f) userPreferences.setUserWeight(action.weight)
+                    if (action.targetWeight > 0f) userPreferences.setUserTargetWeight(action.targetWeight)
                     userPreferences.setUserLevel(action.level)
                     _state.update { it.copy(showProfileEditor = false) }
                 }
@@ -143,24 +161,12 @@ class SettingsViewModel(
     }
 
     private fun initialLoad() {
-        val sdkAvailable = healthConnectManager.checkAvailability() == HealthConnectManager.SDK_AVAILABLE
         val versionPair = readAppVersion()
         _state.update {
             it.copy(
-                sdkAvailable = sdkAvailable,
                 appVersionName = versionPair.first,
                 appVersionCode = versionPair.second
             )
-        }
-
-        if (sdkAvailable) {
-            viewModelScope.launch {
-                val hasPerms = healthConnectManager.hasAllPermissions()
-                _state.update { it.copy(hasPermissions = hasPerms) }
-                if (hasPerms) homeRepository.refreshMetrics()
-            }
-        } else {
-            _state.update { it.copy(hasPermissions = false) }
         }
     }
 
@@ -194,6 +200,9 @@ class SettingsViewModel(
         val userName: String,
         val userAge: Int,
         val userLevel: String,
-        val metrics: DailyMetric
+        val userSex: String,
+        val userHeight: Int,
+        val userWeight: Float,
+        val userTargetWeight: Float
     )
 }

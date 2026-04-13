@@ -16,7 +16,7 @@ import me.pushkaragnihotri.yogaai.features.common.ui.DevicePreviews
 import me.pushkaragnihotri.yogaai.features.ui.theme.YogaAITheme
 import me.pushkaragnihotri.yogaai.features.yoga.domain.model.PoseRepository
 import androidx.compose.ui.unit.sp
-import me.pushkaragnihotri.yogaai.features.ui.theme.FrauncesFamily
+import me.pushkaragnihotri.yogaai.features.ui.theme.PlayfairFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +81,7 @@ private fun PoseLibraryCard(poseName: String, sanskrit: String, meaning: String)
             Text(
                 text = poseName,
                 style = MaterialTheme.typography.headlineSmall.copy(
-                    fontFamily = FrauncesFamily,
+                    fontFamily = PlayfairFamily,
                     fontSize = 24.sp
                 ),
                 color = MaterialTheme.colorScheme.primary

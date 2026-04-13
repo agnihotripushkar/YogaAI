@@ -9,8 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.json.Json
+
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
@@ -76,56 +75,44 @@ class UserPreferences(private val context: Context) {
         }
     }
 
+    suspend fun setColorTheme(theme: String) {
+        context.dataStore.edit { it[KEY_COLOR_THEME] = theme }
+    }
+
+    suspend fun setAppFont(font: String) {
+        context.dataStore.edit { it[KEY_APP_FONT] = font }
+    }
+
+    suspend fun setUserSex(sex: String) {
+        context.dataStore.edit { it[KEY_USER_SEX] = sex }
+    }
+
+    suspend fun setUserHeight(cm: Int) {
+        context.dataStore.edit { it[KEY_USER_HEIGHT] = cm }
+    }
+
+    suspend fun setUserWeight(kg: Float) {
+        context.dataStore.edit { it[KEY_USER_WEIGHT] = kg }
+    }
+
+    suspend fun setUserTargetWeight(kg: Float) {
+        context.dataStore.edit { it[KEY_USER_TARGET_WEIGHT] = kg }
+    }
+
     suspend fun setDynamicColor(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[KEY_DYNAMIC_COLOR] = enabled
         }
     }
 
-    suspend fun appendYogaSession(
-        poseName: String,
-        durationSeconds: Int,
-        isCompleted: Boolean = false,
-        attemptCount: Int = 1
-    ) {
-        if (poseName.isBlank()) return
-        context.dataStore.edit { preferences ->
-            val json = preferences[KEY_YOGA_SESSIONS]
-            val current = if (json.isNullOrEmpty()) {
-                mutableListOf()
-            } else {
-                try {
-                    Json.decodeFromString(ListSerializer(YogaSessionRecord.serializer()), json).toMutableList()
-                } catch (_: Exception) {
-                    mutableListOf()
-                }
-            }
-            current.add(
-                0,
-                YogaSessionRecord(
-                    poseName = poseName,
-                    durationSeconds = durationSeconds.coerceAtLeast(0),
-                    completedAtEpochMs = System.currentTimeMillis(),
-                    isCompleted = isCompleted,
-                    attemptCount = attemptCount.coerceAtLeast(1)
-                )
-            )
-            while (current.size > MAX_YOGA_SESSIONS) current.removeAt(current.lastIndex)
-            preferences[KEY_YOGA_SESSIONS] = Json.encodeToString(
-                ListSerializer(YogaSessionRecord.serializer()),
-                current
-            )
-        }
-    }
-
-    suspend fun clearYogaSessions() {
-        context.dataStore.edit { preferences ->
-            preferences.remove(KEY_YOGA_SESSIONS)
-        }
-    }
-
-    companion object {
+companion object {
         val KEY_CONSENT_GIVEN = booleanPreferencesKey("consent_given")
+        val KEY_COLOR_THEME = androidx.datastore.preferences.core.stringPreferencesKey("color_theme")
+        val KEY_APP_FONT = androidx.datastore.preferences.core.stringPreferencesKey("app_font")
+        val KEY_USER_SEX = androidx.datastore.preferences.core.stringPreferencesKey("user_sex")
+        val KEY_USER_HEIGHT = androidx.datastore.preferences.core.intPreferencesKey("user_height")
+        val KEY_USER_WEIGHT = androidx.datastore.preferences.core.floatPreferencesKey("user_weight")
+        val KEY_USER_TARGET_WEIGHT = androidx.datastore.preferences.core.floatPreferencesKey("user_target_weight")
         val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val KEY_IS_DEMO_MODE = booleanPreferencesKey("is_demo_mode")
         val KEY_STEP_GOAL = androidx.datastore.preferences.core.intPreferencesKey("step_goal")
@@ -136,9 +123,7 @@ class UserPreferences(private val context: Context) {
         val KEY_THEME_MODE = androidx.datastore.preferences.core.intPreferencesKey("theme_mode") // 0=System, 1=Light, 2=Dark
         val KEY_LANGUAGE = androidx.datastore.preferences.core.stringPreferencesKey("language")
         val KEY_DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
-        val KEY_YOGA_SESSIONS = stringPreferencesKey("yoga_sessions_json")
-        private const val MAX_YOGA_SESSIONS = 100
-    }
+}
 
     val consentGiven: Flow<Boolean> = context.dataStore.data
         .map { preferences -> preferences[KEY_CONSENT_GIVEN] ?: false }
@@ -173,12 +158,22 @@ class UserPreferences(private val context: Context) {
     val dynamicColorEnabled: Flow<Boolean> = context.dataStore.data
         .map { preferences -> preferences[KEY_DYNAMIC_COLOR] ?: false }
 
-    val yogaSessions: Flow<List<YogaSessionRecord>> = context.dataStore.data.map { preferences ->
-        val json = preferences[KEY_YOGA_SESSIONS] ?: return@map emptyList()
-        try {
-            Json.decodeFromString(ListSerializer(YogaSessionRecord.serializer()), json)
-        } catch (_: Exception) {
-            emptyList()
-        }
-    }
+    val colorTheme: Flow<String> = context.dataStore.data
+        .map { it[KEY_COLOR_THEME] ?: "Default" }
+
+    val appFont: Flow<String> = context.dataStore.data
+        .map { it[KEY_APP_FONT] ?: "Default" }
+
+    val userSex: Flow<String> = context.dataStore.data
+        .map { it[KEY_USER_SEX] ?: "" }
+
+    val userHeight: Flow<Int> = context.dataStore.data
+        .map { it[KEY_USER_HEIGHT] ?: 0 }
+
+    val userWeight: Flow<Float> = context.dataStore.data
+        .map { it[KEY_USER_WEIGHT] ?: 0f }
+
+    val userTargetWeight: Flow<Float> = context.dataStore.data
+        .map { it[KEY_USER_TARGET_WEIGHT] ?: 0f }
+
 }

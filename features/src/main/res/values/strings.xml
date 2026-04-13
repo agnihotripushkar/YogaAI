@@ -65,6 +65,9 @@
     <string name="settings_profile_dialog_title">Your profile</string>
 
     <string name="settings_section_about">About this app</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="settings_feedback_sub">Send us your thoughts</string>
+    <string name="settings_feedback_email" translatable="false">feedback@yogaai.app</string>
     <string name="settings_rate_app">Rate the app</string>
     <string name="settings_rate_app_sub">Leave a review on the Play Store</string>
     <string name="settings_share_app">Share the app</string>

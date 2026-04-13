@@ -12,4 +12,5 @@ object YogaDestinations {
     const val POSE_LIBRARY_ROUTE = "pose_library"
     const val POSE_RESULT_ROUTE = "pose_result/{poseName}/{duration}/{feedback}"
     const val POSE_HISTORY_ROUTE = "pose_history"
+    const val APPEARANCE_ROUTE = "appearance"
 }

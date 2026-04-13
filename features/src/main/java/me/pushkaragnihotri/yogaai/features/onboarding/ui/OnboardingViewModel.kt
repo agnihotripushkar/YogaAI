@@ -63,6 +63,10 @@ class OnboardingViewModel(
             }
             is OnboardingAction.NameChanged -> _state.update { it.copy(userName = action.name) }
             is OnboardingAction.AgeChanged -> _state.update { it.copy(userAge = action.age) }
+            is OnboardingAction.SexSelected -> _state.update { it.copy(selectedSex = action.sex) }
+            is OnboardingAction.HeightChanged -> _state.update { it.copy(userHeight = action.height) }
+            is OnboardingAction.WeightChanged -> _state.update { it.copy(userWeight = action.weight) }
+            is OnboardingAction.TargetWeightChanged -> _state.update { it.copy(userTargetWeight = action.targetWeight) }
             is OnboardingAction.LevelSelected -> _state.update { it.copy(selectedLevel = action.level) }
             is OnboardingAction.StepGoalChanged -> _state.update { it.copy(stepGoal = action.steps) }
             is OnboardingAction.SleepGoalChanged -> _state.update { it.copy(sleepGoal = action.hours) }
@@ -80,6 +84,10 @@ class OnboardingViewModel(
                     userPreferences.setOnboardingCompleted(true)
                     if (s.userName.isNotBlank()) userPreferences.setUserName(s.userName)
                     s.userAge.toIntOrNull()?.takeIf { it > 0 }?.let { userPreferences.setUserAge(it) }
+                    if (s.selectedSex.isNotBlank()) userPreferences.setUserSex(s.selectedSex)
+                    s.userHeight.toIntOrNull()?.takeIf { it > 0 }?.let { userPreferences.setUserHeight(it) }
+                    s.userWeight.toFloatOrNull()?.takeIf { it > 0f }?.let { userPreferences.setUserWeight(it) }
+                    s.userTargetWeight.toFloatOrNull()?.takeIf { it > 0f }?.let { userPreferences.setUserTargetWeight(it) }
                     userPreferences.setUserLevel(s.selectedLevel)
                     userPreferences.setStepGoal(s.stepGoal)
                     userPreferences.setSleepGoal(s.sleepGoal)

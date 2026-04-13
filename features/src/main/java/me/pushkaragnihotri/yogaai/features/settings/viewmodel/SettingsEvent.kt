@@ -5,4 +5,5 @@ sealed interface SettingsEvent {
     data class OpenUrl(val url: String) : SettingsEvent
     data object RateApp : SettingsEvent
     data class ShareApp(val text: String) : SettingsEvent
+    data object NavigateToAppearance : SettingsEvent
 }

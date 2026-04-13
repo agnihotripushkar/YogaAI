@@ -11,6 +11,10 @@ data class OnboardingState(
     // Step 6: Profile
     val userName: String = "",
     val userAge: String = "",
+    val selectedSex: String = "",
+    val userHeight: String = "",
+    val userWeight: String = "",
+    val userTargetWeight: String = "",
     val selectedLevel: String = "Beginner",
     val stepGoal: Int = 6000,
     val sleepGoal: Int = 8,

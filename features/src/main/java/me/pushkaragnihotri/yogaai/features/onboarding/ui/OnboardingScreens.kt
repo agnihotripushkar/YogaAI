@@ -916,6 +916,57 @@ private fun ProfileSetupStep(
         )
         Spacer(Modifier.height(20.dp))
         Text(
+            text = "Sex",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Spacer(Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf("Male", "Female", "Other").forEach { option ->
+                FilterChip(
+                    selected = state.selectedSex == option,
+                    onClick = { onAction(OnboardingAction.SexSelected(option)) },
+                    label = { Text(option, style = MaterialTheme.typography.bodySmall) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    ),
+                )
+            }
+        }
+        Spacer(Modifier.height(14.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedTextField(
+                value = state.userHeight,
+                onValueChange = { onAction(OnboardingAction.HeightChanged(it.filter { c -> c.isDigit() })) },
+                label = { Text("Height (cm)") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.weight(1f),
+                shape = MaterialTheme.shapes.large,
+            )
+            OutlinedTextField(
+                value = state.userWeight,
+                onValueChange = { onAction(OnboardingAction.WeightChanged(it.filter { c -> c.isDigit() || c == '.' })) },
+                label = { Text("Weight (kg)") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.weight(1f),
+                shape = MaterialTheme.shapes.large,
+            )
+        }
+        Spacer(Modifier.height(14.dp))
+        OutlinedTextField(
+            value = state.userTargetWeight,
+            onValueChange = { onAction(OnboardingAction.TargetWeightChanged(it.filter { c -> c.isDigit() || c == '.' })) },
+            label = { Text("Target weight (kg)") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.large,
+        )
+        Spacer(Modifier.height(20.dp))
+        Text(
             text = "Your yoga experience",
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,

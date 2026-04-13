@@ -33,6 +33,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingsRoot(
     onNavigateUp: () -> Unit,
+    onNavigateToAppearance: () -> Unit = {},
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -46,6 +47,7 @@ fun SettingsRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
+            is SettingsEvent.NavigateToAppearance -> onNavigateToAppearance()
             is SettingsEvent.RequestPermissions -> permissionLauncher.launch(event.permissions)
             is SettingsEvent.OpenUrl -> {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.url))
@@ -141,10 +143,6 @@ private fun SettingsScreenPreview() {
         SettingsScreen(
             state = SettingsState(
                 themeMode = 0,
-                sdkAvailable = true,
-                hasPermissions = true,
-                steps = 5201,
-                calories = 120.0,
                 language = "English",
                 dynamicColor = false,
                 userName = "Alex",
