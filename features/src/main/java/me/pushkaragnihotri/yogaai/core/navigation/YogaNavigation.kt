@@ -16,7 +16,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import me.pushkaragnihotri.yogaai.features.connect.ui.ConnectScreen
 import me.pushkaragnihotri.yogaai.features.history.ui.PoseHistoryRoot
 import me.pushkaragnihotri.yogaai.features.home.ui.HomeRoot
 import me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingScreen
@@ -67,26 +66,12 @@ fun YogaNavigation(
         composable(YogaDestinations.ONBOARDING_ROUTE) {
             val viewModel: OnboardingViewModel = koinViewModel()
             OnboardingScreen(
-                windowSizeClass = windowSizeClass,
+                viewModel = viewModel,
                 onOnboardingComplete = {
-                    viewModel.onAction(me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingAction.OnConsentGranted)
-                    navController.navigate(YogaDestinations.CONNECT_ROUTE) {
+                    navController.navigate(YogaDestinations.HOME_ROUTE) {
                         popUpTo(YogaDestinations.ONBOARDING_ROUTE) { inclusive = true }
                     }
-                }
-            )
-        }
-
-        composable(YogaDestinations.CONNECT_ROUTE) {
-            val viewModel: OnboardingViewModel = koinViewModel()
-            ConnectScreen(
-                viewModel = viewModel,
-                onFinished = {
-                    viewModel.onAction(me.pushkaragnihotri.yogaai.features.onboarding.ui.OnboardingAction.OnOnboardingComplete)
-                    navController.navigate(YogaDestinations.HOME_ROUTE) {
-                        popUpTo(YogaDestinations.CONNECT_ROUTE) { inclusive = true }
-                    }
-                }
+                },
             )
         }
 
