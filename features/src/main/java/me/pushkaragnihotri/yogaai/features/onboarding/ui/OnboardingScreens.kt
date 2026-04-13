@@ -639,6 +639,49 @@ private fun SocialProofStep(onBack: () -> Unit, onNext: () -> Unit) {
     }
 }
 
+@Composable
+private fun TinderCardContent(statement: String, offsetValue: Float) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(28.dp),
+    ) {
+        AnimatedVisibility(
+            visible = offsetValue < -30f,
+            modifier = Modifier.align(Alignment.TopStart),
+        ) {
+            Text(
+                text = "SKIP",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .border(2.dp, MaterialTheme.colorScheme.error, RoundedCornerShape(6.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
+        }
+        AnimatedVisibility(
+            visible = offsetValue > 30f,
+            modifier = Modifier.align(Alignment.TopEnd),
+        ) {
+            Text(
+                text = "SAME",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(6.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
+        }
+        Text(
+            text = "\"$statement\"",
+            style = MaterialTheme.typography.headlineSmall.copy(fontStyle = FontStyle.Italic),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.align(Alignment.Center),
+        )
+    }
+}
+
 // ─── Step 4: Tinder Cards ─────────────────────────────────────────────────────
 
 @Composable
@@ -709,45 +752,7 @@ private fun TinderCardsStep(
                 shape = RoundedCornerShape(24.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(28.dp),
-                ) {
-                    AnimatedVisibility(
-                        visible = offset.value < -30f,
-                        modifier = Modifier.align(Alignment.TopStart),
-                    ) {
-                        Text(
-                            text = "SKIP",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier
-                                .border(2.dp, MaterialTheme.colorScheme.error, RoundedCornerShape(6.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                        )
-                    }
-                    AnimatedVisibility(
-                        visible = offset.value > 30f,
-                        modifier = Modifier.align(Alignment.TopEnd),
-                    ) {
-                        Text(
-                            text = "SAME",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(6.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                        )
-                    }
-                    Text(
-                        text = "\"$statement\"",
-                        style = MaterialTheme.typography.headlineSmall.copy(fontStyle = FontStyle.Italic),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.align(Alignment.Center),
-                    )
-                }
+                TinderCardContent(statement = statement, offsetValue = offset.value)
             }
         }
 
