@@ -22,7 +22,7 @@ val featuresModule = module {
     single { PoseClassifier() }
     single<YogaRepository> { YogaRepositoryImpl() }
 
-    viewModel { HomeViewModel(get(), get(), get<YogaSessionDao>(), androidContext()) }
+    viewModel { HomeViewModel(get(), get(), get<YogaSessionDao>(), androidContext(), get()) }
     viewModel { OnboardingViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get(), androidContext()) }
     viewModel { YogaDetectorViewModel(get(), get(), get<YogaSessionDao>()) }

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.pushkaragnihotri.yogaai.core.HealthConnectManager
+import me.pushkaragnihotri.yogaai.core.UserPreferences
 import me.pushkaragnihotri.yogaai.core.YogaSessionRecord
 import me.pushkaragnihotri.yogaai.core.database.YogaSessionDao
 import me.pushkaragnihotri.yogaai.core.database.toRecord
@@ -34,7 +35,8 @@ class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val healthConnectManager: HealthConnectManager,
     private val yogaSessionDao: YogaSessionDao,
-    private val appContext: Context
+    private val appContext: Context,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -45,6 +47,11 @@ class HomeViewModel(
 
     init {
         checkPermissionsAndLoad()
+        viewModelScope.launch {
+            userPreferences.userName.collect { name ->
+                _state.update { it.copy(userName = name) }
+            }
+        }
         viewModelScope.launch {
             combine(
                 yogaSessionDao.getAllSessions(),

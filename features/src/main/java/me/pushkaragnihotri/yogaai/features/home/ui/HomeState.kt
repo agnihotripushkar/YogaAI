@@ -9,5 +9,6 @@ data class HomeState(
     val isLoading: Boolean = true,
     val hasPermissions: Boolean = false,
     val sdkAvailable: Boolean = false,
-    val error: UiText? = null
+    val error: UiText? = null,
+    val userName: String = ""
 )
