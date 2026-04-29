@@ -188,15 +188,15 @@ fun HealthConnectPermissionBanner(onGrantPermissionClick: () -> Unit) {
 
 @Composable
 fun ProfileHeader(userName: String) {
+    val displayName = userName.trim().ifEmpty { stringResource(R.string.profile_default_name) }
     val initials = run {
-        val parts = userName.trim().split(" ").filter { it.isNotEmpty() }
+        val parts = displayName.split(" ").filter { it.isNotEmpty() }
         when {
             parts.size >= 2 -> "${parts[0].first().uppercaseChar()}${parts[1].first().uppercaseChar()}"
             parts.size == 1 -> parts[0].first().uppercaseChar().toString()
             else -> "?"
         }
     }
-    val displayName = userName.trim().ifEmpty { stringResource(R.string.profile_default_name) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
