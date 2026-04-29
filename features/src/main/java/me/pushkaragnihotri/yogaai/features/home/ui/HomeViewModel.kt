@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -48,7 +49,7 @@ class HomeViewModel(
     init {
         checkPermissionsAndLoad()
         viewModelScope.launch {
-            userPreferences.userName.collect { name ->
+            userPreferences.userName.distinctUntilChanged().collect { name ->
                 _state.update { it.copy(userName = name) }
             }
         }
