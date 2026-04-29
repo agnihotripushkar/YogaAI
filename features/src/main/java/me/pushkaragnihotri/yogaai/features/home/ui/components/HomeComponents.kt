@@ -7,14 +7,12 @@ import androidx.compose.animation.core.tween
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.LocalFireDepartment
@@ -27,12 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -64,7 +59,7 @@ fun HomeScreenContent(
             .padding(horizontal = 20.dp)
             .padding(top = 20.dp)
     ) {
-        ProfileHeader()
+        ProfileHeader(userName = state.userName)
 
         Spacer(modifier = Modifier.height(28.dp))
 
@@ -192,67 +187,57 @@ fun HealthConnectPermissionBanner(onGrantPermissionClick: () -> Unit) {
 }
 
 @Composable
-fun ProfileHeader() {
+fun ProfileHeader(userName: String) {
+    val displayName = userName.trim().ifEmpty { stringResource(R.string.profile_default_name) }
+    val initials = run {
+        val parts = displayName.split(" ").filter { it.isNotEmpty() }
+        when {
+            parts.size >= 2 -> "${parts[0].first().uppercaseChar()}${parts[1].first().uppercaseChar()}"
+            parts.size == 1 -> parts[0].first().uppercaseChar().toString()
+            else -> "?"
+        }
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            // Avatar with gradient ring
-            Box(
-                modifier = Modifier
-                    .size(54.dp)
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.tertiary
-                            )
-                        ),
-                        CircleShape
-                    )
-                    .padding(3.dp)
-                    .clip(CircleShape)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.profile_pic),
-                    contentDescription = stringResource(R.string.profile_picture_content_desc),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(14.dp))
-
-            Column {
-                Text(
-                    text = stringResource(R.string.greeting_namaste),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    letterSpacing = 1.2.sp
-                )
-                Text(
-                    text = stringResource(R.string.profile_default_name),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+        Box(
+            modifier = Modifier
+                .size(54.dp)
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.tertiary
+                        )
+                    ),
+                    CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = initials,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
 
-        // Notification button — tonal style
-        FilledTonalIconButton(
-            onClick = { /* TODO */ },
-            modifier = Modifier.size(48.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = stringResource(R.string.notifications_content_desc),
-                tint = MaterialTheme.colorScheme.onSecondaryContainer
+        Spacer(modifier = Modifier.width(14.dp))
+
+        Column {
+            Text(
+                text = stringResource(R.string.greeting_namaste),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                letterSpacing = 1.2.sp
+            )
+            Text(
+                text = displayName,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -496,7 +481,7 @@ private fun HealthConnectPermissionBannerPreview() {
 @Composable
 private fun ProfileHeaderPreview() {
     YogaAITheme {
-        ProfileHeader()
+        ProfileHeader(userName = "Pushkar Agnihotri")
     }
 }
 
